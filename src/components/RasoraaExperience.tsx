@@ -14,11 +14,9 @@ import {
   Minus,
   Phone,
   Plus,
-  RotateCcw,
   ShieldCheck,
   Sparkles,
   X,
-  Zap,
 } from 'lucide-react';
 
 /* ─── Hero Culinary Masterpieces for 3D Stage ─── */
@@ -363,7 +361,6 @@ export const RasoraaExperience: React.FC = () => {
 
   const rotateX = useTransform(smoothMouseY, [-0.5, 0.5], [14, -14]);
   const rotateY = useTransform(smoothMouseX, [-0.5, 0.5], [-16, 16]);
-  const shineOpacity = useTransform(smoothMouseY, [-0.5, 0.5], [0.12, 0.4]);
 
   const handleStageMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -495,9 +492,9 @@ export const RasoraaExperience: React.FC = () => {
 
             <a
               href="#reserve"
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#22AA00] hover:bg-[#1E9500] text-black font-bold text-xs tracking-[0.14em] uppercase transition-all duration-300 shadow-[0_0_20px_rgba(34,170,0,0.4)] hover:shadow-[0_0_35px_rgba(34,170,0,0.7)] hover:-translate-y-0.5 whitespace-nowrap flex-shrink-0"
+              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-[#17381E] to-[#0D2413] hover:from-[#22AA00] hover:to-[#1E9500] hover:text-black text-[#F5E6CA] border border-[#22AA00]/40 hover:border-[#C8A962] font-medium text-xs tracking-[0.14em] uppercase transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.5)] hover:shadow-[0_0_25px_rgba(34,170,0,0.4)] hover:-translate-y-0.5 whitespace-nowrap flex-shrink-0"
             >
-              <Calendar size={13} className="shrink-0" />
+              <Calendar size={13} className="shrink-0 text-[#C8A962]" />
               <span>Book Table</span>
             </a>
 
@@ -617,60 +614,66 @@ export const RasoraaExperience: React.FC = () => {
         </AnimatePresence>
       </header>
 
-      {/* ─── 2. AESTHETIC 3D HERO SECTION ─── */}
+      {/* ─── 2. REFINED HAUTE GASTRONOMY HERO SECTION ─── */}
       <section
         id="hero"
-        className="relative min-h-[90vh] flex items-center justify-center pt-8 pb-16 overflow-hidden"
+        className="relative min-h-[92vh] flex items-center justify-center pt-8 pb-20 overflow-hidden bg-gradient-to-b from-[#050A07] via-[#07110B] to-[#040806]"
       >
         <EmberCanvas activeColor={activeMasterpiece.accentColor} />
 
+        {/* Ambient Warm Golden & Emerald Glow */}
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[680px] h-[680px] rounded-full blur-[160px] pointer-events-none transition-all duration-700 opacity-20"
-          style={{ backgroundColor: activeMasterpiece.accentColor }}
+          className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[720px] h-[520px] rounded-full blur-[180px] pointer-events-none transition-all duration-1000 opacity-25"
+          style={{
+            background: `radial-gradient(circle, ${activeMasterpiece.accentColor} 0%, rgba(200, 169, 98, 0.25) 45%, transparent 70%)`,
+          }}
         />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
-          <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            {/* Left Headline */}
+          <div className="grid lg:grid-cols-12 gap-12 lg:gap-10 items-center">
+            {/* Left Column: Refined Editorial Gastronomy Typography */}
             <div className="lg:col-span-6 space-y-7 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-[#22AA00]/40 bg-[#22AA00]/10 text-[#22AA00] text-xs font-mono tracking-widest uppercase shadow-[0_0_20px_rgba(34,170,0,0.15)]">
-                <Sparkles size={13} className="text-[#22AA00]" />
-                <span>The Imperial Court // Pure Veg</span>
+              {/* Sacred Lineage Pill */}
+              <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-[#C8A962]/40 bg-[#C8A962]/10 text-[#E5D9C5] text-xs font-mono tracking-[0.22em] uppercase backdrop-blur-md">
+                <span className="w-2 h-2 rounded-full bg-[#22AA00] shadow-[0_0_8px_#22AA00]" />
+                <span>100% Shuddh Shakahari · Imperial Court</span>
               </div>
 
-              <div className="space-y-2">
-                <div className="font-serif text-3xl sm:text-5xl font-light text-neutral-300 italic">
-                  The Royal Art of
-                </div>
-                <h1 className="font-serif text-4xl sm:text-6xl xl:text-7xl font-bold tracking-tight text-white leading-[1.05]">
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#22AA00] via-[#66EE22] to-[#E5C378]">
-                    Living Fire
-                  </span>{' '}
-                  <span className="font-serif italic font-light text-neutral-400">&amp;</span><br />
-                  <span>Vegetarian Alchemy.</span>
+              {/* Majestic Headline */}
+              <div className="space-y-3">
+                <p className="font-serif italic text-2xl sm:text-3xl text-[#E5D9C5] font-light tracking-wide">
+                  Where Ancient Living Fire Meets
+                </p>
+                <h1 className="font-serif text-4xl sm:text-6xl xl:text-7xl font-normal tracking-tight text-white leading-[1.08]">
+                  Vegetarian Craft,{' '}
+                  <br />
+                  <span className="italic font-serif font-light text-transparent bg-clip-text bg-gradient-to-r from-[#FAF7F2] via-[#F0E6D2] to-[#C8A962]">
+                    Elevated to Royalty.
+                  </span>
                 </h1>
               </div>
 
-              <p className="text-neutral-300 text-base sm:text-lg max-w-xl font-light leading-relaxed mx-auto lg:mx-0">
-                Where royal Awadhi dum handis, 400°C charcoal clay pits, and wok hei artistry breathe under a single, uncompromising 100% Shuddh Shakahari &amp; Jain-certified culinary decree.
+              {/* Narrative Subtitle */}
+              <p className="text-neutral-300/90 text-base sm:text-lg max-w-xl font-light leading-relaxed mx-auto lg:mx-0">
+                Century-old Awadhi dum handis simmered over sal wood embers, 400°C clay tandoors, and wok hei artistry breathe under a single, uncompromising 100% Shuddh Shakahari &amp; Jain-certified decree.
               </p>
 
               {/* Fire Discipline Switcher Pills */}
               <div className="pt-1">
-                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2">
+                <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2.5">
                   {HERO_MASTERPIECES.map((item, idx) => {
                     const isSelected = activeMasterpieceIdx === idx;
                     return (
                       <button
                         key={item.id}
                         onClick={() => setActiveMasterpieceIdx(idx)}
-                        className={`px-3.5 py-2 rounded-xl text-xs font-mono tracking-wider transition-all duration-300 flex items-center gap-2 border ${
+                        className={`px-4 py-2 rounded-xl text-xs font-mono tracking-wider transition-all duration-300 flex items-center gap-2.5 border ${
                           isSelected
-                            ? 'bg-[#22AA00] text-black font-bold border-[#22AA00] shadow-[0_0_20px_rgba(34,170,0,0.5)] scale-[1.03]'
-                            : 'bg-white/5 text-neutral-300 border-white/10 hover:border-[#22AA00]/40 hover:bg-white/10'
+                            ? 'bg-[#152B1C] text-[#F5E6CA] font-semibold border-[#C8A962] shadow-[0_0_20px_rgba(200,169,98,0.25)] scale-[1.02]'
+                            : 'bg-white/5 text-neutral-400 border-white/10 hover:border-[#C8A962]/40 hover:text-white hover:bg-white/10'
                         }`}
                       >
-                        <span className={`text-[10px] ${isSelected ? 'text-black' : 'text-[#22AA00]'}`}>
+                        <span className={`text-[10px] ${isSelected ? 'text-[#C8A962]' : 'text-neutral-500'}`}>
                           {item.disciplineNum}
                         </span>
                         <span>{item.discipline}</span>
@@ -684,93 +687,145 @@ export const RasoraaExperience: React.FC = () => {
               <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4">
                 <a
                   href="#reserve"
-                  className="px-8 py-4 rounded-full bg-[#22AA00] hover:bg-[#1E9500] text-black font-bold text-xs tracking-widest uppercase transition-all duration-300 shadow-[0_0_25px_rgba(34,170,0,0.5)] hover:shadow-[0_0_45px_rgba(34,170,0,0.85)] hover:-translate-y-1 inline-flex items-center gap-2.5"
+                  className="px-8 py-3.5 rounded-full bg-gradient-to-r from-[#173B20] via-[#20522B] to-[#173B20] hover:from-[#22AA00] hover:to-[#178500] hover:text-black text-[#F5E6CA] font-semibold text-xs tracking-[0.16em] uppercase transition-all duration-300 border border-[#22AA00]/50 hover:border-[#C8A962] shadow-[0_4px_25px_rgba(0,0,0,0.6)] hover:shadow-[0_0_30px_rgba(34,170,0,0.4)] hover:-translate-y-0.5 inline-flex items-center gap-2.5"
                 >
-                  <Calendar size={15} />
+                  <Calendar size={14} className="text-[#C8A962]" />
                   <span>Reserve Table</span>
                 </a>
 
                 <a
                   href="#menu"
-                  className="px-8 py-4 rounded-full border border-white/20 hover:border-[#22AA00] text-white hover:text-[#22AA00] font-medium text-xs tracking-widest uppercase transition-all duration-300 backdrop-blur-sm hover:bg-white/5 inline-flex items-center gap-2"
+                  className="px-7 py-3.5 rounded-full border border-white/20 hover:border-[#C8A962] text-neutral-300 hover:text-[#F5E6CA] font-medium text-xs tracking-[0.16em] uppercase transition-all duration-300 backdrop-blur-sm hover:bg-white/5 inline-flex items-center gap-2"
                 >
-                  <span>Explore Menu</span>
-                  <ArrowRight size={14} />
+                  <span>Explore Carte</span>
+                  <ArrowRight size={14} className="text-[#C8A962]" />
                 </a>
+              </div>
+
+              {/* Subtle Trust Pillars */}
+              <div className="pt-4 border-t border-white/10 grid grid-cols-3 gap-4 text-left">
+                <div>
+                  <span className="block font-serif text-lg text-white font-medium">100%</span>
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-[#C8A962]">
+                    Pure Shakahari
+                  </span>
+                </div>
+                <div>
+                  <span className="block font-serif text-lg text-white font-medium">Strict</span>
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-[#22AA00]">
+                    Jain Certified
+                  </span>
+                </div>
+                <div>
+                  <span className="block font-serif text-lg text-white font-medium">3 Havens</span>
+                  <span className="text-[11px] font-mono uppercase tracking-wider text-neutral-400">
+                    Delhi NCR
+                  </span>
+                </div>
               </div>
             </div>
 
-            {/* Right: Clean, Unobstructed 3D Culinary Stage */}
+            {/* Right Column: Architectural Haute Gastronomy Showcase Frame */}
             <div className="lg:col-span-6 flex flex-col items-center justify-center">
               <div
                 ref={heroStageRef}
                 onMouseMove={handleStageMouseMove}
                 onMouseLeave={handleStageMouseLeave}
-                className="relative w-[280px] h-[280px] sm:w-[360px] sm:h-[360px] md:w-[420px] md:h-[420px] lg:w-[460px] lg:h-[460px] flex items-center justify-center select-none cursor-grab active:cursor-grabbing mx-auto my-2 sm:my-0"
+                className="relative w-full max-w-[460px] select-none mx-auto"
                 style={{ perspective: 1200 }}
               >
+                {/* 3D Tilted Architectural Image Frame */}
                 <motion.div
                   style={{
                     rotateX,
                     rotateY,
                     transformStyle: 'preserve-3d',
                   }}
-                  className="relative w-full h-full flex items-center justify-center"
+                  className="relative rounded-3xl p-3 sm:p-3.5 bg-gradient-to-b from-[#182B1F] via-[#0A160F] to-[#040806] border border-[#C8A962]/35 shadow-[0_30px_90px_rgba(0,0,0,0.95)]"
                 >
-                  <div
-                    style={{ transform: 'translateZ(-30px)' }}
-                    className="absolute inset-2 sm:inset-4 rounded-full border border-dashed border-[#22AA00]/25 animate-[spin_90s_linear_infinite]"
-                  />
-                  <div
-                    style={{ transform: 'translateZ(-15px)' }}
-                    className="absolute inset-8 sm:inset-12 rounded-full border border-white/10 animate-[spin_60s_linear_infinite_reverse]"
-                  />
+                  {/* Outer Delicate Gold Filigree Ring */}
+                  <div className="relative aspect-[4/4.6] rounded-2xl overflow-hidden border border-white/10 group">
+                    {/* Active Dish Image with Silky Transition */}
+                    <AnimatePresence mode="wait">
+                      <motion.img
+                        key={activeMasterpiece.id}
+                        src={activeMasterpiece.image}
+                        alt={activeMasterpiece.name}
+                        initial={{ opacity: 0, scale: 1.05 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                        className="w-full h-full object-cover filter contrast-[1.06] group-hover:scale-105 transition-transform duration-1000"
+                      />
+                    </AnimatePresence>
 
-                  <motion.div
-                    style={{
-                      transform: 'translateZ(0px)',
-                      boxShadow: `0 0 100px ${activeMasterpiece.auraColor}`,
-                    }}
-                    className="absolute w-[72%] aspect-square rounded-full bg-gradient-to-tr from-[#22AA00]/25 via-transparent to-[#C8A962]/25 blur-xl transition-all duration-700"
-                  />
+                    {/* Subtle Vignette & Gradient Overlays */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#040806] via-transparent to-black/20 pointer-events-none" />
 
-                  {/* 100% Clean Food Artwork (Zero text cards over image) */}
-                  <motion.div
-                    key={activeMasterpiece.id}
-                    initial={{ scale: 0.88, opacity: 0, rotate: -8 }}
-                    animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                    exit={{ scale: 0.9, opacity: 0 }}
-                    transition={{ duration: 0.6, ease: 'easeOut' }}
-                    style={{ transform: 'translateZ(45px)' }}
-                    className="relative w-[74%] aspect-square rounded-full p-2.5 sm:p-3 bg-gradient-to-tr from-[#22AA00]/50 via-[#0A1610] to-[#C8A962]/40 border-2 border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.95)] overflow-hidden group"
-                  >
-                    <img
-                      src={activeMasterpiece.image}
-                      alt={activeMasterpiece.name}
-                      className="w-full h-full object-cover rounded-full group-hover:scale-105 transition-transform duration-700 filter contrast-[1.05]"
-                    />
-                    <motion.div
-                      style={{ opacity: shineOpacity }}
-                      className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/25 to-transparent rounded-full pointer-events-none"
-                    />
-                    <div className="absolute inset-0 rounded-full ring-2 ring-inset ring-white/15 pointer-events-none" />
-                  </motion.div>
-                </motion.div>
-              </div>
+                    {/* Top Seal Badge */}
+                    <div className="absolute top-4 left-4 z-20">
+                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#050C07]/85 backdrop-blur-md border border-[#C8A962]/40 text-[#F5E6CA] text-[10px] font-mono tracking-widest uppercase">
+                        <Sparkles size={11} className="text-[#C8A962]" />
+                        <span>Imperial Signature</span>
+                      </div>
+                    </div>
 
-              {/* Clean Lower Telemetry Bar (Neatly Below Stage) */}
-              <div className="mt-5 w-full max-w-[460px] space-y-3 px-4">
-                <div className="flex items-center justify-between px-4 py-2.5 rounded-2xl bg-[#091510]/90 border border-[#22AA00]/30 backdrop-blur-md text-xs font-mono shadow-[0_10px_25px_rgba(0,0,0,0.6)]">
-                  <div className="flex items-center gap-2">
-                    <Zap size={14} className="text-[#22AA00]" />
-                    <span className="text-white font-medium">{activeMasterpiece.temp}</span>
+                    {/* Floating Lower Showcase Card */}
+                    <div className="absolute bottom-4 inset-x-4 z-20">
+                      <div className="p-4 rounded-2xl bg-[#060E09]/90 backdrop-blur-md border border-[#C8A962]/30 text-left shadow-2xl">
+                        <div className="flex items-center justify-between gap-2 pb-1.5 border-b border-white/10">
+                          <span className="text-[11px] font-mono text-[#C8A962] tracking-wider uppercase">
+                            {activeMasterpiece.discipline}
+                          </span>
+                          <span className="text-xs font-mono font-bold text-[#22AA00]">
+                            ₹{activeMasterpiece.price}
+                          </span>
+                        </div>
+                        <h3 className="font-serif text-xl sm:text-2xl text-white font-medium pt-2">
+                          {activeMasterpiece.name}
+                        </h3>
+                        <div className="flex items-center justify-between pt-2 text-[11px] font-mono text-neutral-400">
+                          <span className="flex items-center gap-1.5">
+                            <Flame size={12} className="text-[#C8A962]" />
+                            {activeMasterpiece.temp}
+                          </span>
+                          <span className="text-[#E5D9C5]">{activeMasterpiece.origin}</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-[#C8A962] font-medium">{activeMasterpiece.origin}</span>
-                </div>
+                </motion.div>
 
-                <div className="flex items-center justify-center gap-2 text-[11px] font-mono text-neutral-400 pt-1">
-                  <RotateCcw size={12} className="text-[#22AA00] animate-spin" style={{ animationDuration: '10s' }} />
-                  <span>Tilt or move cursor to interact with 3D culinary stage</span>
+                {/* Masterpiece Thumb Selector Strip Below Frame */}
+                <div className="mt-5 grid grid-cols-3 gap-3">
+                  {HERO_MASTERPIECES.map((item, idx) => {
+                    const isSelected = activeMasterpieceIdx === idx;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => setActiveMasterpieceIdx(idx)}
+                        className={`group relative p-2 rounded-2xl border text-left transition-all duration-300 flex items-center gap-2.5 ${
+                          isSelected
+                            ? 'bg-[#152B1C] border-[#C8A962] shadow-[0_0_15px_rgba(200,169,98,0.2)]'
+                            : 'bg-white/5 border-white/10 hover:border-white/30 hover:bg-white/10'
+                        }`}
+                      >
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                          className="w-10 h-10 rounded-xl object-cover border border-white/10 shrink-0"
+                        />
+                        <div className="min-w-0">
+                          <span className="block text-[10px] font-mono text-[#C8A962] leading-none">
+                            {item.disciplineNum}
+                          </span>
+                          <span className="block text-xs font-serif text-white truncate group-hover:text-[#F5E6CA] transition-colors pt-1">
+                            {item.name.split(' ')[0]}
+                          </span>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -778,45 +833,41 @@ export const RasoraaExperience: React.FC = () => {
         </div>
       </section>
 
-      {/* ─── 3. CONTINUOUS INFINITE MARQUEE ─── */}
-      <div className="border-y border-[#22AA00]/40 bg-[#22AA00] py-3.5 overflow-hidden text-black font-black select-none relative z-20">
+      {/* ─── 3. REFINED CONTINUOUS LUXURY MARQUEE ─── */}
+      <div className="border-y border-[#C8A962]/20 bg-[#060D09] py-3.5 overflow-hidden text-[#E5D9C5] select-none relative z-20">
         <div className="animate-marquee-infinite">
-          <div className="flex items-center space-x-8 shrink-0 pr-8 text-xs sm:text-sm tracking-[0.25em] uppercase">
-            <span>AWADHI DUM HANDIS</span>
-            <span>✦</span>
-            <span>100% SHUDDH SHAKAHARI</span>
-            <span>✦</span>
-            <span>LIVE CLAY TANDOORS</span>
-            <span>✦</span>
-            <span>STRICT JAIN PREPARATION</span>
-            <span>✦</span>
-            <span>PAN-ASIAN WOK HEI</span>
-            <span>✦</span>
-            <span>STONE HEARTH SOURDOUGH</span>
-            <span>✦</span>
-            <span>CONNAUGHT PLACE &amp; MEHRAULI</span>
-            <span>✦</span>
-            <span>FINE DINING VEG ALCHEMY</span>
-            <span>✦</span>
+          <div className="flex items-center space-x-10 shrink-0 pr-10 text-xs sm:text-[13px] tracking-[0.25em] uppercase font-sans">
+            <span className="text-white font-medium">AWADHI DUM HANDIS</span>
+            <span className="text-[#C8A962]">✦</span>
+            <span className="text-[#22AA00] font-medium">100% SHUDDH SHAKAHARI</span>
+            <span className="text-[#C8A962]">✦</span>
+            <span className="text-white font-medium">400°C CLAY TANDOORS</span>
+            <span className="text-[#C8A962]">✦</span>
+            <span className="text-[#E5D9C5] font-medium">STRICT JAIN HEARTH</span>
+            <span className="text-[#C8A962]">✦</span>
+            <span className="text-white font-medium">PAN-ASIAN WOK HEI</span>
+            <span className="text-[#C8A962]">✦</span>
+            <span className="text-[#C8A962] font-medium">CONNAUGHT PLACE &amp; MEHRAULI</span>
+            <span className="text-[#C8A962]">✦</span>
+            <span className="text-white font-medium">ROYAL VEG GASTRONOMY</span>
+            <span className="text-[#C8A962]">✦</span>
           </div>
 
-          <div className="flex items-center space-x-8 shrink-0 pr-8 text-xs sm:text-sm tracking-[0.25em] uppercase" aria-hidden="true">
-            <span>AWADHI DUM HANDIS</span>
-            <span>✦</span>
-            <span>100% SHUDDH SHAKAHARI</span>
-            <span>✦</span>
-            <span>LIVE CLAY TANDOORS</span>
-            <span>✦</span>
-            <span>STRICT JAIN PREPARATION</span>
-            <span>✦</span>
-            <span>PAN-ASIAN WOK HEI</span>
-            <span>✦</span>
-            <span>STONE HEARTH SOURDOUGH</span>
-            <span>✦</span>
-            <span>CONNAUGHT PLACE &amp; MEHRAULI</span>
-            <span>✦</span>
-            <span>FINE DINING VEG ALCHEMY</span>
-            <span>✦</span>
+          <div className="flex items-center space-x-10 shrink-0 pr-10 text-xs sm:text-[13px] tracking-[0.25em] uppercase font-sans" aria-hidden="true">
+            <span className="text-white font-medium">AWADHI DUM HANDIS</span>
+            <span className="text-[#C8A962]">✦</span>
+            <span className="text-[#22AA00] font-medium">100% SHUDDH SHAKAHARI</span>
+            <span className="text-[#C8A962]">✦</span>
+            <span className="text-white font-medium">400°C CLAY TANDOORS</span>
+            <span className="text-[#C8A962]">✦</span>
+            <span className="text-[#E5D9C5] font-medium">STRICT JAIN HEARTH</span>
+            <span className="text-[#C8A962]">✦</span>
+            <span className="text-white font-medium">PAN-ASIAN WOK HEI</span>
+            <span className="text-[#C8A962]">✦</span>
+            <span className="text-[#C8A962] font-medium">CONNAUGHT PLACE &amp; MEHRAULI</span>
+            <span className="text-[#C8A962]">✦</span>
+            <span className="text-white font-medium">ROYAL VEG GASTRONOMY</span>
+            <span className="text-[#C8A962]">✦</span>
           </div>
         </div>
       </div>
