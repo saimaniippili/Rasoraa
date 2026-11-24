@@ -5,18 +5,18 @@ import {
   ArrowRight,
   Calendar,
   Check,
-  ChevronLeft,
-  ChevronRight,
+  Facebook,
   Flame,
+  Instagram,
   MapPin,
   Menu as MenuIcon,
+  MessageCircle,
   Minus,
   Phone,
   Plus,
   RotateCcw,
   ShieldCheck,
   Sparkles,
-  Utensils,
   X,
   Zap,
 } from 'lucide-react';
@@ -34,7 +34,6 @@ interface HeroMasterpiece {
   accentColor: string;
   temp: string;
   origin: string;
-  alchemyKey: string;
   price: number;
 }
 
@@ -51,7 +50,6 @@ const HERO_MASTERPIECES: HeroMasterpiece[] = [
     accentColor: '#22AA00',
     temp: '95°C Slow Simmer',
     origin: 'Royal Awadh Courts',
-    alchemyKey: 'Saffron & Charcoal Embers',
     price: 680,
   },
   {
@@ -66,7 +64,6 @@ const HERO_MASTERPIECES: HeroMasterpiece[] = [
     accentColor: '#C8A962',
     temp: '400°C Clay Pit',
     origin: 'Northwest Frontier',
-    alchemyKey: 'Stone Cardamom & Hung Curd',
     price: 740,
   },
   {
@@ -81,17 +78,8 @@ const HERO_MASTERPIECES: HeroMasterpiece[] = [
     accentColor: '#38BDF8',
     temp: '320°C Wok Fire',
     origin: 'Canton-Himalayan Hearth',
-    alchemyKey: 'Wok Breath & Black Truffle',
     price: 720,
   },
-];
-
-/* ─── Botanical Ingredients ─── */
-const BOTANICAL_TAGS = [
-  { name: 'Kashmiri Saffron', hindi: 'केसर', glow: '#E5C378' },
-  { name: 'Forest Cardamom', hindi: 'इलायची', glow: '#22AA00' },
-  { name: 'Sal Wood Dum', hindi: 'कोयला दम', glow: '#FF7700' },
-  { name: 'Gir Cow Butter', hindi: 'बिलोना मक्खन', glow: '#F6E05E' },
 ];
 
 /* ─── Menu Dishes for Tasting Reel & Carte ─── */
@@ -113,7 +101,7 @@ const DISHES: Dish[] = [
     id: 'd1',
     name: 'Dal Rasoraa Imperial',
     tagline: '16-Hour Wood Ember Simmered Urad Lentils',
-    category: 'Earthenware Dum',
+    category: 'Awadhi Dum',
     price: 680,
     profile: 'Smoky charcoal · Cultured Gir cow cream · Slow heat',
     jain: true,
@@ -161,7 +149,7 @@ const DISHES: Dish[] = [
     id: 'd5',
     name: 'Subz Awadhi Dum Biryani',
     tagline: 'Aged Basmati · Farm Vegetables · Damascus Rose',
-    category: 'Earthenware Dum',
+    category: 'Awadhi Dum',
     price: 750,
     profile: 'Aged basmati · Kashmiri saffron · Damascus rose attar',
     jain: true,
@@ -183,41 +171,61 @@ const DISHES: Dish[] = [
   },
 ];
 
-const DISCIPLINES = [
+/* ─── Gallery Showcase Images ─── */
+const GALLERY_ITEMS = [
   {
-    num: '01',
-    title: 'The Awadhi Dum',
-    subtitle: '16-Hour Clay Handi Embers',
-    desc: 'Ancient seal of whole wheat dough trapping wild herbs, mountain saffron, and stone-ground spices over smoldering sal wood.',
-    badge: 'Ancient Heritage',
+    id: 'g1',
+    title: 'The Sealed Awadhi Dum Handi',
+    category: 'Culinary Craft',
     image: '/dish-awadhi.jpg',
+    span: 'col-span-1 md:col-span-2 row-span-1 md:row-span-2',
   },
   {
-    num: '02',
-    title: 'The Live Tandoor',
-    subtitle: '400°C Clay Pit Metallurgy',
-    desc: 'Pristine Gir cow dairy, cold-hung yogurt, and smoked mountain spices flash-roasted on skewers in intense clay radiant heat.',
-    badge: 'Fire & Smoke',
+    id: 'g2',
+    title: 'Angari Malai Paneer Tikka over Embers',
+    category: 'Live Fire',
     image: '/dish-tandoor.jpg',
+    span: 'col-span-1',
   },
   {
-    num: '03',
-    title: 'Pan-Asian Wok',
-    subtitle: 'High-Flame Wok Breath (Hei)',
-    desc: 'High-heat roaring fires searing farm-crisp shoots, shiitake fungi, black truffle essence, and hand-pulled noodles.',
-    badge: 'Wok Alchemy',
+    id: 'g3',
+    title: 'Pan-Asian Wok Hei & Black Truffle',
+    category: 'Oriental Alchemy',
     image: '/dish-oriental.jpg',
+    span: 'col-span-1',
   },
   {
-    num: '04',
-    title: 'Continental Hearth',
-    subtitle: 'Artisanal Stone Fire Hearth',
-    desc: 'Rustic sourdough hearth loaves, wild gucchi morels, aged plant-based veloutés, and aromatic garden-harvest herbs.',
-    badge: 'Stone Oven',
+    id: 'g4',
+    title: 'Stone Hearth Sourdough & Morel Gratin',
+    category: 'Continental Hearth',
     image: '/dish-continental.jpg',
+    span: 'col-span-1 md:col-span-2',
   },
 ];
 
+/* ─── Event Offerings ─── */
+const EVENTS = [
+  {
+    title: 'Royal Banquets & Soirées',
+    capacity: '40 – 120 Guests',
+    desc: 'Bespoke multi-course pure vegetarian feasts served in hand-hammered silverware under crystal chandeliers with live sitar and flute acoustics.',
+    badge: 'Private Galas',
+  },
+  {
+    title: 'The Sheesh-Mahal Intimate Salon',
+    capacity: '8 – 18 Guests',
+    desc: 'An exclusive dining alcove adorned with thousands of convex mirror rosettes for corporate leadership dinners and milestone family celebrations.',
+    badge: 'Private Dining',
+  },
+  {
+    title: 'The Glasshouse Conservatory',
+    capacity: '20 – 50 Guests',
+    desc: 'Al fresco botanical dining under starry Delhi skies with personal ustads hosting live charcoal tandoor and wok stations.',
+    badge: 'Cocktail & Feasts',
+  },
+];
+
+/* ─── Seating Sanctuaries ─── */
 const SANCTUARIES = [
   {
     id: 'z1',
@@ -274,14 +282,13 @@ const EmberCanvas: React.FC<{ activeColor?: string }> = ({ activeColor = '#22AA0
     };
     window.addEventListener('resize', handleResize);
 
-    // Particle pool
-    const particles = Array.from({ length: 38 }, () => ({
+    const particles = Array.from({ length: 32 }, () => ({
       x: Math.random() * width,
       y: height + Math.random() * 80,
-      size: Math.random() * 2.8 + 0.8,
-      speedY: Math.random() * 0.9 + 0.3,
-      speedX: (Math.random() - 0.5) * 0.6,
-      opacity: Math.random() * 0.6 + 0.2,
+      size: Math.random() * 2.5 + 0.8,
+      speedY: Math.random() * 0.8 + 0.3,
+      speedX: (Math.random() - 0.5) * 0.5,
+      opacity: Math.random() * 0.5 + 0.2,
       fadeSpeed: Math.random() * 0.004 + 0.002,
       isGold: Math.random() > 0.45,
     }));
@@ -297,8 +304,8 @@ const EmberCanvas: React.FC<{ activeColor?: string }> = ({ activeColor = '#22AA0
         if (p.y < -10 || p.opacity <= 0) {
           p.y = height + 10;
           p.x = Math.random() * width;
-          p.opacity = Math.random() * 0.7 + 0.3;
-          p.speedY = Math.random() * 0.9 + 0.3;
+          p.opacity = Math.random() * 0.6 + 0.3;
+          p.speedY = Math.random() * 0.8 + 0.3;
         }
 
         ctx.beginPath();
@@ -326,12 +333,12 @@ const EmberCanvas: React.FC<{ activeColor?: string }> = ({ activeColor = '#22AA0
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full pointer-events-none z-0 opacity-60"
+      className="absolute inset-0 w-full h-full pointer-events-none z-0 opacity-50"
     />
   );
 };
 
-/* ─── Main Experience Component ─── */
+/* ─── Main Component ─── */
 export const RasoraaExperience: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -345,7 +352,6 @@ export const RasoraaExperience: React.FC = () => {
   const [bookingConfirmed, setBookingConfirmed] = useState<boolean>(false);
 
   const heroStageRef = useRef<HTMLDivElement>(null);
-  const reelRef = useRef<HTMLDivElement>(null);
 
   // Framer Motion 3D Tilt Spring Physics
   const mouseX = useMotionValue(0);
@@ -355,9 +361,9 @@ export const RasoraaExperience: React.FC = () => {
   const smoothMouseX = useSpring(mouseX, springConfig);
   const smoothMouseY = useSpring(mouseY, springConfig);
 
-  const rotateX = useTransform(smoothMouseY, [-0.5, 0.5], [16, -16]);
-  const rotateY = useTransform(smoothMouseX, [-0.5, 0.5], [-18, 18]);
-  const shineOpacity = useTransform(smoothMouseY, [-0.5, 0.5], [0.15, 0.45]);
+  const rotateX = useTransform(smoothMouseY, [-0.5, 0.5], [14, -14]);
+  const rotateY = useTransform(smoothMouseX, [-0.5, 0.5], [-16, 16]);
+  const shineOpacity = useTransform(smoothMouseY, [-0.5, 0.5], [0.12, 0.4]);
 
   const handleStageMouseMove = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
@@ -386,7 +392,7 @@ export const RasoraaExperience: React.FC = () => {
 
   const activeMasterpiece = HERO_MASTERPIECES[activeMasterpieceIdx];
 
-  const categories = ['All', 'Earthenware Dum', 'Royal Tandoor', 'Pan-Asian Wok', 'Continental Hearth'];
+  const categories = ['All', 'Awadhi Dum', 'Royal Tandoor', 'Pan-Asian Wok', 'Continental Hearth'];
 
   const filteredDishes = useMemo(() => {
     if (activeCategory === 'All') return DISHES;
@@ -394,15 +400,6 @@ export const RasoraaExperience: React.FC = () => {
   }, [activeCategory]);
 
   const activeZone = SANCTUARIES.find((s) => s.id === selectedZone) || SANCTUARIES[0];
-
-  const scrollReel = (direction: 'left' | 'right') => {
-    if (!reelRef.current) return;
-    const scrollAmount = 380;
-    reelRef.current.scrollBy({
-      left: direction === 'left' ? -scrollAmount : scrollAmount,
-      behavior: 'smooth',
-    });
-  };
 
   return (
     <div className="min-h-screen bg-[#060B08] text-[#F7F6F2] font-sans selection:bg-[#22AA00] selection:text-black overflow-x-hidden">
@@ -458,30 +455,30 @@ export const RasoraaExperience: React.FC = () => {
             </div>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation (Home, About Us, Menu, Gallery, Events, Contact) */}
           <nav className="hidden lg:flex items-center gap-7 xl:gap-8 text-xs font-sans tracking-[0.15em] uppercase text-neutral-300">
             <a href="#hero" className="hover:text-[#22AA00] transition-colors py-1 relative group">
-              <span>Experience</span>
+              <span>Home</span>
               <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#22AA00] transition-all duration-300 group-hover:w-full" />
             </a>
-            <a href="#reel" className="hover:text-[#22AA00] transition-colors py-1 relative group">
-              <span>Signatures</span>
+            <a href="#about" className="hover:text-[#22AA00] transition-colors py-1 relative group">
+              <span>About Us</span>
               <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#22AA00] transition-all duration-300 group-hover:w-full" />
             </a>
-            <a href="#disciplines" className="hover:text-[#22AA00] transition-colors py-1 relative group">
-              <span>The 4 Fires</span>
+            <a href="#menu" className="hover:text-[#22AA00] transition-colors py-1 relative group">
+              <span>Menu</span>
               <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#22AA00] transition-all duration-300 group-hover:w-full" />
             </a>
-            <a href="#carte" className="hover:text-[#22AA00] transition-colors py-1 relative group">
-              <span>The Carte</span>
+            <a href="#gallery" className="hover:text-[#22AA00] transition-colors py-1 relative group">
+              <span>Gallery</span>
               <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#22AA00] transition-all duration-300 group-hover:w-full" />
             </a>
-            <a href="#sanctuaries" className="hover:text-[#22AA00] transition-colors py-1 relative group">
-              <span>Seating Courts</span>
+            <a href="#events" className="hover:text-[#22AA00] transition-colors py-1 relative group">
+              <span>Events</span>
               <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#22AA00] transition-all duration-300 group-hover:w-full" />
             </a>
-            <a href="#reserve" className="hover:text-[#22AA00] transition-colors py-1 relative group">
-              <span>Reservations</span>
+            <a href="#contact" className="hover:text-[#22AA00] transition-colors py-1 relative group">
+              <span>Contact</span>
               <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#22AA00] transition-all duration-300 group-hover:w-full" />
             </a>
           </nav>
@@ -522,7 +519,7 @@ export const RasoraaExperience: React.FC = () => {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.25 }}
-              className="lg:hidden border-b border-[#22AA00]/20 bg-[#060B08]/98 px-6 py-6 overflow-hidden"
+              className="lg:hidden border-b border-white/10 bg-[#060B08]/98 px-6 py-6 overflow-hidden"
             >
               <div className="flex flex-col space-y-4 text-base font-medium tracking-wide">
                 <a
@@ -530,63 +527,88 @@ export const RasoraaExperience: React.FC = () => {
                   onClick={() => setMobileMenuOpen(false)}
                   className="py-2 border-b border-white/5 flex items-center justify-between hover:text-[#22AA00]"
                 >
-                  <span>01 // EXPERIENCE</span>
+                  <span>Home</span>
                   <ArrowRight size={14} className="text-[#22AA00]" />
                 </a>
                 <a
-                  href="#reel"
+                  href="#about"
                   onClick={() => setMobileMenuOpen(false)}
                   className="py-2 border-b border-white/5 flex items-center justify-between hover:text-[#22AA00]"
                 >
-                  <span>02 // SIGNATURE REEL</span>
+                  <span>About Us</span>
                   <ArrowRight size={14} className="text-[#22AA00]" />
                 </a>
                 <a
-                  href="#disciplines"
+                  href="#menu"
                   onClick={() => setMobileMenuOpen(false)}
                   className="py-2 border-b border-white/5 flex items-center justify-between hover:text-[#22AA00]"
                 >
-                  <span>03 // THE 4 DISCIPLINES</span>
+                  <span>Menu</span>
                   <ArrowRight size={14} className="text-[#22AA00]" />
                 </a>
                 <a
-                  href="#carte"
+                  href="#gallery"
                   onClick={() => setMobileMenuOpen(false)}
                   className="py-2 border-b border-white/5 flex items-center justify-between hover:text-[#22AA00]"
                 >
-                  <span>04 // THE CARTE</span>
+                  <span>Gallery</span>
                   <ArrowRight size={14} className="text-[#22AA00]" />
                 </a>
                 <a
-                  href="#sanctuaries"
+                  href="#events"
                   onClick={() => setMobileMenuOpen(false)}
                   className="py-2 border-b border-white/5 flex items-center justify-between hover:text-[#22AA00]"
                 >
-                  <span>05 // SEATING SANCTUARIES</span>
+                  <span>Events</span>
                   <ArrowRight size={14} className="text-[#22AA00]" />
                 </a>
                 <a
-                  href="#reserve"
+                  href="#contact"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="py-2 flex items-center justify-between text-[#22AA00] font-semibold"
+                  className="py-2 border-b border-white/5 flex items-center justify-between hover:text-[#22AA00]"
                 >
-                  <span>06 // INSTANT TABLE BOOKING</span>
-                  <Calendar size={16} />
+                  <span>Contact</span>
+                  <ArrowRight size={14} className="text-[#22AA00]" />
                 </a>
 
+                {/* Mobile Socials & Reserve CTA */}
                 <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
-                  <a
-                    href="tel:+911141002800"
-                    className="w-full py-3 rounded-xl border border-[#22AA00]/40 text-center text-sm font-mono text-[#22AA00] hover:bg-[#22AA00]/10"
-                  >
-                    Direct Concierge: +91 11 4100 2800
-                  </a>
+                  <div className="flex items-center justify-center gap-4 py-2">
+                    <a
+                      href="https://facebook.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-neutral-300 hover:text-[#22AA00] hover:border-[#22AA00]"
+                      aria-label="Facebook"
+                    >
+                      <Facebook size={18} />
+                    </a>
+                    <a
+                      href="https://instagram.com"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-neutral-300 hover:text-[#22AA00] hover:border-[#22AA00]"
+                      aria-label="Instagram"
+                    >
+                      <Instagram size={18} />
+                    </a>
+                    <a
+                      href="https://wa.me/911141002800"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center text-neutral-300 hover:text-[#22AA00] hover:border-[#22AA00]"
+                      aria-label="WhatsApp"
+                    >
+                      <MessageCircle size={18} />
+                    </a>
+                  </div>
+
                   <a
                     href="#reserve"
                     onClick={() => setMobileMenuOpen(false)}
                     className="w-full py-3.5 rounded-xl bg-[#22AA00] text-black font-bold text-center text-sm tracking-wider uppercase shadow-[0_0_20px_rgba(34,170,0,0.5)]"
                   >
-                    Confirm Table Reservation
+                    Reserve Table
                   </a>
                 </div>
               </div>
@@ -595,39 +617,27 @@ export const RasoraaExperience: React.FC = () => {
         </AnimatePresence>
       </header>
 
-      {/* ─── 2. HIGH-AESTHETIC 3D INTERACTIVE HERO SECTION ─── */}
+      {/* ─── 2. AESTHETIC 3D HERO SECTION ─── */}
       <section
         id="hero"
-        className="relative min-h-[92vh] flex items-center justify-center pt-8 pb-16 overflow-hidden"
+        className="relative min-h-[90vh] flex items-center justify-center pt-8 pb-16 overflow-hidden"
       >
-        {/* Interactive Ember Particle Canvas */}
         <EmberCanvas activeColor={activeMasterpiece.accentColor} />
 
-        {/* Ambient Volumetric Glow Backdrops */}
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[720px] h-[720px] rounded-full blur-[160px] pointer-events-none transition-all duration-700 opacity-25"
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[680px] h-[680px] rounded-full blur-[160px] pointer-events-none transition-all duration-700 opacity-20"
           style={{ backgroundColor: activeMasterpiece.accentColor }}
         />
-        <div className="absolute top-1/4 right-1/4 w-[380px] h-[380px] bg-[#C8A962]/10 rounded-full blur-[120px] pointer-events-none" />
-
-        {/* Watermark Outlined Backdrop */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden opacity-5">
-          <span className="font-serif text-[22vw] font-black uppercase text-transparent tracking-tighter whitespace-nowrap [-webkit-text-stroke:2px_#22AA00]">
-            SHAKAHARI · RASORAA · SHAKAHARI
-          </span>
-        </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-            {/* ── Left Column: Editorial Luxury Headline & Controls ── */}
+            {/* Left Headline */}
             <div className="lg:col-span-6 space-y-7 text-center lg:text-left">
-              {/* Refined Category Tag */}
-              <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-[#22AA00]/40 bg-[#22AA00]/10 text-[#22AA00] text-xs font-mono tracking-widest uppercase shadow-[0_0_20px_rgba(34,170,0,0.2)]">
-                <Sparkles size={13} className="text-[#22AA00] animate-spin" style={{ animationDuration: '8s' }} />
-                <span>The Imperial Court // Vol. IV</span>
+              <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-[#22AA00]/40 bg-[#22AA00]/10 text-[#22AA00] text-xs font-mono tracking-widest uppercase shadow-[0_0_20px_rgba(34,170,0,0.15)]">
+                <Sparkles size={13} className="text-[#22AA00]" />
+                <span>The Imperial Court // Pure Veg</span>
               </div>
 
-              {/* Editorial Master Headline */}
               <div className="space-y-2">
                 <div className="font-serif text-3xl sm:text-5xl font-light text-neutral-300 italic">
                   The Royal Art of
@@ -641,17 +651,12 @@ export const RasoraaExperience: React.FC = () => {
                 </h1>
               </div>
 
-              {/* Lead Paragraph */}
               <p className="text-neutral-300 text-base sm:text-lg max-w-xl font-light leading-relaxed mx-auto lg:mx-0">
                 Where royal Awadhi dum handis, 400°C charcoal clay pits, and wok hei artistry breathe under a single, uncompromising 100% Shuddh Shakahari &amp; Jain-certified culinary decree.
               </p>
 
-              {/* Interactive Discipline Switcher Pills (3 Masterpieces) */}
-              <div className="pt-2">
-                <p className="text-[11px] font-mono uppercase tracking-widest text-neutral-400 mb-2.5 flex items-center justify-center lg:justify-start gap-1.5">
-                  <Flame size={12} className="text-[#22AA00]" />
-                  <span>Explore The 3 Fires:</span>
-                </p>
+              {/* Fire Discipline Switcher Pills */}
+              <div className="pt-1">
                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2">
                   {HERO_MASTERPIECES.map((item, idx) => {
                     const isSelected = activeMasterpieceIdx === idx;
@@ -659,7 +664,7 @@ export const RasoraaExperience: React.FC = () => {
                       <button
                         key={item.id}
                         onClick={() => setActiveMasterpieceIdx(idx)}
-                        className={`group px-3.5 py-2 rounded-xl text-xs font-mono tracking-wider transition-all duration-300 flex items-center gap-2 border ${
+                        className={`px-3.5 py-2 rounded-xl text-xs font-mono tracking-wider transition-all duration-300 flex items-center gap-2 border ${
                           isSelected
                             ? 'bg-[#22AA00] text-black font-bold border-[#22AA00] shadow-[0_0_20px_rgba(34,170,0,0.5)] scale-[1.03]'
                             : 'bg-white/5 text-neutral-300 border-white/10 hover:border-[#22AA00]/40 hover:bg-white/10'
@@ -675,7 +680,7 @@ export const RasoraaExperience: React.FC = () => {
                 </div>
               </div>
 
-              {/* Dual Magnetic Action Buttons */}
+              {/* Dual Action Buttons */}
               <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4">
                 <a
                   href="#reserve"
@@ -686,38 +691,16 @@ export const RasoraaExperience: React.FC = () => {
                 </a>
 
                 <a
-                  href="#reel"
-                  className="px-8 py-4 rounded-full border border-white/20 hover:border-[#22AA00] text-white hover:text-[#22AA00] font-medium text-xs tracking-widest uppercase transition-all duration-300 backdrop-blur-sm hover:bg-white/5 inline-flex items-center gap-2 shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
+                  href="#menu"
+                  className="px-8 py-4 rounded-full border border-white/20 hover:border-[#22AA00] text-white hover:text-[#22AA00] font-medium text-xs tracking-widest uppercase transition-all duration-300 backdrop-blur-sm hover:bg-white/5 inline-flex items-center gap-2"
                 >
-                  <span>The Tasting Reel</span>
+                  <span>Explore Menu</span>
                   <ArrowRight size={14} />
                 </a>
               </div>
-
-              {/* Prestige Credentials */}
-              <div className="pt-6 border-t border-white/10 grid grid-cols-3 gap-4 text-left max-w-lg mx-auto lg:mx-0">
-                <div>
-                  <div className="text-2xl font-bold font-serif text-[#22AA00]">100%</div>
-                  <div className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">
-                    Pure Vegetarian
-                  </div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold font-serif text-[#C8A962]">16 hrs</div>
-                  <div className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">
-                    Sal Wood Dum
-                  </div>
-                </div>
-                <div>
-                  <div className="text-2xl font-bold font-serif text-white">4.9 ★</div>
-                  <div className="text-[10px] font-mono text-neutral-400 uppercase tracking-wider">
-                    Michelin Honor
-                  </div>
-                </div>
-              </div>
             </div>
 
-            {/* ── Right Column: Interactive 3D Culinary Stage ── */}
+            {/* Right: Clean, Unobstructed 3D Culinary Stage */}
             <div className="lg:col-span-6 flex flex-col items-center justify-center">
               <div
                 ref={heroStageRef}
@@ -726,7 +709,6 @@ export const RasoraaExperience: React.FC = () => {
                 className="relative w-[280px] h-[280px] sm:w-[360px] sm:h-[360px] md:w-[420px] md:h-[420px] lg:w-[460px] lg:h-[460px] flex items-center justify-center select-none cursor-grab active:cursor-grabbing mx-auto my-2 sm:my-0"
                 style={{ perspective: 1200 }}
               >
-                {/* 3D Tilting Stage Container */}
                 <motion.div
                   style={{
                     rotateX,
@@ -735,7 +717,6 @@ export const RasoraaExperience: React.FC = () => {
                   }}
                   className="relative w-full h-full flex items-center justify-center"
                 >
-                  {/* Layer -1: Concentric Orbital Gyro Rings */}
                   <div
                     style={{ transform: 'translateZ(-30px)' }}
                     className="absolute inset-2 sm:inset-4 rounded-full border border-dashed border-[#22AA00]/25 animate-[spin_90s_linear_infinite]"
@@ -745,16 +726,15 @@ export const RasoraaExperience: React.FC = () => {
                     className="absolute inset-8 sm:inset-12 rounded-full border border-white/10 animate-[spin_60s_linear_infinite_reverse]"
                   />
 
-                  {/* Layer 0: Volumetric Halo Light */}
                   <motion.div
                     style={{
                       transform: 'translateZ(0px)',
-                      boxShadow: `0 0 90px ${activeMasterpiece.auraColor}`,
+                      boxShadow: `0 0 100px ${activeMasterpiece.auraColor}`,
                     }}
-                    className="absolute w-[70%] aspect-square rounded-full bg-gradient-to-tr from-[#22AA00]/20 via-transparent to-[#C8A962]/20 blur-xl transition-all duration-700"
+                    className="absolute w-[72%] aspect-square rounded-full bg-gradient-to-tr from-[#22AA00]/25 via-transparent to-[#C8A962]/25 blur-xl transition-all duration-700"
                   />
 
-                  {/* Layer 1: Floating Culinary Platter Artwork (100% Clean & Unobstructed) */}
+                  {/* 100% Clean Food Artwork (Zero text cards over image) */}
                   <motion.div
                     key={activeMasterpiece.id}
                     initial={{ scale: 0.88, opacity: 0, rotate: -8 }}
@@ -769,22 +749,17 @@ export const RasoraaExperience: React.FC = () => {
                       alt={activeMasterpiece.name}
                       className="w-full h-full object-cover rounded-full group-hover:scale-105 transition-transform duration-700 filter contrast-[1.05]"
                     />
-
-                    {/* Dynamic Glare Reflection Overlay */}
                     <motion.div
                       style={{ opacity: shineOpacity }}
                       className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/25 to-transparent rounded-full pointer-events-none"
                     />
-
-                    {/* Central Dish Inset Ring */}
                     <div className="absolute inset-0 rounded-full ring-2 ring-inset ring-white/15 pointer-events-none" />
                   </motion.div>
                 </motion.div>
               </div>
 
-              {/* Clean Telemetry & Botanical Tags (Neatly Underneath the Stage, Zero Overlap) */}
+              {/* Clean Lower Telemetry Bar (Neatly Below Stage) */}
               <div className="mt-5 w-full max-w-[460px] space-y-3 px-4">
-                {/* Live Telemetry Badge */}
                 <div className="flex items-center justify-between px-4 py-2.5 rounded-2xl bg-[#091510]/90 border border-[#22AA00]/30 backdrop-blur-md text-xs font-mono shadow-[0_10px_25px_rgba(0,0,0,0.6)]">
                   <div className="flex items-center gap-2">
                     <Zap size={14} className="text-[#22AA00]" />
@@ -793,21 +768,6 @@ export const RasoraaExperience: React.FC = () => {
                   <span className="text-[#C8A962] font-medium">{activeMasterpiece.origin}</span>
                 </div>
 
-                {/* Botanical Ingredients Bar */}
-                <div className="flex flex-wrap items-center justify-center gap-2">
-                  {BOTANICAL_TAGS.map((tag) => (
-                    <div
-                      key={tag.name}
-                      className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] font-mono text-neutral-300 flex items-center gap-1.5 hover:border-[#22AA00]/40 transition-colors"
-                    >
-                      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: tag.glow }} />
-                      <span>{tag.name}</span>
-                      <span className="text-[#22AA00] text-[9.5px]">({tag.hindi})</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* 3D Interaction Hint */}
                 <div className="flex items-center justify-center gap-2 text-[11px] font-mono text-neutral-400 pt-1">
                   <RotateCcw size={12} className="text-[#22AA00] animate-spin" style={{ animationDuration: '10s' }} />
                   <span>Tilt or move cursor to interact with 3D culinary stage</span>
@@ -818,10 +778,9 @@ export const RasoraaExperience: React.FC = () => {
         </div>
       </section>
 
-      {/* ─── 3. INFINITE SEAMLESS MARQUEE STRIP ─── */}
+      {/* ─── 3. CONTINUOUS INFINITE MARQUEE ─── */}
       <div className="border-y border-[#22AA00]/40 bg-[#22AA00] py-3.5 overflow-hidden text-black font-black select-none relative z-20">
         <div className="animate-marquee-infinite">
-          {/* Loop Set 1 */}
           <div className="flex items-center space-x-8 shrink-0 pr-8 text-xs sm:text-sm tracking-[0.25em] uppercase">
             <span>AWADHI DUM HANDIS</span>
             <span>✦</span>
@@ -841,7 +800,6 @@ export const RasoraaExperience: React.FC = () => {
             <span>✦</span>
           </div>
 
-          {/* Loop Set 2 (Exact clone for seamless infinite loop) */}
           <div className="flex items-center space-x-8 shrink-0 pr-8 text-xs sm:text-sm tracking-[0.25em] uppercase" aria-hidden="true">
             <span>AWADHI DUM HANDIS</span>
             <span>✦</span>
@@ -863,179 +821,73 @@ export const RasoraaExperience: React.FC = () => {
         </div>
       </div>
 
-      {/* ─── 4. SIGNATURE CARD REEL (Horizontal Snap Reel - Reel.tsx Style) ─── */}
-      <section id="reel" className="py-24 relative overflow-hidden bg-[#08100C]">
+      {/* ─── 4. ABOUT US SECTION (#about) ─── */}
+      <section id="about" className="py-24 relative bg-[#08100C] border-b border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
-            <div>
-              <p className="text-[#22AA00] text-xs font-mono tracking-[0.25em] uppercase flex items-center gap-2">
-                <Utensils size={14} /> Scene 03 // Signature Masterpieces
-              </p>
-              <h2 className="font-serif text-3xl sm:text-5xl font-bold text-white mt-2">
-                The Master’s Tasting Reel.
+          <div className="grid lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-6 space-y-6">
+              <span className="text-[#22AA00] text-xs font-mono tracking-[0.25em] uppercase">
+                About Us // Royal Heritage
+              </span>
+              <h2 className="font-serif text-3xl sm:text-5xl font-bold text-white leading-tight">
+                Purity of Tradition. Mastery of Fire.
               </h2>
-            </div>
+              <p className="text-neutral-300 text-sm sm:text-base font-light leading-relaxed">
+                Founded with a sacred commitment to pure vegetarian gastronomy, RASORAA honors centuries-old culinary lineages across royal India, Pan-Asia, and the Mediterranean hearth.
+              </p>
+              <p className="text-neutral-400 text-sm font-light leading-relaxed">
+                We operate with independent culinary stations, dedicated pure-veg ustads, and strict Jain protocols that completely forbid onion, garlic, or underground root tubers upon request.
+              </p>
 
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => scrollReel('left')}
-                className="w-12 h-12 rounded-full border border-white/20 hover:border-[#22AA00] flex items-center justify-center text-white hover:text-[#22AA00] transition-colors"
-                aria-label="Previous Dish"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              <button
-                onClick={() => scrollReel('right')}
-                className="w-12 h-12 rounded-full border border-white/20 hover:border-[#22AA00] flex items-center justify-center text-white hover:text-[#22AA00] transition-colors"
-                aria-label="Next Dish"
-              >
-                <ChevronRight size={20} />
-              </button>
-            </div>
-          </div>
-
-          <div
-            ref={reelRef}
-            className="flex gap-6 overflow-x-auto pb-6 scroll-smooth snap-x snap-mandatory no-scrollbar"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            {DISHES.map((dish, index) => {
-              const numStr = (index + 1).toString().padStart(2, '0');
-              return (
-                <article
-                  key={dish.id}
-                  className="relative flex-shrink-0 w-[300px] sm:w-[380px] h-[520px] rounded-[2.5rem] border border-white/10 bg-gradient-to-br from-[#162720] via-[#0E1A15] to-[#08100C] p-7 flex flex-col justify-between overflow-hidden group snap-center hover:border-[#22AA00]/50 transition-all duration-300"
-                >
-                  <span className="font-serif text-[10rem] font-bold text-[#22AA00]/10 select-none pointer-events-none absolute -right-4 -top-8 leading-none">
-                    {numStr}
-                  </span>
-
-                  <div className="flex items-center justify-between z-10">
-                    <span className="px-3 py-1 rounded-full text-[10px] font-mono tracking-wider uppercase bg-[#22AA00]/20 text-[#22AA00] border border-[#22AA00]/30">
-                      {dish.category}
-                    </span>
-                    {dish.jain && (
-                      <span className="px-2.5 py-0.5 rounded-full text-[9px] font-mono tracking-wider uppercase bg-white/10 text-[#C8A962] border border-[#C8A962]/40">
-                        Jain Available
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="relative mx-auto my-2 aspect-square w-[72%]">
-                    <div className="absolute inset-0 rounded-full bg-[#22AA00]/20 blur-2xl group-hover:bg-[#22AA00]/35 transition-colors" />
-                    <img
-                      src={dish.image}
-                      alt={dish.name}
-                      className="relative w-full h-full object-cover rounded-full drop-shadow-[0_20px_25px_rgba(0,0,0,0.8)] group-hover:scale-105 transition-transform duration-500"
-                    />
-                  </div>
-
-                  <div className="relative z-10 space-y-2">
-                    <h3 className="font-serif text-2xl font-bold text-white group-hover:text-[#22AA00] transition-colors leading-tight">
-                      {dish.name}
-                    </h3>
-                    <p className="text-xs text-neutral-400 line-clamp-2 font-light">
-                      {dish.note}
-                    </p>
-
-                    <div className="pt-3 flex items-center justify-between border-t border-white/10">
-                      <div>
-                        <span className="text-xs text-neutral-400 font-mono">Price </span>
-                        <span className="text-xl font-bold font-serif text-[#22AA00]">
-                          ₹{dish.price}
-                        </span>
-                      </div>
-
-                      <a
-                        href="#reserve"
-                        className="px-4 py-2 rounded-full bg-white/10 hover:bg-[#22AA00] text-white hover:text-black font-semibold text-xs tracking-wider transition-colors inline-flex items-center gap-1.5"
-                      >
-                        <Plus size={14} />
-                        <span>Reserve Taste</span>
-                      </a>
-                    </div>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ─── 5. THE 4 SACRED DISCIPLINES ─── */}
-      <section id="disciplines" className="py-24 relative bg-[#060B08]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-[#22AA00] text-xs font-mono tracking-[0.25em] uppercase">
-              The Four Culinary Disciplines
-            </span>
-            <h2 className="font-serif text-3xl sm:text-5xl font-bold text-white mt-3">
-              One Temple. Four Sacred Fires.
-            </h2>
-            <p className="text-neutral-400 text-sm sm:text-base mt-4 font-light">
-              Rasoraa does not compromise. Each of our four kitchens operates with dedicated chefs, bespoke hearths, and independent preparation stations.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {DISCIPLINES.map((d) => (
-              <div
-                key={d.num}
-                className="group relative rounded-3xl border border-white/10 bg-[#0E1C16] p-6 hover:border-[#22AA00]/50 transition-all duration-300 flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between text-xs font-mono text-[#22AA00] mb-4">
-                    <span>{d.num}</span>
-                    <span className="px-2 py-0.5 rounded-full bg-[#22AA00]/10 border border-[#22AA00]/30 text-[10px]">
-                      {d.badge}
-                    </span>
-                  </div>
-
-                  <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-6 relative">
-                    <img
-                      src={d.image}
-                      alt={d.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0E1C16] via-transparent to-transparent" />
-                  </div>
-
-                  <h3 className="font-serif text-2xl font-bold text-white group-hover:text-[#22AA00] transition-colors">
-                    {d.title}
-                  </h3>
-                  <div className="text-xs font-mono text-[#C8A962] mt-1">
-                    {d.subtitle}
-                  </div>
-                  <p className="text-xs text-neutral-400 mt-3 font-light leading-relaxed">
-                    {d.desc}
-                  </p>
+              <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10 text-xs font-mono">
+                <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                  <span className="text-[#22AA00] block text-base font-bold">100% Shuddh</span>
+                  <span className="text-neutral-400">Pure Shakahari Discipline</span>
                 </div>
-
-                <div className="pt-6 mt-6 border-t border-white/10 flex items-center justify-between text-xs text-neutral-300 group-hover:text-[#22AA00] transition-colors">
-                  <span className="font-mono">Explore Carte</span>
-                  <ArrowRight size={14} />
+                <div className="p-4 rounded-2xl bg-white/5 border border-white/10">
+                  <span className="text-[#C8A962] block text-base font-bold">Jain Certified</span>
+                  <span className="text-neutral-400">Separate Root-Free Preparation</span>
                 </div>
               </div>
-            ))}
+            </div>
+
+            <div className="lg:col-span-6">
+              <div className="relative rounded-3xl overflow-hidden border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.8)]">
+                <img
+                  src="/dish-tandoor.jpg"
+                  alt="Rasoraa Heritage Kitchen"
+                  className="w-full aspect-[4/3] object-cover hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#08100C] via-transparent to-transparent" />
+                <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-[#060B08]/90 backdrop-blur-md border border-white/10 flex items-center justify-between">
+                  <div>
+                    <span className="text-white text-sm font-bold font-serif block">Executive Culinary Custodians</span>
+                    <span className="text-[#22AA00] text-xs font-mono">Five Generations of Awadhi Dum Heritage</span>
+                  </div>
+                  <Flame size={20} className="text-[#22AA00]" />
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ─── 6. THE INTERACTIVE CARTE ─── */}
-      <section id="carte" className="py-24 relative bg-[#08100C] border-t border-white/5">
+      {/* ─── 5. MENU SECTION (#menu) ─── */}
+      <section id="menu" className="py-24 relative bg-[#060B08]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-12">
             <span className="text-[#22AA00] text-xs font-mono tracking-[0.25em] uppercase">
-              A la Carte Gastronomy
+              The Imperial Carte
             </span>
             <h2 className="font-serif text-3xl sm:text-5xl font-bold text-white mt-2">
-              The Imperial Vegetarian Carte.
+              Our Signature Creations.
             </h2>
             <p className="text-neutral-400 text-xs sm:text-sm mt-3">
-              Filter by culinary fire and explore our signature recipes.
+              Explore our pure vegetarian master recipes, simmered in clay handis and charred over live coals.
             </p>
           </div>
 
+          {/* Category Tabs */}
           <div className="flex flex-wrap items-center justify-center gap-2.5 mb-12">
             {categories.map((cat) => (
               <button
@@ -1052,11 +904,12 @@ export const RasoraaExperience: React.FC = () => {
             ))}
           </div>
 
+          {/* Dishes Grid */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredDishes.map((dish) => (
               <div
                 key={dish.id}
-                className="rounded-3xl border border-white/10 bg-[#0E1A15] p-6 hover:border-[#22AA00]/40 transition-all duration-300 flex flex-col justify-between"
+                className="rounded-3xl border border-white/10 bg-[#0E1A15] p-6 hover:border-[#22AA00]/40 transition-all duration-300 flex flex-col justify-between group"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
@@ -1065,7 +918,7 @@ export const RasoraaExperience: React.FC = () => {
                     </span>
                     {dish.jain && (
                       <span className="text-[10px] font-mono text-[#C8A962] bg-[#C8A962]/10 px-2 py-0.5 rounded-full border border-[#C8A962]/30">
-                        Jain
+                        Jain Available
                       </span>
                     )}
                   </div>
@@ -1074,11 +927,11 @@ export const RasoraaExperience: React.FC = () => {
                     <img
                       src={dish.image}
                       alt={dish.name}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
 
-                  <h3 className="font-serif text-xl font-bold text-white">
+                  <h3 className="font-serif text-xl font-bold text-white group-hover:text-[#22AA00] transition-colors">
                     {dish.name}
                   </h3>
                   <p className="text-xs text-[#22AA00] font-mono mt-1">
@@ -1097,7 +950,7 @@ export const RasoraaExperience: React.FC = () => {
                     href="#reserve"
                     className="text-xs font-mono text-[#22AA00] hover:underline flex items-center gap-1"
                   >
-                    <span>Reserve</span>
+                    <span>Reserve Taste</span>
                     <ArrowRight size={12} />
                   </a>
                 </div>
@@ -1107,18 +960,110 @@ export const RasoraaExperience: React.FC = () => {
         </div>
       </section>
 
-      {/* ─── 7. SEATING SANCTUARIES & BOOKING CONCIERGE ─── */}
-      <section id="sanctuaries" className="py-24 relative bg-[#060B08]">
+      {/* ─── 6. GALLERY SECTION (#gallery) ─── */}
+      <section id="gallery" className="py-24 relative bg-[#08100C] border-t border-white/5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <span className="text-[#22AA00] text-xs font-mono tracking-[0.25em] uppercase">
+              Visual Chronicles
+            </span>
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold text-white mt-2">
+              The Aesthetic of Rasoraa.
+            </h2>
+            <p className="text-neutral-400 text-xs sm:text-sm mt-3">
+              Moments of living fire, antique handis, and pure vegetarian artistry.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {GALLERY_ITEMS.map((item) => (
+              <div
+                key={item.id}
+                className={`relative rounded-3xl overflow-hidden border border-white/10 group ${item.span}`}
+              >
+                <img
+                  src={item.image}
+                  alt={item.title}
+                  className="w-full h-full min-h-[260px] object-cover group-hover:scale-105 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
+                <div className="absolute bottom-6 left-6 right-6">
+                  <span className="text-[10px] font-mono text-[#22AA00] uppercase tracking-wider block mb-1">
+                    {item.category}
+                  </span>
+                  <h3 className="font-serif text-lg font-bold text-white">
+                    {item.title}
+                  </h3>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 7. EVENTS & PRIVATE DINING SECTION (#events) ─── */}
+      <section id="events" className="py-24 relative bg-[#060B08]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <span className="text-[#22AA00] text-xs font-mono tracking-[0.25em] uppercase">
+              Private Dining &amp; Gatherings
+            </span>
+            <h2 className="font-serif text-3xl sm:text-5xl font-bold text-white mt-2">
+              Royal Feasts &amp; Celebrations.
+            </h2>
+            <p className="text-neutral-400 text-xs sm:text-sm mt-3">
+              Host intimate anniversaries, corporate banquets, and bespoke family feasts in dedicated sanctuaries.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 mb-12">
+            {EVENTS.map((evt) => (
+              <div
+                key={evt.title}
+                className="p-8 rounded-3xl border border-white/10 bg-[#0E1A15] hover:border-[#22AA00]/40 transition-all flex flex-col justify-between"
+              >
+                <div>
+                  <span className="text-xs font-mono text-[#22AA00] uppercase tracking-wider block mb-2">
+                    {evt.badge}
+                  </span>
+                  <h3 className="font-serif text-2xl font-bold text-white mb-2">
+                    {evt.title}
+                  </h3>
+                  <span className="text-xs font-mono text-[#C8A962] block mb-4">
+                    {evt.capacity}
+                  </span>
+                  <p className="text-xs text-neutral-400 font-light leading-relaxed">
+                    {evt.desc}
+                  </p>
+                </div>
+
+                <div className="pt-6 mt-6 border-t border-white/10">
+                  <a
+                    href="#reserve"
+                    className="inline-flex items-center gap-1.5 text-xs font-mono text-[#22AA00] hover:underline"
+                  >
+                    <span>Inquire for Events</span>
+                    <ArrowRight size={13} />
+                  </a>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 8. CONTACT & TABLE RESERVATION SUITE (#contact & #reserve) ─── */}
+      <section id="contact" className="py-24 relative bg-[#08100C] border-t border-white/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <span className="text-[#22AA00] text-xs font-mono tracking-[0.25em] uppercase">
               Sanctuaries of Delhi
             </span>
             <h2 className="font-serif text-3xl sm:text-5xl font-bold text-white mt-2">
-              Select Your Seating Court.
+              Select Your Seating Sanctuary.
             </h2>
             <p className="text-neutral-400 text-xs sm:text-sm mt-3">
-              Each dining room features its own distinct acoustic and visual ambiance.
+              Choose your preferred dining hall and confirm your table instantly.
             </p>
           </div>
 
@@ -1310,30 +1255,63 @@ export const RasoraaExperience: React.FC = () => {
         </div>
       </section>
 
-      {/* ─── 8. FOOTER ─── */}
+      {/* ─── 9. LUXURY FOOTER (With Facebook, Instagram, WhatsApp) ─── */}
       <footer className="border-t border-white/10 bg-[#040806] pt-16 pb-12 text-neutral-400">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-12 gap-12 pb-12 border-b border-white/10">
+            {/* Col 1: Brand & Manifesto */}
             <div className="lg:col-span-5 space-y-4">
               <div className="flex items-center gap-3">
                 <img
                   src="/logo.png"
                   alt="RASORAA"
-                  className="w-10 h-10 object-contain filter drop-shadow-[0_0_10px_rgba(34,170,0,0.5)]"
+                  className="h-10 w-auto object-contain filter drop-shadow-[0_0_10px_rgba(34,170,0,0.5)]"
                 />
                 <span className="font-serif text-2xl font-bold tracking-[0.2em] text-white">
                   RASORAA
                 </span>
               </div>
               <p className="text-xs font-light leading-relaxed max-w-sm text-neutral-400">
-                A multi-cuisine fine dining sanctuary honoring the sacred traditions of 100% Shuddh Shakahari and Jain gastronomy through live fire, earthenware handis, and artisanal precision.
+                A royal multi-cuisine sanctuary honoring 100% Shuddh Shakahari and Jain gastronomy through live fire, earthenware handis, and artisanal precision.
               </p>
               <div className="flex items-center gap-2 text-xs font-mono text-[#22AA00]">
                 <span className="w-2 h-2 rounded-full bg-[#22AA00]" />
                 <span>100% Shuddh Shakahari &amp; Jain Certified</span>
               </div>
+
+              {/* Social Channels: Facebook, Instagram, WhatsApp */}
+              <div className="pt-2 flex items-center gap-3">
+                <a
+                  href="https://facebook.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-neutral-300 hover:text-white hover:bg-[#1877F2] hover:border-[#1877F2] transition-all"
+                  aria-label="Follow RASORAA on Facebook"
+                >
+                  <Facebook size={16} />
+                </a>
+                <a
+                  href="https://instagram.com"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-neutral-300 hover:text-white hover:bg-gradient-to-tr hover:from-[#F58529] hover:via-[#DD2A7B] hover:to-[#8134AF] hover:border-transparent transition-all"
+                  aria-label="Follow RASORAA on Instagram"
+                >
+                  <Instagram size={16} />
+                </a>
+                <a
+                  href="https://wa.me/911141002800"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-9 h-9 rounded-full border border-white/10 bg-white/5 flex items-center justify-center text-neutral-300 hover:text-white hover:bg-[#25D366] hover:border-[#25D366] transition-all"
+                  aria-label="Chat with Concierge on WhatsApp"
+                >
+                  <MessageCircle size={16} />
+                </a>
+              </div>
             </div>
 
+            {/* Col 2: Sanctuaries */}
             <div className="lg:col-span-4 space-y-3">
               <h4 className="font-mono text-xs text-white uppercase tracking-wider">
                 Sanctuaries
@@ -1354,6 +1332,7 @@ export const RasoraaExperience: React.FC = () => {
               </ul>
             </div>
 
+            {/* Col 3: Concierge Timings & Quick Links */}
             <div className="lg:col-span-3 space-y-3">
               <h4 className="font-mono text-xs text-white uppercase tracking-wider">
                 Concierge &amp; Hours
@@ -1365,6 +1344,17 @@ export const RasoraaExperience: React.FC = () => {
                   <span className="text-neutral-500 block">Reservations Desk:</span>
                   <a href="tel:+911141002800" className="text-[#22AA00] hover:underline font-mono">
                     +91 11 4100 2800
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="https://wa.me/911141002800"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#25D366] hover:underline font-mono flex items-center gap-1.5 pt-1"
+                  >
+                    <MessageCircle size={13} />
+                    <span>WhatsApp Concierge</span>
                   </a>
                 </li>
               </ul>
