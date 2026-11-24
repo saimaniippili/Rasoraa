@@ -4,6 +4,8 @@ import {
   ArrowUpRight,
   Calendar,
   Check,
+  ChevronLeft,
+  ChevronRight,
   Facebook,
   Instagram,
   MapPin,
@@ -268,14 +270,68 @@ export const RasoraaExperience: React.FC = () => {
   const [selectedHeroIndex, setSelectedHeroIndex] = useState(0);
 
   // Reservation Form State
+  const today = new Date();
+  const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+
   const [selectedSanctuary, setSelectedSanctuary] = useState('cp');
   const [guestCount, setGuestCount] = useState(2);
-  const [selectedDate, setSelectedDate] = useState('Tonight');
+  const [selectedDate, setSelectedDate] = useState<string>(todayISO);
+  const [calendarViewDate, setCalendarViewDate] = useState<Date>(() => new Date());
   const [selectedTime, setSelectedTime] = useState('8:00 PM');
   const [isJainDiet, setIsJainDiet] = useState(false);
   const [guestName, setGuestName] = useState('');
   const [guestPhone, setGuestPhone] = useState('');
   const [isBookingSuccess, setIsBookingSuccess] = useState(false);
+
+  // Calendar Calculation Helpers
+  const calendarYear = calendarViewDate.getFullYear();
+  const calendarMonthIndex = calendarViewDate.getMonth();
+  const monthName = calendarViewDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const firstDayOfWeek = new Date(calendarYear, calendarMonthIndex, 1).getDay();
+  const totalDaysInMonth = new Date(calendarYear, calendarMonthIndex + 1, 0).getDate();
+  const isCurrentMonth = calendarYear === today.getFullYear() && calendarMonthIndex === today.getMonth();
+
+  const handlePrevMonth = () => {
+    setCalendarViewDate(new Date(calendarYear, calendarMonthIndex - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCalendarViewDate(new Date(calendarYear, calendarMonthIndex + 1, 1));
+  };
+
+  const isDayDisabled = (day: number) => {
+    const candidate = new Date(calendarYear, calendarMonthIndex, day, 23, 59, 59);
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    return candidate < now;
+  };
+
+  const isDaySelected = (day: number) => {
+    const formattedCandidate = `${calendarYear}-${String(calendarMonthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    return selectedDate === formattedCandidate;
+  };
+
+  const handleSelectDay = (day: number) => {
+    if (isDayDisabled(day)) return;
+    const formatted = `${calendarYear}-${String(calendarMonthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    setSelectedDate(formatted);
+  };
+
+  const formatSelectedDateHuman = (isoStr: string) => {
+    if (!isoStr) return '';
+    try {
+      const [y, m, d] = isoStr.split('-').map(Number);
+      const dt = new Date(y, m - 1, d);
+      return dt.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      });
+    } catch {
+      return isoStr;
+    }
+  };
 
   // Dish Detail Lightbox Preview
   const [previewDish, setPreviewDish] = useState<Dish | null>(null);
@@ -1081,7 +1137,7 @@ export const RasoraaExperience: React.FC = () => {
                       Reservation Confirmed
                     </h3>
                     <p className="text-neutral-300 text-sm max-w-md mx-auto font-light leading-relaxed">
-                      Honored Patron <strong className="text-white">{guestName}</strong>, your sanctuary table for <strong className="text-white">{guestCount} Guests</strong> on <strong className="text-white">{selectedDate} ({selectedTime})</strong> has been registered.
+                      Honored Patron <strong className="text-white">{guestName}</strong>, your sanctuary table for <strong className="text-white">{guestCount} Guests</strong> on <strong className="text-white">{formatSelectedDateHuman(selectedDate)} ({selectedTime})</strong> has been registered.
                     </p>
                     <div className="text-xs font-mono text-[#C5A880]">
                       Confirmation dispatched to {guestPhone}. Our Chief Maître d' will greet you.
@@ -1129,26 +1185,117 @@ export const RasoraaExperience: React.FC = () => {
                       </div>
                     </div>
 
-                    {/* Date Selector */}
+                    {/* Interactive Bespoke Luxury Calendar Picker */}
                     <div>
-                      <label className="block text-xs font-sans text-neutral-400 uppercase tracking-widest mb-2">
-                        Dining Evening
-                      </label>
-                      <div className="grid grid-cols-3 gap-2">
-                        {['Tonight', 'Tomorrow', 'This Weekend'].map((d) => (
-                          <button
-                            key={d}
-                            type="button"
-                            onClick={() => setSelectedDate(d)}
-                            className={`py-2.5 px-3 rounded-xl text-xs font-sans tracking-wider border transition-colors ${
-                              selectedDate === d
-                                ? 'bg-[#183620] text-white border-[#C5A880]'
-                                : 'bg-white/[0.02] text-neutral-400 border-white/10 hover:border-white/30'
-                            }`}
-                          >
-                            {d}
-                          </button>
-                        ))}
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="block text-xs font-sans text-neutral-400 uppercase tracking-widest">
+                          Dining Calendar Date
+                        </label>
+                        <span className="text-xs font-serif text-[#C5A880] italic">
+                          {formatSelectedDateHuman(selectedDate)}
+                        </span>
+                      </div>
+
+                      <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3">
+                        {/* Month & Year Navigator */}
+                        <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                          <span className="font-serif text-lg text-white font-light tracking-wide">
+                            {monthName}
+                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              type="button"
+                              onClick={handlePrevMonth}
+                              disabled={isCurrentMonth}
+                              className="w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-neutral-300 hover:text-white hover:border-[#C5A880] disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+                              aria-label="Previous Month"
+                            >
+                              <ChevronLeft size={15} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleNextMonth}
+                              className="w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-neutral-300 hover:text-white hover:border-[#C5A880] transition-colors"
+                              aria-label="Next Month"
+                            >
+                              <ChevronRight size={15} />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Weekday Labels */}
+                        <div className="grid grid-cols-7 gap-1 text-center text-[10.5px] font-sans text-neutral-500 uppercase tracking-wider py-1">
+                          <span>Su</span>
+                          <span>Mo</span>
+                          <span>Tu</span>
+                          <span>We</span>
+                          <span>Th</span>
+                          <span>Fr</span>
+                          <span>Sa</span>
+                        </div>
+
+                        {/* Calendar Day Grid */}
+                        <div className="grid grid-cols-7 gap-1 text-center">
+                          {/* Empty offset days before 1st of month */}
+                          {Array.from({ length: firstDayOfWeek }).map((_, i) => (
+                            <div key={`offset-${i}`} className="h-8 sm:h-9" />
+                          ))}
+
+                          {/* Days of current month */}
+                          {Array.from({ length: totalDaysInMonth }).map((_, i) => {
+                            const day = i + 1;
+                            const disabled = isDayDisabled(day);
+                            const selected = isDaySelected(day);
+                            const isToday =
+                              today.getDate() === day &&
+                              today.getMonth() === calendarMonthIndex &&
+                              today.getFullYear() === calendarYear;
+
+                            return (
+                              <button
+                                key={`day-${day}`}
+                                type="button"
+                                disabled={disabled}
+                                onClick={() => handleSelectDay(day)}
+                                className={`h-8 sm:h-9 rounded-xl text-xs font-mono transition-all duration-200 flex items-center justify-center ${
+                                  selected
+                                    ? 'bg-[#183620] text-white font-bold border border-[#C5A880] shadow-[0_0_15px_rgba(197,168,128,0.3)] scale-[1.05]'
+                                    : disabled
+                                    ? 'text-neutral-600 opacity-25 cursor-not-allowed'
+                                    : isToday
+                                    ? 'text-[#C5A880] border border-[#C5A880]/40 hover:bg-white/10'
+                                    : 'text-neutral-300 hover:text-white hover:bg-white/[0.08]'
+                                }`}
+                              >
+                                {day}
+                              </button>
+                            );
+                          })}
+                        </div>
+
+                        {/* Quick Selection Footer */}
+                        <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[11px] text-neutral-400">
+                          <span className="flex items-center gap-1.5 text-neutral-400">
+                            <Calendar size={12} className="text-[#C5A880]" />
+                            <span>Reserved For: <strong className="text-white">{formatSelectedDateHuman(selectedDate)}</strong></span>
+                          </span>
+                          <label className="cursor-pointer text-[#C5A880] hover:underline flex items-center gap-1">
+                            <span>Pick from OS Datepicker</span>
+                            <input
+                              type="date"
+                              min={todayISO}
+                              value={selectedDate}
+                              onChange={(e) => {
+                                if (e.target.value) {
+                                  setSelectedDate(e.target.value);
+                                  const [y, m] = e.target.value.split('-').map(Number);
+                                  setCalendarViewDate(new Date(y, m - 1, 1));
+                                }
+                              }}
+                              className="sr-only"
+                            />
+                          </label>
+                        </div>
                       </div>
                     </div>
 
