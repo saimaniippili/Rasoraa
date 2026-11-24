@@ -117,8 +117,9 @@ export default {
       },
       fontFamily: {
         sans: ['"Plus Jakarta Sans"', 'system-ui', '-apple-system', 'sans-serif'],
-        serif: ['"Playfair Display"', 'Georgia', 'serif'],
-        display: ['"Playfair Display"', 'Georgia', 'serif'],
+        serif: ['"Cormorant Garamond"', '"Playfair Display"', 'Georgia', 'serif'],
+        display: ['"Cormorant Garamond"', '"Playfair Display"', 'Georgia', 'serif'],
+        cormorant: ['"Cormorant Garamond"', 'serif'],
       },
       boxShadow: {
         'subtle': '0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05)',
