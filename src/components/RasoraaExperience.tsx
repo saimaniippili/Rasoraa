@@ -86,69 +86,12 @@ const HERO_MASTERPIECES: HeroMasterpiece[] = [
   },
 ];
 
-/* ─── Interactive 3D Alchemy Nodes ─── */
-interface AlchemyNode {
-  id: string;
-  name: string;
-  shortName: string;
-  hindi: string;
-  category: string;
-  note: string;
-  glow: string;
-  xPct: number;
-  yPct: number;
-  zDepth: number;
-}
-
-const ALCHEMY_NODES: AlchemyNode[] = [
-  {
-    id: 'saffron',
-    name: 'Kashmiri Mongra Saffron',
-    shortName: 'Kashmiri Saffron',
-    hindi: 'केसर',
-    category: 'Botanical Royalty',
-    note: 'Grade-A Pampore stigma hand-harvested at dawn, imparting honeyed perfume and liquid-gold warmth.',
-    glow: '#E5C378',
-    xPct: -38,
-    yPct: -36,
-    zDepth: 70,
-  },
-  {
-    id: 'cardamom',
-    name: 'Idukki Forest Cardamom',
-    shortName: 'Green Cardamom',
-    hindi: 'इलायची',
-    category: 'Aromatic Alchemy',
-    note: 'Wild green pods sun-dried on burlap and stone-crushed to release camphor-citrus sweetness.',
-    glow: '#22AA00',
-    xPct: 38,
-    yPct: -36,
-    zDepth: 70,
-  },
-  {
-    id: 'embers',
-    name: '16-Hr Sal Wood Dum',
-    shortName: 'Sal Wood Dum',
-    hindi: 'कोयला दम',
-    category: 'Sacred Thermal Fire',
-    note: 'Low-oxygen smoldering sal embers imparting smoky mineral sweetness without bitterness.',
-    glow: '#FF7700',
-    xPct: -38,
-    yPct: 36,
-    zDepth: 70,
-  },
-  {
-    id: 'butter',
-    name: 'Cultured A2 Gir Butter',
-    shortName: 'Gir Cow Butter',
-    hindi: 'बिलोना मक्खन',
-    category: 'Sacred Dairy',
-    note: 'Hand-churned in wooden vats from grass-fed Gir cows, producing velvety lactic silkiness.',
-    glow: '#F6E05E',
-    xPct: 38,
-    yPct: 36,
-    zDepth: 70,
-  },
+/* ─── Botanical Ingredients ─── */
+const BOTANICAL_TAGS = [
+  { name: 'Kashmiri Saffron', hindi: 'केसर', glow: '#E5C378' },
+  { name: 'Forest Cardamom', hindi: 'इलायची', glow: '#22AA00' },
+  { name: 'Sal Wood Dum', hindi: 'कोयला दम', glow: '#FF7700' },
+  { name: 'Gir Cow Butter', hindi: 'बिलोना मक्खन', glow: '#F6E05E' },
 ];
 
 /* ─── Menu Dishes for Tasting Reel & Carte ─── */
@@ -393,7 +336,6 @@ export const RasoraaExperience: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeMasterpieceIdx, setActiveMasterpieceIdx] = useState<number>(0);
-  const [hoveredAlchemyNode, setHoveredAlchemyNode] = useState<AlchemyNode | null>(null);
   const [activeCategory, setActiveCategory] = useState<string>('All');
   const [selectedZone, setSelectedZone] = useState<string>('z1');
   const [guestCount, setGuestCount] = useState<number>(4);
@@ -401,17 +343,6 @@ export const RasoraaExperience: React.FC = () => {
   const [selectedSession, setSelectedSession] = useState<string>('Twilight Dinner (8:00 PM)');
   const [isJainStrict, setIsJainStrict] = useState<boolean>(false);
   const [bookingConfirmed, setBookingConfirmed] = useState<boolean>(false);
-  const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
-
-  useEffect(() => {
-    const handleResize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const isMobile = windowWidth < 640;
-  const isTablet = windowWidth >= 640 && windowWidth < 1024;
-  const nodeMultiplier = isMobile ? 1.85 : isTablet ? 2.9 : 4.0;
 
   const heroStageRef = useRef<HTMLDivElement>(null);
   const reelRef = useRef<HTMLDivElement>(null);
@@ -475,103 +406,107 @@ export const RasoraaExperience: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#060B08] text-[#F7F6F2] font-sans selection:bg-[#22AA00] selection:text-black overflow-x-hidden">
-      {/* ─── 0. TOP PRE-HEADER RAIL ─── */}
-      <div className="border-b border-[#22AA00]/20 bg-[#040806] text-[11px] font-mono tracking-wider py-2 px-4 sm:px-8 text-neutral-400">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+      {/* ─── 0. REFINED HAUTE GASTRONOMY PRE-HEADER ─── */}
+      <div className="border-b border-white/[0.06] bg-[#030604] text-[11px] font-sans tracking-[0.14em] uppercase py-2 px-4 sm:px-8 text-neutral-400">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center space-x-3">
-            <span className="inline-flex items-center gap-1.5 text-[#22AA00] font-semibold">
-              <span className="w-2 h-2 rounded-full bg-[#22AA00] animate-pulse" />
-              100% SHUDDH SHAKAHARI
+            <span className="inline-flex items-center gap-2 text-[#22AA00] font-medium">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#22AA00] shadow-[0_0_8px_#22AA00]" />
+              100% Shuddh Shakahari
             </span>
-            <span className="text-neutral-600 hidden sm:inline">|</span>
-            <span className="hidden sm:inline-flex items-center gap-1 text-neutral-300">
-              <ShieldCheck size={13} className="text-[#22AA00]" /> JAIN CERTIFIED HEARTH
+            <span className="text-white/20 hidden sm:inline">·</span>
+            <span className="hidden sm:inline-flex items-center gap-1.5 text-neutral-300 font-light">
+              <ShieldCheck size={12} className="text-[#C8A962]" /> Jain Certified Kitchens
             </span>
           </div>
 
-          <div className="flex items-center space-x-4">
-            <span className="flex items-center gap-1.5 text-neutral-300">
-              <MapPin size={12} className="text-[#22AA00]" /> Connaught Place · Mehrauli · Aerocity
+          <div className="flex items-center space-x-4 text-neutral-400 font-light">
+            <span className="flex items-center gap-1.5">
+              <MapPin size={11} className="text-[#22AA00]" /> Connaught Place · Mehrauli · Aerocity
             </span>
-            <span className="text-neutral-600 hidden md:inline">|</span>
+            <span className="text-white/20 hidden md:inline">·</span>
             <span className="hidden md:inline text-neutral-400">
-              28.6139° N, 77.2090° E
+              New Delhi
             </span>
           </div>
         </div>
       </div>
 
-      {/* ─── 1. FIXED GLASSMORPHIC NAVBAR ─── */}
+      {/* ─── 1. FIXED GLASSMORPHIC LUXURY NAVBAR ─── */}
       <header
         className={`sticky top-0 z-50 transition-all duration-300 ${
           scrolled
-            ? 'bg-[#060B08]/95 backdrop-blur-md border-b border-[#22AA00]/25 shadow-[0_10px_35px_rgba(0,0,0,0.85)]'
-            : 'bg-[#060B08]/80 backdrop-blur-sm border-b border-white/5'
+            ? 'bg-[#060B08]/95 backdrop-blur-md border-b border-white/10 shadow-[0_12px_40px_rgba(0,0,0,0.9)]'
+            : 'bg-[#060B08]/80 backdrop-blur-sm border-b border-white/[0.05]'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           {/* Brand Logo & Wordmark */}
-          <Link to="/" className="flex items-center gap-3.5 group">
-            <div className="relative w-12 h-12 flex-shrink-0 rounded-full p-1 bg-gradient-to-tr from-[#22AA00]/30 to-white/10 border border-[#22AA00]/40 group-hover:border-[#22AA00] transition-colors shadow-[0_0_15px_rgba(34,170,0,0.3)]">
-              <img
-                src="/logo.png"
-                alt="RASORAA Pure Veg"
-                className="w-full h-full object-contain filter drop-shadow-[0_2px_8px_rgba(34,170,0,0.5)]"
-              />
-            </div>
+          <Link to="/" className="flex items-center gap-3.5 group flex-shrink-0">
+            <img
+              src="/logo.png"
+              alt="RASORAA"
+              className="h-11 sm:h-12 w-auto object-contain filter drop-shadow-[0_2px_8px_rgba(34,170,0,0.4)] group-hover:scale-105 transition-transform"
+            />
             <div className="flex flex-col">
-              <span className="font-serif text-2xl font-bold tracking-[0.2em] text-white group-hover:text-[#22AA00] transition-colors leading-none">
+              <span className="font-serif text-2xl font-bold tracking-[0.22em] text-white group-hover:text-[#22AA00] transition-colors leading-none">
                 RASORAA
               </span>
-              <span className="text-[9px] font-mono tracking-[0.25em] text-[#22AA00] uppercase mt-1">
+              <span className="text-[8.5px] font-sans font-medium tracking-[0.25em] text-[#C8A962] uppercase mt-1">
                 Pure Veg &amp; Jain Fine Dining
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-8 text-[13px] font-medium tracking-wider text-neutral-300">
-            <a href="#hero" className="hover:text-[#22AA00] transition-colors">
-              EXPERIENCE
+          <nav className="hidden lg:flex items-center gap-7 xl:gap-8 text-xs font-sans tracking-[0.15em] uppercase text-neutral-300">
+            <a href="#hero" className="hover:text-[#22AA00] transition-colors py-1 relative group">
+              <span>Experience</span>
+              <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#22AA00] transition-all duration-300 group-hover:w-full" />
             </a>
-            <a href="#reel" className="hover:text-[#22AA00] transition-colors">
-              SIGNATURES
+            <a href="#reel" className="hover:text-[#22AA00] transition-colors py-1 relative group">
+              <span>Signatures</span>
+              <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#22AA00] transition-all duration-300 group-hover:w-full" />
             </a>
-            <a href="#disciplines" className="hover:text-[#22AA00] transition-colors">
-              THE DISCIPLINES
+            <a href="#disciplines" className="hover:text-[#22AA00] transition-colors py-1 relative group">
+              <span>The 4 Fires</span>
+              <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#22AA00] transition-all duration-300 group-hover:w-full" />
             </a>
-            <a href="#carte" className="hover:text-[#22AA00] transition-colors">
-              THE CARTE
+            <a href="#carte" className="hover:text-[#22AA00] transition-colors py-1 relative group">
+              <span>The Carte</span>
+              <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#22AA00] transition-all duration-300 group-hover:w-full" />
             </a>
-            <a href="#sanctuaries" className="hover:text-[#22AA00] transition-colors">
-              SEATING COURTS
+            <a href="#sanctuaries" className="hover:text-[#22AA00] transition-colors py-1 relative group">
+              <span>Seating Courts</span>
+              <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#22AA00] transition-all duration-300 group-hover:w-full" />
             </a>
-            <a href="#reserve" className="hover:text-[#22AA00] transition-colors">
-              RESERVATIONS
+            <a href="#reserve" className="hover:text-[#22AA00] transition-colors py-1 relative group">
+              <span>Reservations</span>
+              <span className="absolute bottom-0 left-0 w-0 h-[1.5px] bg-[#22AA00] transition-all duration-300 group-hover:w-full" />
             </a>
           </nav>
 
           {/* Right Action Bar */}
-          <div className="flex items-center gap-3.5">
+          <div className="flex items-center gap-3">
             <a
               href="tel:+911141002800"
-              className="hidden sm:flex items-center gap-2 text-xs font-mono text-neutral-300 hover:text-white px-3.5 py-2 rounded-full border border-white/10 hover:border-[#22AA00]/40 transition-colors bg-white/5"
+              className="hidden xl:flex items-center gap-2 text-xs font-mono text-neutral-300 hover:text-white px-4 py-2 rounded-full border border-white/10 hover:border-[#22AA00]/40 transition-colors bg-white/5 whitespace-nowrap flex-shrink-0"
             >
-              <Phone size={13} className="text-[#22AA00]" />
+              <Phone size={13} className="text-[#22AA00] shrink-0" />
               <span>+91 11 4100 2800</span>
             </a>
 
             <a
               href="#reserve"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#22AA00] hover:bg-[#1E9500] text-black font-semibold text-xs tracking-wider transition-all duration-300 shadow-[0_0_20px_rgba(34,170,0,0.4)] hover:shadow-[0_0_30px_rgba(34,170,0,0.7)] hover:-translate-y-0.5"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-[#22AA00] hover:bg-[#1E9500] text-black font-bold text-xs tracking-[0.14em] uppercase transition-all duration-300 shadow-[0_0_20px_rgba(34,170,0,0.4)] hover:shadow-[0_0_35px_rgba(34,170,0,0.7)] hover:-translate-y-0.5 whitespace-nowrap flex-shrink-0"
             >
-              <Calendar size={14} />
-              <span className="uppercase">Book Table</span>
+              <Calendar size={13} className="shrink-0" />
+              <span>Book Table</span>
             </a>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2.5 rounded-full border border-white/10 text-neutral-200 hover:text-[#22AA00] hover:border-[#22AA00]/40 transition-colors"
+              className="lg:hidden p-2.5 rounded-full border border-white/10 text-neutral-200 hover:text-[#22AA00] hover:border-[#22AA00]/40 transition-colors shrink-0"
               aria-label="Toggle Navigation Menu"
             >
               {mobileMenuOpen ? <X size={20} /> : <MenuIcon size={20} />}
@@ -819,7 +754,7 @@ export const RasoraaExperience: React.FC = () => {
                     className="absolute w-[70%] aspect-square rounded-full bg-gradient-to-tr from-[#22AA00]/20 via-transparent to-[#C8A962]/20 blur-xl transition-all duration-700"
                   />
 
-                  {/* Layer 1: Floating Culinary Platter Artwork (Scaled elegantly on mobile) */}
+                  {/* Layer 1: Floating Culinary Platter Artwork (100% Clean & Unobstructed) */}
                   <motion.div
                     key={activeMasterpiece.id}
                     initial={{ scale: 0.88, opacity: 0, rotate: -8 }}
@@ -827,7 +762,7 @@ export const RasoraaExperience: React.FC = () => {
                     exit={{ scale: 0.9, opacity: 0 }}
                     transition={{ duration: 0.6, ease: 'easeOut' }}
                     style={{ transform: 'translateZ(45px)' }}
-                    className="relative w-[65%] sm:w-[72%] lg:w-[76%] aspect-square rounded-full p-2 sm:p-2.5 bg-gradient-to-tr from-[#22AA00]/50 via-[#0A1610] to-[#C8A962]/40 border-2 border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.95)] overflow-hidden group"
+                    className="relative w-[74%] aspect-square rounded-full p-2.5 sm:p-3 bg-gradient-to-tr from-[#22AA00]/50 via-[#0A1610] to-[#C8A962]/40 border-2 border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.95)] overflow-hidden group"
                   >
                     <img
                       src={activeMasterpiece.image}
@@ -844,96 +779,39 @@ export const RasoraaExperience: React.FC = () => {
                     {/* Central Dish Inset Ring */}
                     <div className="absolute inset-0 rounded-full ring-2 ring-inset ring-white/15 pointer-events-none" />
                   </motion.div>
-
-                  {/* Layer 2: Interactive 3D Alchemy Nodes in Orbit (Responsive Multiplier & Labels) */}
-                  {ALCHEMY_NODES.map((node) => {
-                    const isHovered = hoveredAlchemyNode?.id === node.id;
-                    return (
-                      <motion.div
-                        key={node.id}
-                        onMouseEnter={() => setHoveredAlchemyNode(node)}
-                        onMouseLeave={() => setHoveredAlchemyNode(null)}
-                        style={{
-                          transform: `translate3d(${node.xPct * nodeMultiplier}px, ${node.yPct * nodeMultiplier}px, ${isMobile ? 35 : node.zDepth}px)`,
-                        }}
-                        className="absolute z-30 cursor-pointer group"
-                      >
-                        <div
-                          className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-full backdrop-blur-md border text-xs font-mono transition-all duration-300 flex items-center gap-1.5 sm:gap-2 shadow-[0_10px_25px_rgba(0,0,0,0.8)] ${
-                            isHovered
-                              ? 'bg-[#10241A] border-[#22AA00] scale-105 sm:scale-110 shadow-[0_0_20px_rgba(34,170,0,0.5)]'
-                              : 'bg-[#091510]/90 border-white/15 text-neutral-300 hover:border-white/30'
-                          }`}
-                        >
-                          <span
-                            className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-transform group-hover:scale-125 shrink-0"
-                            style={{ backgroundColor: node.glow }}
-                          />
-                          <span className="text-white font-medium text-[9.5px] sm:text-[11px] whitespace-nowrap">
-                            {isMobile ? node.shortName : node.name}
-                          </span>
-                          <span className="text-[#22AA00] text-[9px] sm:text-[10px] font-bold">
-                            {node.hindi}
-                          </span>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-
-                  {/* Layer 3: Dynamic 3D Live Alchemy Info Tooltip */}
-                  <AnimatePresence>
-                    {hoveredAlchemyNode && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 15, scale: 0.9 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        transition={{ duration: 0.2 }}
-                        style={{ transform: 'translateZ(110px)' }}
-                        className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[86%] z-40 bg-[#091510]/95 backdrop-blur-xl border border-[#22AA00]/50 p-4 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.9)] text-left"
-                      >
-                        <div className="flex items-center justify-between mb-1.5">
-                          <span className="text-[10px] font-mono text-[#22AA00] uppercase tracking-wider">
-                            {hoveredAlchemyNode.category}
-                          </span>
-                          <span className="text-[10px] font-mono text-neutral-400">
-                            Sacred Pure Ingredient
-                          </span>
-                        </div>
-                        <h4 className="font-serif text-base font-bold text-white flex items-center gap-1.5">
-                          <span>{hoveredAlchemyNode.name}</span>
-                          <span className="text-xs text-[#22AA00]">({hoveredAlchemyNode.hindi})</span>
-                        </h4>
-                        <p className="text-xs text-neutral-300 mt-1 font-light leading-relaxed">
-                          {hoveredAlchemyNode.note}
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  {/* Layer 4: Live Kitchen Temperature & Origin Badge (Centered on mobile to eliminate overlap) */}
-                  <div
-                    style={{ transform: 'translateZ(65px)' }}
-                    className="absolute -bottom-3 sm:-bottom-4 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:right-2 z-20 px-3 py-1 sm:px-4 sm:py-2 rounded-2xl bg-gradient-to-r from-[#12261C] to-[#0A1610] border border-[#22AA00]/40 shadow-[0_15px_30px_rgba(0,0,0,0.85)] text-left flex items-center gap-2 sm:gap-3 backdrop-blur-md whitespace-nowrap"
-                  >
-                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[#22AA00]/20 border border-[#22AA00] flex items-center justify-center text-[#22AA00] shrink-0">
-                      <Zap size={12} className="sm:w-3.5 sm:h-3.5" />
-                    </div>
-                    <div>
-                      <div className="text-[9px] sm:text-[10px] font-mono tracking-widest text-[#22AA00] uppercase">
-                        {activeMasterpiece.temp}
-                      </div>
-                      <div className="text-[11px] sm:text-xs font-bold text-white leading-tight">
-                        {activeMasterpiece.origin}
-                      </div>
-                    </div>
-                  </div>
                 </motion.div>
               </div>
 
-              {/* 3D Interaction Hint */}
-              <div className="mt-4 flex items-center gap-2 text-[11px] font-mono text-neutral-400">
-                <RotateCcw size={12} className="text-[#22AA00] animate-spin" style={{ animationDuration: '10s' }} />
-                <span>Move cursor to tilt 3D stage · Hover spice orbs to reveal alchemy</span>
+              {/* Clean Telemetry & Botanical Tags (Neatly Underneath the Stage, Zero Overlap) */}
+              <div className="mt-5 w-full max-w-[460px] space-y-3 px-4">
+                {/* Live Telemetry Badge */}
+                <div className="flex items-center justify-between px-4 py-2.5 rounded-2xl bg-[#091510]/90 border border-[#22AA00]/30 backdrop-blur-md text-xs font-mono shadow-[0_10px_25px_rgba(0,0,0,0.6)]">
+                  <div className="flex items-center gap-2">
+                    <Zap size={14} className="text-[#22AA00]" />
+                    <span className="text-white font-medium">{activeMasterpiece.temp}</span>
+                  </div>
+                  <span className="text-[#C8A962] font-medium">{activeMasterpiece.origin}</span>
+                </div>
+
+                {/* Botanical Ingredients Bar */}
+                <div className="flex flex-wrap items-center justify-center gap-2">
+                  {BOTANICAL_TAGS.map((tag) => (
+                    <div
+                      key={tag.name}
+                      className="px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-[11px] font-mono text-neutral-300 flex items-center gap-1.5 hover:border-[#22AA00]/40 transition-colors"
+                    >
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: tag.glow }} />
+                      <span>{tag.name}</span>
+                      <span className="text-[#22AA00] text-[9.5px]">({tag.hindi})</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* 3D Interaction Hint */}
+                <div className="flex items-center justify-center gap-2 text-[11px] font-mono text-neutral-400 pt-1">
+                  <RotateCcw size={12} className="text-[#22AA00] animate-spin" style={{ animationDuration: '10s' }} />
+                  <span>Tilt or move cursor to interact with 3D culinary stage</span>
+                </div>
               </div>
             </div>
           </div>
