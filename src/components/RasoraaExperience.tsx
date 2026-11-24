@@ -2,18 +2,18 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
-  ArrowRight,
   ArrowUpRight,
   Calendar,
   Check,
   ChevronDown,
+  ChevronRight,
   Clock,
+  Compass,
   Flame,
   MapPin,
   Menu as MenuIcon,
   Minus,
   Plus,
-  Sparkles,
   Star,
   Users,
   X,
@@ -28,75 +28,84 @@ type Dish = {
   profile: string;
   jain: boolean;
   note: string;
+  isSignature?: boolean;
+  image?: string;
 };
 
 const dishes: Dish[] = [
   {
     id: 'd1',
     name: 'Dal Rasoraa',
-    hindi: 'Urad dal simmered overnight on live embers',
+    hindi: 'Black urad lentils simmered overnight on live embers',
     category: 'Earthenware Dum',
-    price: 28,
-    profile: 'Smoky charcoal · Cultured A2 butter · Slow heat',
+    price: 680,
+    profile: 'Smoky charcoal · Cultured Gir cow cream · Slow heat',
     jain: true,
-    note: 'Black urad lentils breathe for sixteen hours in a sealed clay handi over wood charcoal, folded by hand with churned Gir cow butter.',
+    note: 'Black urad lentils breathe for sixteen hours in a sealed earthenware handi over wood embers, hand-folded with churned A2 cultured butter.',
+    isSignature: true,
+    image: '/dish-awadhi.jpg',
   },
   {
     id: 'd2',
     name: 'Angari Malai Paneer Tikka',
-    hindi: 'Fresh curd paneer · Saffron · Stone cardamom',
+    hindi: 'Fresh curd paneer · Wild mountain saffron · Stone cardamom',
     category: 'Royal Tandoor',
-    price: 32,
+    price: 740,
     profile: 'Wild saffron · Charred lime · Gentle wood warmth',
     jain: true,
-    note: 'Handcrafted Gir cow milk paneer, rested in saffron threads and hung curd before meeting the 400°C live clay tandoor.',
+    note: 'Handcrafted Gir cow milk paneer rested in wild saffron threads and hung curd before meeting the 400°C live clay tandoor.',
+    isSignature: true,
+    image: '/dish-tandoor.jpg',
   },
   {
     id: 'd3',
-    name: 'Kashmiri Morel Yakhni',
-    hindi: 'Gucchi mushrooms · Fennel blossom · Mountain saffron',
-    category: 'Earthenware Dum',
-    price: 38,
-    profile: 'Forest earth · Mountain fennel · Velvety emulsion',
-    jain: false,
-    note: 'Wild foraged gucchi morels from the Pir Panjal valleys, slowly infused with toasted walnut and simmered in a spiced curd yakhni.',
-  },
-  {
-    id: 'd4',
     name: 'Truffle Edamame Hakka Noodles',
     hindi: 'Artisanal wok noodles · Black truffle · Cold-pressed sesame',
     category: 'Pan-Asian Wok',
-    price: 30,
-    profile: 'Wok breath (Wok Hei) · Black truffle · Shiitake',
+    price: 720,
+    profile: 'Wok breath (Wok Hei) · Black truffle · Fresh shiitake',
     jain: true,
-    note: 'Fresh hand-pulled noodles flashed over screaming wok embers with young edamame, shaved black truffle, and cold-pressed sesame.',
+    note: 'Hand-pulled artisanal noodles flashed over screaming wok embers with tender edamame pods, black truffle, and cold-pressed sesame.',
+    isSignature: true,
+    image: '/dish-oriental.jpg',
+  },
+  {
+    id: 'd4',
+    name: 'Kashmiri Morel Yakhni',
+    hindi: 'Gucchi mushrooms · Mountain fennel · Walnut emulsion',
+    category: 'Earthenware Dum',
+    price: 890,
+    profile: 'Forest earth · Mountain fennel · Velvety emulsion',
+    jain: false,
+    note: 'Wild foraged gucchi morels from the Pir Panjal valleys, filled with toasted walnut and simmered in a fragrant curd yakhni.',
   },
   {
     id: 'd5',
     name: 'Wild Morel & Herb Gratin Crostini',
     hindi: 'Hearth-baked sourdough · Kashmir morel velouté · Fresh thyme',
     category: 'Continental Hearth',
-    price: 34,
-    profile: 'Charred sourdough · Cultured cream · Garden herbs',
+    price: 780,
+    profile: 'Charred sourdough · Cultured cream · Garden rosemary',
     jain: false,
     note: 'Wild morels in velvet herb reduction, served over garlic-rubbed artisanal stone-hearth sourdough with cold-churned cream.',
+    image: '/dish-continental.jpg',
   },
   {
     id: 'd6',
     name: 'Subz Awadhi Dum Biryani',
-    hindi: 'Long-grain basmati · Garden vegetables · Rose attar',
+    hindi: 'Long-grain aged basmati · Garden vegetables · Rose attar',
     category: 'Earthenware Dum',
-    price: 34,
+    price: 750,
     profile: 'Aged basmati · Kashmiri saffron · Damascus rose',
     jain: true,
-    note: 'Fragrant basmati layered with seasonal farm vegetables, sealed with dough (purdah) in a clay handi and slow-cooked over gentle embers.',
+    note: 'Fragrant basmati layered with seasonal farm vegetables, sealed with wheat dough (purdah) in a clay handi and slow-cooked over gentle embers.',
   },
   {
     id: 'd7',
     name: 'Bhutte Ke Kebab',
     hindi: 'Tender sweet corn patties · Green chilli · Roasted cumin',
     category: 'Royal Tandoor',
-    price: 26,
+    price: 580,
     profile: 'Charred sweet corn · Spiced mint · Crisp gold',
     jain: true,
     note: 'Grated tender sweet corn laced with roasted cumin, fresh coriander, and cold-pressed mustard oil, griddled on cast iron.',
@@ -104,19 +113,19 @@ const dishes: Dish[] = [
   {
     id: 'd8',
     name: 'Chandi Vark Chenna Mithai',
-    hindi: 'Pistachio sandesh · Edible silver leaf · Damascus rose',
+    hindi: 'Pistachio sandesh · Edible silver leaf · Damascus rose preserve',
     category: 'Mithai & Elixirs',
-    price: 24,
-    profile: 'Rosewater · Iranian pistachio · Silken chenna',
+    price: 490,
+    profile: 'Damascus rosewater · Iranian pistachio · Silken chenna',
     jain: true,
     note: 'A delicate finish of hand-beaten cow milk chenna, crowned in 99.9% certified pure silver vark and fragrant organic rose petal preserve.',
   },
   {
     id: 'd9',
     name: 'Kesar Badam Doodh Elixir',
-    hindi: 'Slow-steeped saffron milk · Cardamom · Roasted almonds',
+    hindi: 'Slow-steeped saffron milk · Green cardamom · Toasted almonds',
     category: 'Mithai & Elixirs',
-    price: 16,
+    price: 360,
     profile: 'Saffron threads · Toasted almond slivers · Chilled',
     jain: true,
     note: 'Whole Gir cow milk slow-steeped for hours with Kashmir saffron, green cardamom pods, and slivered roasted mamra almonds.',
@@ -171,59 +180,21 @@ const diningZones = [
   },
 ];
 
-const culinaryDisciplines = [
+const testimonials = [
   {
-    num: '01',
-    tag: 'ROYAL AWADHI DUM',
-    title: 'Dal Rasoraa & Saffron Dum Handis',
-    desc: 'Sixteen hours of patient simmering in clay-sealed earthenware over dying wood embers. The alchemy of cultured butter, Kashmiri saffron, and whole spices.',
-    flavor: 'Smoked Butter · Kashmiri Saffron · Earthen Clay',
-    image: '/dish-awadhi.jpg',
+    quote: "We reserved Zone 01 at the Dum Court and received an unforgettable experience. Unhurried, serene, and the staff took meticulous care of our Jain dietary preferences.",
+    author: "Kavita & Arvind Malhotra",
+    city: "New Delhi Patrons",
   },
   {
-    num: '02',
-    tag: 'LIVE CLAY TANDOOR',
-    title: 'Angari Malai Paneer & Stone Spices',
-    desc: 'Fresh Gir cow paneer rested in wild saffron and hung curd, blistered at 400°C over live clay charcoal embers with charred lime and cold-pressed ghee.',
-    flavor: 'Clay Oven Sear · Stone Cardamom · Charred Lime',
-    image: '/dish-tandoor.jpg',
+    quote: "The Dal Rasoraa breathes true woodsmoke and patient simmering. Rivaling the greatest fine dining institutions in Tokyo and Paris — 100% pure vegetarian reverence.",
+    author: "Marek Nowicki",
+    city: "International Culinary Critic",
   },
   {
-    num: '03',
-    tag: 'PAN-ASIAN WOK ALCHEMY',
-    title: 'Truffle Edamame & Golden Hakka Noodles',
-    desc: 'Hand-pulled artisanal noodles wok-tossed over searing fire breath (Wok Hei) with fresh shiitake, edamame pods, and cold-pressed roasted sesame.',
-    flavor: 'Searing Wok Breath · Black Truffle · Shiitake',
-    image: '/dish-oriental.jpg',
-  },
-  {
-    num: '04',
-    tag: 'ARTISANAL CONTINENTAL',
-    title: 'Wild Morel & Herb Gratin Crostini',
-    desc: 'Kashmir morels in creamy velvet emulsion served over garlic-rubbed stone-hearth sourdough with cultured cream and garden rosemary.',
-    flavor: 'Wild Foraged Morel · Cultured Cream · Hearth Bake',
-    image: '/dish-continental.jpg',
-  },
-];
-
-const criticsPraise = [
-  {
-    quote: 'Rasoraa strips vegetarian dining of every gimmick. When the seal on their Dal handi cracks open, you understand what royal heritage truly means.',
-    critic: 'The Imperial Dining Review',
-    city: 'New Delhi Flagship',
-    rating: 5,
-  },
-  {
-    quote: 'The level of precision in their live clay tandoor and wok alchemy rivals the greatest culinary institutions in Tokyo and Paris — 100% pure vegetarian reverence.',
-    critic: 'Gourmet Gastronomy Guide',
-    city: 'Annual Critic Selection',
-    rating: 5,
-  },
-  {
-    quote: 'Choosing your exact seating zone in the Haveli Conservatory and having dishes paced to perfection made our evening unforgettable.',
-    critic: 'Kavita & Arvind Malhotra',
-    city: 'Connaught Place Patrons',
-    rating: 5,
+    quote: "Choosing our exact seating zone in the Garden Conservatory made our anniversary magical. The Truffle Edamame Hakka Noodles and Malai Tikka were extraordinary.",
+    author: "Rohit & Meera Singhal",
+    city: "Lodhi Gardens Visitors",
   },
 ];
 
@@ -264,6 +235,7 @@ export const RasoraaExperience: React.FC = () => {
   const [expandedDish, setExpandedDish] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [testimonialIdx, setTestimonialIdx] = useState(0);
 
   // Reservation Form State
   const [partySize, setPartySize] = useState(2);
@@ -274,10 +246,17 @@ export const RasoraaExperience: React.FC = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 40);
+      setScrolled(window.scrollY > 30);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTestimonialIdx((prev) => (prev + 1) % testimonials.length);
+    }, 6000);
+    return () => clearInterval(timer);
   }, []);
 
   const filteredDishes = useMemo(() => {
@@ -288,247 +267,322 @@ export const RasoraaExperience: React.FC = () => {
     });
   }, [selectedCategory, jainOnly]);
 
+  const signatureDishes = useMemo(() => {
+    return dishes.filter((d) => d.isSignature);
+  }, []);
+
   const activeZoneObj = diningZones.find((z) => z.id === selectedZone) || diningZones[0];
 
   return (
-    <div className="obscura-shell">
-      {/* Precision Hairline Architectural Grid Lines */}
-      <div className="obscura-grid-lines" aria-hidden="true">
-        <div className="grid-line" style={{ left: '25%' }} />
-        <div className="grid-line" style={{ left: '50%' }} />
-        <div className="grid-line" style={{ left: '75%' }} />
-      </div>
-
-      {/* Top Precision Meta Rail */}
-      <div className="obscura-meta-rail">
-        <div className="rail-left">
-          <span>28.6139° N&nbsp; / &nbsp;77.2090° E</span>
-          <span className="rail-sep">|</span>
-          <span className="rail-badge">VOL. IV · IMPERIAL ARCADE</span>
+    <div className="esencja-shell">
+      {/* ─── Top Micro-Rail ─── */}
+      <div className="esencja-rail">
+        <div className="rail-location">
+          <span>28.6139° N / 77.2090° E</span>
+          <span>•</span>
+          <span>THE IMPERIAL ARCADE, NEW DELHI</span>
         </div>
-        <div className="rail-center">
-          <span className="shuddh-status-dot" />
-          <span>100% SHUDDH SHAKAHARI &amp; JAIN CERTIFIED</span>
+        <div className="rail-badge-leaf">
+          <span className="leaf-dot" />
+          <span>100% Pure Vegetarian &amp; Jain Certified</span>
         </div>
-        <div className="rail-right">
-          <span className="live-status-pulse" />
-          <span>ACCEPTING RESERVATIONS TONIGHT</span>
+        <div className="rail-status">
+          <span className="gold-pulse-dot" />
+          <span>Accepting Reservations Tonight</span>
         </div>
       </div>
 
-      {/* Fixed Luxury Nav */}
-      <nav className={`obscura-nav ${scrolled ? 'nav-scrolled' : ''}`}>
-        <Link to="/" className="obscura-brand" aria-label="Rasoraa Home">
-          <img src="/logo.png" alt="RASORAA" className="brand-emblem" />
-          <div className="brand-naming">
-            <span className="brand-title">RASORAA</span>
-            <span className="brand-subtitle">MULTICUISINE VEG RESTAURANT</span>
+      {/* ─── Fixed Luxury Navbar (Esencja Grid Architecture) ─── */}
+      <nav className={`esencja-nav ${scrolled ? 'scrolled' : ''}`}>
+        {/* Left: Brand Wordmark */}
+        <Link to="/" className="nav-brand-wrap" aria-label="Rasoraa Home">
+          <img src="/logo.png" alt="RASORAA" className="nav-brand-logo" />
+          <div className="nav-brand-title">
+            <span className="brand-main-text">RASORAA</span>
+            <span className="brand-sub-badge">MULTICUISINE VEG RESTAURANT</span>
           </div>
         </Link>
 
-        {/* Desktop Nav Links */}
-        <div className="obscura-nav-links">
-          <a href="#hero">01 // HOME</a>
-          <a href="#concierge">02 // ZONES &amp; BOOKING</a>
-          <a href="#disciplines">03 // DISCIPLINES</a>
-          <a href="#carte">04 // THE CARTE</a>
-          <a href="#philosophy">05 // PHILOSOPHY</a>
-          <a href="#sanctuaries">06 // SANCTUARIES</a>
+        {/* Center: Clean Nav Links with Underline Indicator */}
+        <div className="nav-center-menu">
+          <a href="#hero" className="nav-link-item">Home</a>
+          <a href="#philosophy" className="nav-link-item">Our Story</a>
+          <a href="#signatures" className="nav-link-item">Signatures</a>
+          <a href="#carte" className="nav-link-item">The Carte</a>
+          <a href="#zones" className="nav-link-item">Seating Zones</a>
+          <a href="#sanctuaries" className="nav-link-item">Sanctuaries</a>
         </div>
 
-        {/* CTA + Mobile Toggle */}
-        <div className="nav-actions-group">
-          <a href="#concierge" className="btn-obscura-action">
-            <span>RESERVE TABLE</span>
-            <ArrowUpRight size={14} className="btn-icon" />
+        {/* Right: CTA Button */}
+        <div className="nav-right-actions">
+          <a href="#zones" className="btn-nav-reserve">
+            <Calendar size={14} />
+            <span>Book a Table</span>
           </a>
           <button
-            className="mobile-toggle-btn"
+            className="btn-mobile-toggle"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            aria-label="Toggle navigation"
+            aria-label="Toggle Navigation"
           >
-            {mobileMenuOpen ? <X size={22} /> : <MenuIcon size={22} />}
+            {mobileMenuOpen ? <X size={20} /> : <MenuIcon size={20} />}
           </button>
         </div>
 
-        {/* Mobile Navigation Drawer */}
+        {/* Mobile Slide-Down Drawer */}
         {mobileMenuOpen && (
-          <div className="obscura-mobile-drawer">
-            <a href="#hero" onClick={() => setMobileMenuOpen(false)}>01 // HOME</a>
-            <a href="#concierge" onClick={() => setMobileMenuOpen(false)}>02 // ZONES &amp; BOOKING</a>
-            <a href="#disciplines" onClick={() => setMobileMenuOpen(false)}>03 // DISCIPLINES</a>
-            <a href="#carte" onClick={() => setMobileMenuOpen(false)}>04 // THE CARTE</a>
-            <a href="#philosophy" onClick={() => setMobileMenuOpen(false)}>05 // PHILOSOPHY</a>
-            <a href="#sanctuaries" onClick={() => setMobileMenuOpen(false)}>06 // SANCTUARIES</a>
-            <div className="drawer-footer">
-              <span className="drawer-pure-veg">✳ 100% PURE VEGETARIAN SANCTUARY</span>
-              <a href="#concierge" className="btn-obscura-action full-w" onClick={() => setMobileMenuOpen(false)}>
-                <span>BOOK YOUR TABLE</span>
-                <ArrowRight size={14} />
+          <div className="mobile-nav-drawer">
+            <a href="#hero" className="mobile-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+              01 · Home
+            </a>
+            <a href="#philosophy" className="mobile-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+              02 · Our Story &amp; Craft
+            </a>
+            <a href="#signatures" className="mobile-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+              03 · Signature Creations
+            </a>
+            <a href="#carte" className="mobile-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+              04 · The Carte
+            </a>
+            <a href="#zones" className="mobile-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+              05 · Seating Zones &amp; Booking
+            </a>
+            <a href="#sanctuaries" className="mobile-drawer-link" onClick={() => setMobileMenuOpen(false)}>
+              06 · Haveli Sanctuaries
+            </a>
+            <div className="drawer-bottom-cta">
+              <a href="#zones" className="btn-hero-primary" onClick={() => setMobileMenuOpen(false)}>
+                <Calendar size={16} />
+                <span>Reserve Your Table</span>
               </a>
             </div>
           </div>
         )}
       </nav>
 
-      {/* ─── HERO SECTION (OBSCURA STATEMENT + ESENCJA REVERENCE) ─── */}
-      <section id="hero" className="obscura-hero">
-        {/* Subtle Watermark Ghost Lettering */}
-        <div className="hero-ghost-wordmark" aria-hidden="true">
-          RASORAA
-        </div>
+      {/* ─── HERO SECTION (ATMOSPHERIC ESENCJA LUXURY) ─── */}
+      <section id="hero" className="esencja-hero">
+        <div className="hero-backdrop-image" />
+        <div className="hero-vignette-overlay" />
 
-        {/* Hero Top Right Metadata */}
-        <div className="hero-top-meta">
-          <span className="meta-kicker">ROYAL MULTICUISINE GASTRONOMY</span>
-          <span className="meta-details">EST. MMXII · 3 NEW DELHI SANCTUARIES</span>
-        </div>
+        <div className="hero-content-wrapper">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, ease: 'easeOut' }}
+          >
+            <div className="hero-top-eyebrow">
+              <span>12, THE IMPERIAL ARCADE</span>
+              <span className="eyebrow-sep">/</span>
+              <span>ROYAL MULTICUISINE GASTRONOMY</span>
+            </div>
 
-        {/* Hero Central Content */}
-        <div className="hero-main-content">
-          <div className="hero-eyebrow">
-            <span className="eyebrow-accent-dash">—</span>
-            <span>FINE DINING, STRIPPED OF COMPROMISE</span>
-          </div>
+            <h1 className="hero-main-title">
+              The Art of Royal Vegetarian
+              <span className="hero-title-italic">Alchemy &amp; Living Fire</span>
+            </h1>
 
-          <h1 className="hero-headline-statement">
-            <span className="headline-line1">FIRE, EMBER &amp;</span>
-            <span className="headline-line2">VEGETARIAN CRAFT</span>
-          </h1>
-
-          <div className="hero-bottom-row">
-            <p className="hero-statement-copy">
-              From slow-simmered 16-hour Awadhi dum handis and charcoal-charred malai paneer to blistering Pan-Asian wok alchemy and artisanal Continental creations. Precision vegetarian dining crafted with purest reverence.
+            <p className="hero-lead-text">
+              Where sixteen-hour Awadhi dum handis, live 400°C clay tandoor embers, and artisanal Pan-Asian wok craft meet uncompromising vegetarian reverence. Savor dinner at your selected seating zone without compromise.
             </p>
 
-            <div className="hero-actions-cluster">
-              <a href="#concierge" className="btn-obscura-solid">
-                <span>RESERVE YOUR TABLE</span>
-                <ArrowRight size={15} className="arrow-shift" />
+            <div className="hero-buttons-row">
+              <a href="#zones" className="btn-hero-primary">
+                <Calendar size={17} />
+                <span>Reserve Your Table</span>
               </a>
-              <a href="#carte" className="btn-obscura-ghost">
-                <span>EXPLORE THE CARTE</span>
+              <a href="#carte" className="btn-hero-secondary">
+                <span>Explore The Carte</span>
+                <ChevronRight size={17} />
               </a>
             </div>
-          </div>
 
-          {/* Prestige Monospace Metrics Strip */}
-          <div className="hero-metrics-strip">
-            <div className="metric-cell">
-              <span className="metric-val">16h</span>
-              <span className="metric-desc">Charcoal Dum Embers</span>
+            {/* Prestige Metrics */}
+            <div className="hero-prestige-strip">
+              <div className="prestige-item">
+                <span className="prestige-num">16h</span>
+                <span className="prestige-label">Charcoal Dum Embers</span>
+              </div>
+              <div className="prestige-item">
+                <span className="prestige-num">100%</span>
+                <span className="prestige-label">Pure Veg &amp; Jain Sanctuary</span>
+              </div>
+              <div className="prestige-item">
+                <span className="prestige-num">03</span>
+                <span className="prestige-label">Heritage Haveli Locations</span>
+              </div>
+              <div className="prestige-item">
+                <span className="prestige-num">400°C</span>
+                <span className="prestige-label">Live Clay Tandoor Heat</span>
+              </div>
             </div>
-            <div className="metric-divider" />
-            <div className="metric-cell">
-              <span className="metric-val">100%</span>
-              <span className="metric-desc">Shuddh Veg &amp; Jain Kitchen</span>
-            </div>
-            <div className="metric-divider" />
-            <div className="metric-cell">
-              <span className="metric-val">03</span>
-              <span className="metric-desc">Haveli Sanctuaries</span>
-            </div>
-            <div className="metric-divider" />
-            <div className="metric-cell">
-              <span className="metric-val">400°C</span>
-              <span className="metric-desc">Live Clay Tandoor Heat</span>
-            </div>
-          </div>
+          </motion.div>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="hero-scroll-beam">
-          <div className="scroll-beam-line" />
-          <span className="scroll-beam-text">SCROLL TO EXPLORE</span>
+        {/* Scroll Cue */}
+        <div className="hero-scroll-cue">
+          <div className="scroll-cue-pill" />
+          <span>SCROLL</span>
         </div>
       </section>
 
-      {/* ─── SECTION 02: TABLE CONCIERGE & DINING ZONES (FROM ESENCJA) ─── */}
-      <section id="concierge" className="obscura-section concierge-section">
-        <div className="section-header-block">
-          <div className="section-num-tag">02 // TABLE CONCIERGE</div>
-          <h2 className="section-title-statement">
-            SELECT YOUR <span className="title-stroke">DINING ZONE</span>
+      {/* ─── KITCHEN & PHILOSOPHY SECTION (POLAROID COLLAGE FROM ESENCJA) ─── */}
+      <section id="philosophy" className="esencja-section">
+        <div className="kitchen-story-grid">
+          {/* Left: Narrative & Principles */}
+          <div className="kitchen-copy-col">
+            <span className="section-kicker-leaf">THE KITCHEN &amp; LIVING FIRE</span>
+            <h2 className="section-main-heading">
+              Seasonal Ingredients, <br />
+              <em>honest, uncompromised plates</em>
+            </h2>
+            <div className="h-0.5 w-16 bg-[#22AA00]" />
+            <p className="section-lead-paragraph">
+              We cook strictly with what is finest at harvest. Our carte evolves with the seasons, honoring every single ingredient with time-tested Vedic and royal court techniques. No synthetic shortcuts. No animal derivatives. Only pure reverence.
+            </p>
+
+            <div className="kitchen-features-duo">
+              <div className="feature-bullet">
+                <Compass size={22} className="bullet-icon" />
+                <div>
+                  <h4 className="bullet-title">Single-Origin Ethical Dairy</h4>
+                  <p className="bullet-desc">
+                    Gir cow A2 milk, hand-churned cultured butter, and fresh paneer crafted every sunrise.
+                  </p>
+                </div>
+              </div>
+
+              <div className="feature-bullet">
+                <Flame size={22} className="bullet-icon" />
+                <div>
+                  <h4 className="bullet-title">Open Live Fire Theater</h4>
+                  <p className="bullet-desc">
+                    From the dining hall, witness the live clay tandoor, sealed earthen handis, and roaring wok hearths.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Esencja Floating Tilted Photos */}
+          <div className="kitchen-collage-col">
+            <div className="collage-card card-1" title="Chef finishing the sealed clay handi">
+              <img src="/dish-awadhi.jpg" alt="Slow Charcoal Dum Cooking" />
+            </div>
+            <div className="collage-card card-2" title="Blistering Paneer Tikka over clay coals">
+              <img src="/dish-tandoor.jpg" alt="Live Clay Tandoor Sear" />
+            </div>
+            <div className="collage-card card-3" title="High-heat Pan-Asian wok alchemy">
+              <img src="/dish-oriental.jpg" alt="Live Wok Alchemy" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── SIGNATURE DISHES SHOWCASE (ESENCJA 3-COLUMN CARDS) ─── */}
+      <section id="signatures" className="esencja-section">
+        <div className="section-head-center">
+          <span className="section-kicker-leaf">SIGNATURE CULINARY CREATIONS</span>
+          <h2 className="section-main-heading">
+            Crafted for <em>The Imperial Table</em>
           </h2>
-          <p className="section-subtitle">
-            Every sanctuary offers distinct culinary atmospheres. Choose your seating environment and reserve instantly.
+          <div className="section-separator-line" />
+          <p className="section-lead-paragraph">
+            Our most revered dishes, celebrating slow earthen dum alchemy, clay tandoor embers, and artisanal wok mastery.
           </p>
         </div>
 
-        {/* 4 Interactive Seating Zones */}
-        <div className="dining-zones-grid">
-          {diningZones.map((zone) => (
-            <div
-              key={zone.id}
-              onClick={() => setSelectedZone(zone.id)}
-              className={`zone-card ${selectedZone === zone.id ? 'zone-active' : ''}`}
-            >
-              <div className="zone-card-top">
-                <span className="zone-number">{zone.number}</span>
-                <span className="zone-tag-pill">{zone.tag}</span>
+        <div className="signature-dishes-grid">
+          {signatureDishes.map((dish) => (
+            <div key={dish.id} className="signature-dish-card">
+              <div className="dish-img-box">
+                <img src={dish.image} alt={dish.name} />
+                <span className="dish-badge-overlay">{dish.category}</span>
               </div>
-              <h3 className="zone-name">{zone.name}</h3>
-              <p className="zone-subtitle">{zone.subtitle}</p>
-              <div className="zone-meta">
-                <span className="zone-capacity">
-                  <Users size={12} /> {zone.capacity}
-                </span>
-                <span className="zone-ideal">{zone.ideal}</span>
-              </div>
-              <div className="zone-select-indicator">
-                {selectedZone === zone.id ? (
-                  <span className="selected-text">
-                    <Check size={12} /> ZONE SELECTED
-                  </span>
-                ) : (
-                  <span className="select-prompt">CLICK TO SELECT</span>
-                )}
+              <div className="dish-content-body">
+                <div className="dish-title-row">
+                  <h3 className="dish-card-name">{dish.name}</h3>
+                  <span className="dish-card-price">₹{dish.price}</span>
+                </div>
+                <p className="dish-card-hindi">{dish.hindi}</p>
+                <p className="dish-card-note">{dish.note}</p>
+                <div className="dish-card-flavor">
+                  <span>FLAVOR:</span> {dish.profile}
+                </div>
               </div>
             </div>
           ))}
         </div>
+      </section>
 
-        {/* Booking Parameters Bar */}
-        <div className="concierge-booking-box">
-          <div className="booking-box-header">
-            <div className="box-header-title">
-              <Sparkles size={14} className="gold-icon" />
-              <span>CONFIRMING FOR: <strong>{activeZoneObj.name}</strong></span>
-            </div>
-            <div className="box-header-status">
-              <span className="green-pulse-dot" />
-              <span>TABLES AVAILABLE TONIGHT</span>
-            </div>
+      {/* ─── INTERACTIVE SEATING ZONES & RESERVATION (FROM ESENCJA) ─── */}
+      <section id="zones" className="esencja-section">
+        <div className="section-head-center">
+          <span className="section-kicker-leaf">INTERACTIVE TABLE CONCIERGE</span>
+          <h2 className="section-main-heading">
+            Choose Your <em>Dining Zone</em>
+          </h2>
+          <div className="section-separator-line" />
+          <p className="section-lead-paragraph">
+            Select your preferred dining atmosphere, check availability, and reserve your table in 60 seconds without calling.
+          </p>
+        </div>
+
+        <div className="zones-suite-container">
+          {/* 4 Interactive Zone Cards */}
+          <div className="zones-picker-grid">
+            {diningZones.map((zone) => (
+              <div
+                key={zone.id}
+                onClick={() => setSelectedZone(zone.id)}
+                className={`zone-selector-card ${selectedZone === zone.id ? 'active' : ''}`}
+              >
+                <div className="zone-top-row">
+                  <span className="zone-num">{zone.number}</span>
+                  <span className="zone-pill">{zone.tag}</span>
+                </div>
+                <h3 className="zone-headline">{zone.name}</h3>
+                <p className="zone-desc">{zone.subtitle}</p>
+                <div className="zone-footer-status">
+                  <span><Users size={12} className="inline mr-1" /> {zone.capacity}</span>
+                  {selectedZone === zone.id ? (
+                    <span className="active-check"><Check size={13} /> Selected</span>
+                  ) : (
+                    <span className="inactive-prompt">Click to select</span>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
 
+          {/* Reservation Controls */}
           {!bookingConfirmed ? (
-            <div className="booking-fields-row">
-              {/* Branch Selector */}
-              <div className="booking-field-group">
-                <label className="field-label">SANCTUARY LOCATION</label>
-                <div className="field-input-wrap">
-                  <MapPin size={14} className="field-icon" />
+            <div className="reservation-action-bar">
+              {/* Sanctuary */}
+              <div className="control-field">
+                <label className="control-label">Haveli Sanctuary</label>
+                <div className="control-input-box">
+                  <MapPin size={15} className="control-icon" />
                   <select
                     value={resBranch}
                     onChange={(e) => setResBranch(e.target.value)}
-                    className="styled-select"
+                    className="control-select"
                   >
                     <option value="Downtown Flagship">Connaught Place Flagship</option>
-                    <option value="Waterfront Haveli">Waterfront Haveli (Khan Market)</option>
-                    <option value="Garden Conservatory">Garden Conservatory (Lodhi Road)</option>
+                    <option value="Waterfront Haveli">Waterfront Haveli (Khan Mkt)</option>
+                    <option value="Garden Conservatory">Garden Conservatory (Lodhi)</option>
                   </select>
                 </div>
               </div>
 
-              {/* Date Selector */}
-              <div className="booking-field-group">
-                <label className="field-label">DATE</label>
-                <div className="field-input-wrap">
-                  <Calendar size={14} className="field-icon" />
+              {/* Date */}
+              <div className="control-field">
+                <label className="control-label">Date</label>
+                <div className="control-input-box">
+                  <Calendar size={15} className="control-icon" />
                   <select
                     value={resDate}
                     onChange={(e) => setResDate(e.target.value)}
-                    className="styled-select"
+                    className="control-select"
                   >
                     <option value="Today">Today, 24 Nov</option>
                     <option value="Tomorrow">Tomorrow, 25 Nov</option>
@@ -537,15 +591,15 @@ export const RasoraaExperience: React.FC = () => {
                 </div>
               </div>
 
-              {/* Time Session */}
-              <div className="booking-field-group">
-                <label className="field-label">MEAL SESSION</label>
-                <div className="field-input-wrap">
-                  <Clock size={14} className="field-icon" />
+              {/* Session */}
+              <div className="control-field">
+                <label className="control-label">Meal Session</label>
+                <div className="control-input-box">
+                  <Clock size={15} className="control-icon" />
                   <select
                     value={resTime}
                     onChange={(e) => setResTime(e.target.value)}
-                    className="styled-select"
+                    className="control-select"
                   >
                     <option value="Lunch 12:30">Lunch Seating · 12:30 PM</option>
                     <option value="Lunch 14:00">Lunch Seating · 02:00 PM</option>
@@ -556,21 +610,21 @@ export const RasoraaExperience: React.FC = () => {
                 </div>
               </div>
 
-              {/* Guests Stepper */}
-              <div className="booking-field-group">
-                <label className="field-label">PARTY SIZE</label>
-                <div className="party-stepper-wrap">
+              {/* Guests */}
+              <div className="control-field">
+                <label className="control-label">Patrons</label>
+                <div className="stepper-box">
                   <button
                     onClick={() => setPartySize(Math.max(1, partySize - 1))}
-                    className="stepper-btn"
+                    className="stepper-icon-btn"
                     aria-label="Decrease guests"
                   >
                     <Minus size={13} />
                   </button>
-                  <span className="party-count">{partySize < 10 ? `0${partySize}` : partySize} PATRONS</span>
+                  <span className="stepper-value">{partySize < 10 ? `0${partySize}` : partySize} Guests</span>
                   <button
                     onClick={() => setPartySize(Math.min(16, partySize + 1))}
-                    className="stepper-btn"
+                    className="stepper-icon-btn"
                     aria-label="Increase guests"
                   >
                     <Plus size={13} />
@@ -578,140 +632,96 @@ export const RasoraaExperience: React.FC = () => {
                 </div>
               </div>
 
-              {/* Submit CTA */}
+              {/* Confirm */}
               <button
                 onClick={() => setBookingConfirmed(true)}
-                className="btn-book-submit"
+                className="btn-confirm-booking"
               >
-                <span>CONFIRM TABLE</span>
-                <ArrowRight size={14} />
+                <Calendar size={15} />
+                <span>Confirm Table</span>
               </button>
             </div>
           ) : (
-            <div className="booking-success-card">
-              <div className="success-icon-badge">
-                <Check size={24} />
+            <div className="booking-confirmed-panel">
+              <div className="confirmed-icon-circle">
+                <Check size={22} />
               </div>
-              <div className="success-copy">
-                <h3>RESERVATION RECORDED · {activeZoneObj.name.toUpperCase()}</h3>
+              <div className="confirmed-text">
+                <h4>Table Allocated at {activeZoneObj.name}</h4>
                 <p>
-                  Your table for <strong>{partySize} patrons</strong> is allocated at <strong>{resBranch}</strong> for <strong>{resDate} ({resTime})</strong>. A concierge confirmation SMS has been prepared.
+                  Reserved for <strong>{partySize} guests</strong> at <strong>{resBranch}</strong> on <strong>{resDate} ({resTime})</strong>. A confirmation SMS has been prepared for your arrival.
                 </p>
               </div>
               <button
                 onClick={() => setBookingConfirmed(false)}
-                className="btn-modify"
+                className="btn-rebook"
               >
-                MODIFY SEATING
+                Change Details
               </button>
             </div>
           )}
         </div>
       </section>
 
-      {/* ─── SECTION 03: THE FOUR CULINARY DISCIPLINES (OBSCURA GRID) ─── */}
-      <section id="disciplines" className="obscura-section disciplines-section">
-        <div className="section-header-block">
-          <div className="section-num-tag">03 // CULINARY ARCHITECTURE</div>
-          <h2 className="section-title-statement">
-            FOUR REVERED <span className="title-stroke">DISCIPLINES</span>
+      {/* ─── THE EDITORIAL CARTE (ESENCJA MENU TABS & LIST) ─── */}
+      <section id="carte" className="esencja-section">
+        <div className="section-head-center">
+          <span className="section-kicker-leaf">THE REVERENT CARTE</span>
+          <h2 className="section-main-heading">
+            Culinary Dishes &amp; <em>Elixirs</em>
           </h2>
-          <p className="section-subtitle">
-            Rasoraa unites the royal Awadhi heritage with live clay ovens, wok-tossed Asian gastronomy, and European hearth baking.
+          <div className="section-separator-line" />
+          <p className="section-lead-paragraph">
+            Dishes marked with Jain Certified are prepared in strict adherence to Jain traditions with zero root vegetables.
           </p>
         </div>
 
-        <div className="disciplines-grid">
-          {culinaryDisciplines.map((item) => (
-            <div key={item.num} className="discipline-card">
-              <div className="discipline-img-stage">
-                <img src={item.image} alt={item.title} className="discipline-photo" />
-                <div className="discipline-photo-overlay" />
-                <span className="discipline-index">{item.num}</span>
-                <span className="discipline-badge-pill">{item.tag}</span>
-              </div>
-              <div className="discipline-info">
-                <h3 className="discipline-title">{item.title}</h3>
-                <p className="discipline-desc">{item.desc}</p>
-                <div className="discipline-flavor-bar">
-                  <span className="flavor-label">FLAVOR NOTES:</span>
-                  <span className="flavor-value">{item.flavor}</span>
-                </div>
-              </div>
-            </div>
+        {/* Tabs Bar */}
+        <div className="carte-tabs-bar">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`carte-filter-pill ${selectedCategory === cat ? 'active' : ''}`}
+            >
+              {cat}
+            </button>
           ))}
-        </div>
-      </section>
-
-      {/* ─── SECTION 04: THE CARTE (PRECISION EDITORIAL MENU) ─── */}
-      <section id="carte" className="obscura-section carte-section">
-        <div className="section-header-block">
-          <div className="section-num-tag">04 // THE EDITORIAL CARTE</div>
-          <h2 className="section-title-statement">
-            CURATED <span className="title-stroke">CREATIONS</span>
-          </h2>
-          <p className="section-subtitle">
-            Seasonal ingredients, cold-churned Gir cow dairy, and ancient slow-fire techniques.
-          </p>
-        </div>
-
-        {/* Menu Filtering Toolbar */}
-        <div className="carte-toolbar-bar">
-          <div className="carte-categories-scroll">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`carte-cat-btn ${selectedCategory === cat ? 'cat-active' : ''}`}
-              >
-                {cat.toUpperCase()}
-              </button>
-            ))}
-          </div>
-
           <button
             onClick={() => setJainOnly(!jainOnly)}
-            className={`jain-toggle-btn ${jainOnly ? 'jain-active' : ''}`}
-            title="Filter 100% Jain Certified Creations"
+            className={`jain-switch-button ${jainOnly ? 'active' : ''}`}
           >
-            <span className="jain-dot" />
-            <span>JAIN CREATIONS ONLY</span>
+            <span className="leaf-dot" />
+            <span>Jain Only</span>
           </button>
         </div>
 
-        {/* Dishes List */}
-        <div className="dishes-ledger">
-          {filteredDishes.map((dish, idx) => {
+        {/* Dish List */}
+        <div className="carte-menu-list">
+          {filteredDishes.map((dish) => {
             const isExpanded = expandedDish === dish.id;
-            const indexStr = idx < 9 ? `0${idx + 1}` : `${idx + 1}`;
             return (
               <div
                 key={dish.id}
-                className={`dish-ledger-row ${isExpanded ? 'dish-row-expanded' : ''}`}
+                className="carte-dish-row"
                 onClick={() => setExpandedDish(isExpanded ? null : dish.id)}
               >
-                <div className="dish-row-summary">
-                  <span className="dish-order-index">{indexStr}</span>
-
-                  <div className="dish-identity">
-                    <div className="dish-title-line">
-                      <span className="dish-name-bold">{dish.name}</span>
+                <div className="dish-row-top">
+                  <div className="dish-title-group">
+                    <div className="dish-name-header">
+                      <span>{dish.name}</span>
                       {dish.jain && (
-                        <span className="jain-mini-badge" title="Prepared strictly according to Jain dietary tradition">
-                          JAIN CERTIFIED
-                        </span>
+                        <span className="dish-jain-pill">JAIN</span>
                       )}
                     </div>
-                    <span className="dish-hindi-sub">{dish.hindi}</span>
+                    <span className="dish-subtext-hindi">{dish.hindi}</span>
                   </div>
 
-                  <span className="dish-flavor-notes">{dish.profile}</span>
+                  <span className="dish-flavor-badge">{dish.profile}</span>
 
-                  <div className="dish-pricing">
-                    <span className="price-num">₹{dish.price * 25}</span>
-                    <span className="dish-expand-icon">
-                      <ChevronDown size={14} className={isExpanded ? 'rotate-180' : ''} />
-                    </span>
+                  <div className="dish-price-expand">
+                    <span className="dish-rupee">₹{dish.price}</span>
+                    <ChevronDown size={16} className={`chevron-icon ${isExpanded ? 'rotate-180' : ''}`} />
                   </div>
                 </div>
 
@@ -721,18 +731,10 @@ export const RasoraaExperience: React.FC = () => {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="dish-expanded-details"
+                      className="overflow-hidden"
                     >
-                      <div className="expanded-inner">
-                        <div className="craft-note">
-                          <Flame size={13} className="craft-icon" />
-                          <p>{dish.note}</p>
-                        </div>
-                        <div className="expanded-meta-tag">
-                          <span>DISCIPLINE: {dish.category.toUpperCase()}</span>
-                          <span>•</span>
-                          <span>100% SHUDDH SHAKAHARI</span>
-                        </div>
+                      <div className="expanded-card-box">
+                        <p className="craft-text">{dish.note}</p>
                       </div>
                     </motion.div>
                   )}
@@ -743,105 +745,75 @@ export const RasoraaExperience: React.FC = () => {
         </div>
       </section>
 
-      {/* ─── SECTION 05: THREE REVERENT PILLARS (OBSCURA PROCESS) ─── */}
-      <section id="philosophy" className="obscura-section philosophy-section">
-        <div className="section-header-block">
-          <div className="section-num-tag">05 // THE PHILOSOPHY</div>
-          <h2 className="section-title-statement">
-            THREE REVERENT <span className="title-stroke">PILLARS</span>
-          </h2>
-          <p className="section-subtitle">
-            True luxury is restraint. We strip away synthetic enhancers, animal derivatives, and rushed preparation.
-          </p>
-        </div>
-
-        <div className="pillars-grid">
-          <div className="pillar-card">
-            <span className="pillar-num">01</span>
-            <h3 className="pillar-title">ETHICAL SOURCING</h3>
-            <p className="pillar-body">
-              Certified Gir cow A2 dairy, cold-pressed stone mustard oils, hand-harvested wild morels from Kashmir, and organic single-origin spices ground in stone pestles.
-            </p>
-            <div className="pillar-tag">NO PROCESSED EXTRACTS</div>
+      {/* ─── TESTIMONIALS SLIDER (FROM ESENCJA) ─── */}
+      <section className="esencja-section testimonials-section">
+        <div className="testimonial-carousel-card">
+          <div className="testimonial-stars">
+            {[...Array(5)].map((_, i) => (
+              <Star key={i} size={16} fill="#C8A962" color="#C8A962" />
+            ))}
           </div>
-
-          <div className="pillar-card">
-            <span className="pillar-num">02</span>
-            <h3 className="pillar-title">THE ELEMENT OF FIRE</h3>
-            <p className="pillar-body">
-              Sixteen-hour sealed clay handis slow-simmered over wood charcoal embers, live 400°C clay tandoors, and roaring wok hearths that impart authentic breath.
-            </p>
-            <div className="pillar-tag">ANCIENT CHARCOAL ALCHEMY</div>
-          </div>
-
-          <div className="pillar-card">
-            <span className="pillar-num">03</span>
-            <h3 className="pillar-title">PURE VEGETARIAN SANCTUARY</h3>
-            <p className="pillar-body">
-              100% Shuddh Shakahari and Jain sanctuaries. We use zero eggs, zero gelatin, zero animal rennet, and provide dedicated separate Jain preparation stations.
-            </p>
-            <div className="pillar-tag">100% PURE VEG REVERENCE</div>
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={testimonialIdx}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.5 }}
+            >
+              <p className="testimonial-quote">
+                "{testimonials[testimonialIdx].quote}"
+              </p>
+              <div className="testimonial-author">
+                {testimonials[testimonialIdx].author}
+              </div>
+              <div className="testimonial-city">
+                {testimonials[testimonialIdx].city}
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
       </section>
 
-      {/* ─── CRITICS PRAISE (ESENCJA STYLE) ─── */}
-      <section className="obscura-section praise-section">
-        <div className="praise-grid">
-          {criticsPraise.map((item, idx) => (
-            <div key={idx} className="praise-card">
-              <div className="praise-stars">
-                {[...Array(item.rating)].map((_, i) => (
-                  <Star key={i} size={12} fill="#c3a66c" color="#c3a66c" />
-                ))}
-              </div>
-              <p className="praise-quote">"{item.quote}"</p>
-              <div className="praise-author">
-                <span className="critic-name">{item.critic}</span>
-                <span className="critic-city">{item.city}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ─── SECTION 06: SANCTUARIES & HAVELIS ─── */}
-      <section id="sanctuaries" className="obscura-section sanctuaries-section">
-        <div className="section-header-block">
-          <div className="section-num-tag">06 // THE SANCTUARIES</div>
-          <h2 className="section-title-statement">
-            THREE HAVELI <span className="title-stroke">DESTINATIONS</span>
+      {/* ─── SANCTUARIES & HAVELIS ─── */}
+      <section id="sanctuaries" className="esencja-section">
+        <div className="section-head-center">
+          <span className="section-kicker-leaf">OUR DESTINATIONS</span>
+          <h2 className="section-main-heading">
+            Three Imperial <em>Haveli Sanctuaries</em>
           </h2>
-          <p className="section-subtitle">
-            Restored heritage havelis across the imperial capital of New Delhi.
+          <div className="section-separator-line" />
+          <p className="section-lead-paragraph">
+            Historic architectural destinations across New Delhi, preserved for royal multicuisine dining.
           </p>
         </div>
 
-        <div className="sanctuaries-grid">
+        <div className="sanctuaries-triple-grid">
           {sanctuaries.map((s) => (
-            <div key={s.num} className="sanctuary-card">
-              <div className="sanctuary-card-top">
-                <span className="sanctuary-num">{s.num}</span>
-                <span className="sanctuary-locality">{s.locality}</span>
+            <div key={s.num} className="sanctuary-box">
+              <div className="sanctuary-header-line">
+                <span className="sanctuary-index">{s.num}</span>
+                <span className="sanctuary-locality-tag">{s.locality}</span>
               </div>
-              <h3 className="sanctuary-name">{s.name}</h3>
-              <p className="sanctuary-address">{s.address}</p>
-              <p className="sanctuary-note">{s.note}</p>
-              <div className="sanctuary-timing">
-                <Clock size={12} />
+              <h3 className="sanctuary-title">{s.name}</h3>
+              <p className="sanctuary-address-text">{s.address}</p>
+              <p className="sanctuary-story-text">{s.note}</p>
+              <div className="sanctuary-hours-line">
+                <Clock size={13} className="text-[#22AA00]" />
                 <span>{s.hours}</span>
               </div>
-              <div className="sanctuary-actions">
-                <a href={`tel:${s.phone.replace(/\s+/g, '')}`} className="sanctuary-phone">
+              <div className="sanctuary-footer-links">
+                <a href={`tel:${s.phone.replace(/\s+/g, '')}`} className="sanctuary-phone-link">
                   {s.phone}
                 </a>
                 <a
                   href={`https://maps.google.com/?q=${encodeURIComponent(s.address)}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="sanctuary-map-link"
+                  className="sanctuary-dir-link"
                 >
-                  GET DIRECTIONS <ArrowUpRight size={12} />
+                  <span>Directions</span>
+                  <ArrowUpRight size={13} />
                 </a>
               </div>
             </div>
@@ -849,52 +821,53 @@ export const RasoraaExperience: React.FC = () => {
         </div>
       </section>
 
-      {/* ─── BESPOKE ARCHITECTURAL FOOTER ─── */}
-      <footer className="obscura-footer">
-        <div className="footer-top-row">
-          <div className="footer-brand-block">
-            <img src="/logo.png" alt="RASORAA" className="footer-logo" />
-            <h2 className="footer-brand-title">RASORAA</h2>
-            <p className="footer-tagline">
-              ROYAL MULTICUISINE VEGETARIAN GASTRONOMY · NEW DELHI
+      {/* ─── FOOTER ─── */}
+      <footer className="esencja-footer">
+        <div className="footer-inner-grid">
+          <div className="footer-col-brand">
+            <img src="/logo.png" alt="RASORAA" className="footer-brand-logo" />
+            <h2 className="footer-title-h2">RASORAA</h2>
+            <p className="footer-tagline-text">
+              THE ART OF ROYAL MULTICUISINE VEGETARIAN DINING
             </p>
-            <div className="footer-shuddh-badge">
-              <span className="green-dot" />
-              <span>100% SHUDDH SHAKAHARI CERTIFIED</span>
+            <div className="footer-pure-veg-emblem">
+              <span className="leaf-dot" />
+              <span>100% SHUDDH SHAKAHARI &amp; JAIN CERTIFIED</span>
             </div>
           </div>
 
-          <div className="footer-links-col">
-            <span className="col-header">SANCTUARIES</span>
+          <div className="footer-col-nav">
+            <span className="footer-col-title">Sanctuaries</span>
             <a href="#sanctuaries">Downtown Flagship, CP</a>
             <a href="#sanctuaries">The Waterfront Haveli, Khan Mkt</a>
             <a href="#sanctuaries">Garden Conservatory, Lodhi</a>
-            <a href="#concierge">Private Dining &amp; Salons</a>
+            <a href="#zones">Private Salons &amp; Banquets</a>
           </div>
 
-          <div className="footer-links-col">
-            <span className="col-header">CULINARY</span>
+          <div className="footer-col-nav">
+            <span className="footer-col-title">Culinary Disciplines</span>
             <a href="#carte">Royal Awadhi Dum</a>
             <a href="#carte">Live Clay Tandoor</a>
             <a href="#carte">Pan-Asian Wok Craft</a>
             <a href="#carte">Continental Hearth</a>
-            <a href="#carte">Artisanal Chenna Mithai</a>
+            <a href="#carte">Chenna Sandesh Mithai</a>
           </div>
 
-          <div className="footer-links-col">
-            <span className="col-header">RESERVATIONS &amp; HOURS</span>
-            <p className="hours-text">Lunch: 12:00 – 15:30</p>
-            <p className="hours-text">Dinner: 19:00 – 23:30</p>
-            <a href="tel:+911141002800" className="footer-phone">+91 11 4100 2800</a>
-            <a href="#concierge" className="btn-footer-reserve">
-              <span>ONLINE CONCIERGE ↗</span>
+          <div className="footer-col-nav">
+            <span className="footer-col-title">Reservations</span>
+            <p className="footer-hours-note">Lunch: 12:00 – 15:30</p>
+            <p className="footer-hours-note">Dinner: 19:00 – 23:30</p>
+            <a href="tel:+911141002800" className="sanctuary-phone-link">+91 11 4100 2800</a>
+            <a href="#zones" className="btn-nav-reserve mt-2 w-fit">
+              <Calendar size={13} />
+              <span>Online Concierge</span>
             </a>
           </div>
         </div>
 
-        <div className="footer-bottom-bar">
+        <div className="footer-bottom-row">
           <span>© {new Date().getFullYear()} RASORAA VEG RESTAURANT. ALL RIGHTS RESERVED.</span>
-          <span>EST. MMXII · CRAFTED WITH REVERENCE</span>
+          <span>EST. MMXII · 100% PURE VEGETARIAN</span>
           <span>NEW DELHI · BHARAT</span>
         </div>
       </footer>
