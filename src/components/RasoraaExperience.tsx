@@ -90,6 +90,7 @@ const HERO_MASTERPIECES: HeroMasterpiece[] = [
 interface AlchemyNode {
   id: string;
   name: string;
+  shortName: string;
   hindi: string;
   category: string;
   note: string;
@@ -103,46 +104,50 @@ const ALCHEMY_NODES: AlchemyNode[] = [
   {
     id: 'saffron',
     name: 'Kashmiri Mongra Saffron',
+    shortName: 'Kashmiri Saffron',
     hindi: 'केसर',
     category: 'Botanical Royalty',
     note: 'Grade-A Pampore stigma hand-harvested at dawn, imparting honeyed perfume and liquid-gold warmth.',
     glow: '#E5C378',
-    xPct: -42,
-    yPct: -38,
-    zDepth: 75,
+    xPct: -38,
+    yPct: -36,
+    zDepth: 70,
   },
   {
     id: 'cardamom',
     name: 'Idukki Forest Cardamom',
-    hindi: 'हरी इलायची',
+    shortName: 'Green Cardamom',
+    hindi: 'इलायची',
     category: 'Aromatic Alchemy',
     note: 'Wild green pods sun-dried on burlap and stone-crushed to release camphor-citrus sweetness.',
     glow: '#22AA00',
-    xPct: 44,
-    yPct: -34,
-    zDepth: 90,
+    xPct: 38,
+    yPct: -36,
+    zDepth: 70,
   },
   {
     id: 'embers',
     name: '16-Hr Sal Wood Dum',
+    shortName: 'Sal Wood Dum',
     hindi: 'कोयला दम',
     category: 'Sacred Thermal Fire',
     note: 'Low-oxygen smoldering sal embers imparting smoky mineral sweetness without bitterness.',
     glow: '#FF7700',
-    xPct: -46,
+    xPct: -38,
     yPct: 36,
-    zDepth: 80,
+    zDepth: 70,
   },
   {
     id: 'butter',
     name: 'Cultured A2 Gir Butter',
+    shortName: 'Gir Cow Butter',
     hindi: 'बिलोना मक्खन',
     category: 'Sacred Dairy',
     note: 'Hand-churned in wooden vats from grass-fed Gir cows, producing velvety lactic silkiness.',
     glow: '#F6E05E',
-    xPct: 42,
-    yPct: 40,
-    zDepth: 85,
+    xPct: 38,
+    yPct: 36,
+    zDepth: 70,
   },
 ];
 
@@ -396,6 +401,17 @@ export const RasoraaExperience: React.FC = () => {
   const [selectedSession, setSelectedSession] = useState<string>('Twilight Dinner (8:00 PM)');
   const [isJainStrict, setIsJainStrict] = useState<boolean>(false);
   const [bookingConfirmed, setBookingConfirmed] = useState<boolean>(false);
+  const [windowWidth, setWindowWidth] = useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1024);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isMobile = windowWidth < 640;
+  const isTablet = windowWidth >= 640 && windowWidth < 1024;
+  const nodeMultiplier = isMobile ? 1.85 : isTablet ? 2.9 : 4.0;
 
   const heroStageRef = useRef<HTMLDivElement>(null);
   const reelRef = useRef<HTMLDivElement>(null);
@@ -772,7 +788,7 @@ export const RasoraaExperience: React.FC = () => {
                 ref={heroStageRef}
                 onMouseMove={handleStageMouseMove}
                 onMouseLeave={handleStageMouseLeave}
-                className="relative w-full max-w-[480px] aspect-square flex items-center justify-center select-none cursor-grab active:cursor-grabbing"
+                className="relative w-[280px] h-[280px] sm:w-[360px] sm:h-[360px] md:w-[420px] md:h-[420px] lg:w-[460px] lg:h-[460px] flex items-center justify-center select-none cursor-grab active:cursor-grabbing mx-auto my-2 sm:my-0"
                 style={{ perspective: 1200 }}
               >
                 {/* 3D Tilting Stage Container */}
@@ -803,7 +819,7 @@ export const RasoraaExperience: React.FC = () => {
                     className="absolute w-[70%] aspect-square rounded-full bg-gradient-to-tr from-[#22AA00]/20 via-transparent to-[#C8A962]/20 blur-xl transition-all duration-700"
                   />
 
-                  {/* Layer 1: Floating Culinary Platter Artwork */}
+                  {/* Layer 1: Floating Culinary Platter Artwork (Scaled elegantly on mobile) */}
                   <motion.div
                     key={activeMasterpiece.id}
                     initial={{ scale: 0.88, opacity: 0, rotate: -8 }}
@@ -811,7 +827,7 @@ export const RasoraaExperience: React.FC = () => {
                     exit={{ scale: 0.9, opacity: 0 }}
                     transition={{ duration: 0.6, ease: 'easeOut' }}
                     style={{ transform: 'translateZ(45px)' }}
-                    className="relative w-[78%] aspect-square rounded-full p-2.5 bg-gradient-to-tr from-[#22AA00]/50 via-[#0A1610] to-[#C8A962]/40 border-2 border-white/20 shadow-[0_30px_70px_rgba(0,0,0,0.95)] overflow-hidden group"
+                    className="relative w-[65%] sm:w-[72%] lg:w-[76%] aspect-square rounded-full p-2 sm:p-2.5 bg-gradient-to-tr from-[#22AA00]/50 via-[#0A1610] to-[#C8A962]/40 border-2 border-white/20 shadow-[0_20px_50px_rgba(0,0,0,0.95)] overflow-hidden group"
                   >
                     <img
                       src={activeMasterpiece.image}
@@ -829,7 +845,7 @@ export const RasoraaExperience: React.FC = () => {
                     <div className="absolute inset-0 rounded-full ring-2 ring-inset ring-white/15 pointer-events-none" />
                   </motion.div>
 
-                  {/* Layer 2: Interactive 3D Alchemy Nodes in Orbit */}
+                  {/* Layer 2: Interactive 3D Alchemy Nodes in Orbit (Responsive Multiplier & Labels) */}
                   {ALCHEMY_NODES.map((node) => {
                     const isHovered = hoveredAlchemyNode?.id === node.id;
                     return (
@@ -838,25 +854,25 @@ export const RasoraaExperience: React.FC = () => {
                         onMouseEnter={() => setHoveredAlchemyNode(node)}
                         onMouseLeave={() => setHoveredAlchemyNode(null)}
                         style={{
-                          transform: `translate3d(${node.xPct * 4.2}px, ${node.yPct * 4.2}px, ${node.zDepth}px)`,
+                          transform: `translate3d(${node.xPct * nodeMultiplier}px, ${node.yPct * nodeMultiplier}px, ${isMobile ? 35 : node.zDepth}px)`,
                         }}
                         className="absolute z-30 cursor-pointer group"
                       >
                         <div
-                          className={`px-3 py-1.5 rounded-full backdrop-blur-md border text-xs font-mono transition-all duration-300 flex items-center gap-2 shadow-[0_10px_25px_rgba(0,0,0,0.8)] ${
+                          className={`px-2 py-1 sm:px-3 sm:py-1.5 rounded-full backdrop-blur-md border text-xs font-mono transition-all duration-300 flex items-center gap-1.5 sm:gap-2 shadow-[0_10px_25px_rgba(0,0,0,0.8)] ${
                             isHovered
-                              ? 'bg-[#10241A] border-[#22AA00] scale-110 shadow-[0_0_20px_rgba(34,170,0,0.5)]'
-                              : 'bg-[#091510]/85 border-white/15 text-neutral-300 hover:border-white/30'
+                              ? 'bg-[#10241A] border-[#22AA00] scale-105 sm:scale-110 shadow-[0_0_20px_rgba(34,170,0,0.5)]'
+                              : 'bg-[#091510]/90 border-white/15 text-neutral-300 hover:border-white/30'
                           }`}
                         >
                           <span
-                            className="w-2 h-2 rounded-full transition-transform group-hover:scale-125"
+                            className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full transition-transform group-hover:scale-125 shrink-0"
                             style={{ backgroundColor: node.glow }}
                           />
-                          <span className="text-white font-medium text-[11px] whitespace-nowrap">
-                            {node.name}
+                          <span className="text-white font-medium text-[9.5px] sm:text-[11px] whitespace-nowrap">
+                            {isMobile ? node.shortName : node.name}
                           </span>
-                          <span className="text-[#22AA00] text-[10px] font-bold">
+                          <span className="text-[#22AA00] text-[9px] sm:text-[10px] font-bold">
                             {node.hindi}
                           </span>
                         </div>
@@ -894,19 +910,19 @@ export const RasoraaExperience: React.FC = () => {
                     )}
                   </AnimatePresence>
 
-                  {/* Layer 4: Live Kitchen Temperature & Origin Badge */}
+                  {/* Layer 4: Live Kitchen Temperature & Origin Badge (Centered on mobile to eliminate overlap) */}
                   <div
                     style={{ transform: 'translateZ(65px)' }}
-                    className="absolute -bottom-4 right-2 z-20 px-4 py-2 rounded-2xl bg-gradient-to-r from-[#12261C] to-[#0A1610] border border-[#22AA00]/40 shadow-[0_15px_30px_rgba(0,0,0,0.85)] text-left flex items-center gap-3 backdrop-blur-md"
+                    className="absolute -bottom-3 sm:-bottom-4 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:right-2 z-20 px-3 py-1 sm:px-4 sm:py-2 rounded-2xl bg-gradient-to-r from-[#12261C] to-[#0A1610] border border-[#22AA00]/40 shadow-[0_15px_30px_rgba(0,0,0,0.85)] text-left flex items-center gap-2 sm:gap-3 backdrop-blur-md whitespace-nowrap"
                   >
-                    <div className="w-8 h-8 rounded-full bg-[#22AA00]/20 border border-[#22AA00] flex items-center justify-center text-[#22AA00]">
-                      <Zap size={14} />
+                    <div className="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-[#22AA00]/20 border border-[#22AA00] flex items-center justify-center text-[#22AA00] shrink-0">
+                      <Zap size={12} className="sm:w-3.5 sm:h-3.5" />
                     </div>
                     <div>
-                      <div className="text-[10px] font-mono tracking-widest text-[#22AA00] uppercase">
+                      <div className="text-[9px] sm:text-[10px] font-mono tracking-widest text-[#22AA00] uppercase">
                         {activeMasterpiece.temp}
                       </div>
-                      <div className="text-xs font-bold text-white">
+                      <div className="text-[11px] sm:text-xs font-bold text-white leading-tight">
                         {activeMasterpiece.origin}
                       </div>
                     </div>
