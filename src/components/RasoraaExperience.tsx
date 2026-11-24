@@ -924,29 +924,48 @@ export const RasoraaExperience: React.FC = () => {
         </div>
       </section>
 
-      {/* ─── 3. VELOCITY MARQUEE STRIP ─── */}
-      <div className="border-y border-[#22AA00]/30 bg-[#22AA00] py-3.5 overflow-hidden text-black font-black select-none">
-        <div className="flex w-max animate-[marquee_25s_linear_infinite] space-x-8 text-xs sm:text-sm tracking-[0.25em] uppercase">
-          <span>AWADHI DUM HANDIS</span>
-          <span>✦</span>
-          <span>100% SHUDDH SHAKAHARI</span>
-          <span>✦</span>
-          <span>LIVE CLAY TANDOORS</span>
-          <span>✦</span>
-          <span>STRICT JAIN PREPARATION</span>
-          <span>✦</span>
-          <span>PAN-ASIAN WOK HEI</span>
-          <span>✦</span>
-          <span>STONE HEARTH SOURDOUGH</span>
-          <span>✦</span>
-          <span>CONNAUGHT PLACE &amp; MEHRAULI</span>
-          <span>✦</span>
-          <span>AWADHI DUM HANDIS</span>
-          <span>✦</span>
-          <span>100% SHUDDH SHAKAHARI</span>
-          <span>✦</span>
-          <span>LIVE CLAY TANDOORS</span>
-          <span>✦</span>
+      {/* ─── 3. INFINITE SEAMLESS MARQUEE STRIP ─── */}
+      <div className="border-y border-[#22AA00]/40 bg-[#22AA00] py-3.5 overflow-hidden text-black font-black select-none relative z-20">
+        <div className="animate-marquee-infinite">
+          {/* Loop Set 1 */}
+          <div className="flex items-center space-x-8 shrink-0 pr-8 text-xs sm:text-sm tracking-[0.25em] uppercase">
+            <span>AWADHI DUM HANDIS</span>
+            <span>✦</span>
+            <span>100% SHUDDH SHAKAHARI</span>
+            <span>✦</span>
+            <span>LIVE CLAY TANDOORS</span>
+            <span>✦</span>
+            <span>STRICT JAIN PREPARATION</span>
+            <span>✦</span>
+            <span>PAN-ASIAN WOK HEI</span>
+            <span>✦</span>
+            <span>STONE HEARTH SOURDOUGH</span>
+            <span>✦</span>
+            <span>CONNAUGHT PLACE &amp; MEHRAULI</span>
+            <span>✦</span>
+            <span>FINE DINING VEG ALCHEMY</span>
+            <span>✦</span>
+          </div>
+
+          {/* Loop Set 2 (Exact clone for seamless infinite loop) */}
+          <div className="flex items-center space-x-8 shrink-0 pr-8 text-xs sm:text-sm tracking-[0.25em] uppercase" aria-hidden="true">
+            <span>AWADHI DUM HANDIS</span>
+            <span>✦</span>
+            <span>100% SHUDDH SHAKAHARI</span>
+            <span>✦</span>
+            <span>LIVE CLAY TANDOORS</span>
+            <span>✦</span>
+            <span>STRICT JAIN PREPARATION</span>
+            <span>✦</span>
+            <span>PAN-ASIAN WOK HEI</span>
+            <span>✦</span>
+            <span>STONE HEARTH SOURDOUGH</span>
+            <span>✦</span>
+            <span>CONNAUGHT PLACE &amp; MEHRAULI</span>
+            <span>✦</span>
+            <span>FINE DINING VEG ALCHEMY</span>
+            <span>✦</span>
+          </div>
         </div>
       </div>
 

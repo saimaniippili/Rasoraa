@@ -8,6 +8,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Infinite Marquee Animations ─── */
+@keyframes marquee-scroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee-infinite {
+  display: flex !important;
+  width: max-content !important;
+  animation: marquee-scroll 22s linear infinite !important;
+  will-change: transform;
+}
+
+.animate-marquee-infinite:hover {
+  animation-play-state: paused;
+}
+
 *, *::before, *::after {
   margin: 0;
   padding: 0;
