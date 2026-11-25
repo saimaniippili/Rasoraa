@@ -2,11 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowUpRight,
+  BookOpen,
+  Bookmark,
   Calendar,
   Check,
   ChevronLeft,
   ChevronRight,
   Facebook,
+  Grid,
   Instagram,
   MapPin,
   Menu as MenuIcon,
@@ -17,6 +20,8 @@ import {
   Search,
   Sparkles,
   Users,
+  Volume2,
+  VolumeX,
   X,
 } from 'lucide-react';
 
@@ -780,6 +785,96 @@ export const RasoraaExperience: React.FC = () => {
 
   const [menuSearchQuery, setMenuSearchQuery] = useState('');
 
+  // ─── Interactive Luxury Menu Book State & Controls ───
+  // Spreads: 0: Cover & Index, 1: Starters & Wok, 2: Curries & Dosas, 3: Biryani & Pizzas, 4: Drinks & Desserts
+  const [currentSpread, setCurrentSpread] = useState(0);
+  const [menuViewMode, setMenuViewMode] = useState<'book' | 'grid'>('book');
+  const [isAudioMuted, setIsAudioMuted] = useState(false);
+  const [flipDirection, setFlipDirection] = useState<'next' | 'prev'>('next');
+
+  // Realistic luxury parchment paper turn sound via Web Audio API (zero external assets needed)
+  const playPageTurnSound = () => {
+    if (isAudioMuted || typeof window === 'undefined') return;
+    try {
+      const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx = new AudioCtx();
+      const bufferSize = ctx.sampleRate * 0.14;
+      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        const decay = Math.exp(-i / (bufferSize * 0.28));
+        data[i] = (Math.random() * 2 - 1) * decay * 0.08;
+      }
+      const noise = ctx.createBufferSource();
+      noise.buffer = buffer;
+      const bandpass = ctx.createBiquadFilter();
+      bandpass.type = 'bandpass';
+      bandpass.frequency.value = 1350;
+      bandpass.Q.value = 0.85;
+      noise.connect(bandpass);
+      bandpass.connect(ctx.destination);
+      noise.start();
+    } catch {
+      // Audio policy safe fallback
+    }
+  };
+
+  const turnToSpread = (newSpread: number) => {
+    if (newSpread < 0 || newSpread > 4 || newSpread === currentSpread) return;
+    setFlipDirection(newSpread > currentSpread ? 'next' : 'prev');
+    setCurrentSpread(newSpread);
+    playPageTurnSound();
+  };
+
+  const handleNextSpread = () => {
+    if (currentSpread < 4) {
+      turnToSpread(currentSpread + 1);
+    }
+  };
+
+  const handlePrevSpread = () => {
+    if (currentSpread > 0) {
+      turnToSpread(currentSpread - 1);
+    }
+  };
+
+  // Grouped Dishes for Book Spreads matching Official 6-Page Booklet
+  const tandooriDishes = DISHES.filter((d) => d.category === 'Tandoori Starters');
+  const chineseDishes = DISHES.filter((d) => d.category === 'Chinese & Sizzlers');
+  const curryDishes = DISHES.filter((d) => d.category === 'Indian Curries');
+  const southIndianDishes = DISHES.filter((d) => d.category === 'South Indian & Dosas');
+  const riceBreadsDishes = DISHES.filter((d) => d.category === 'Rice, Biryani & Breads');
+  const continentalDishes = DISHES.filter((d) => d.category === 'Continental, Pastas & Pizzas');
+  const mocktailDishes = DISHES.filter((d) => d.category === 'Mocktails & Shakes');
+  const dessertDishes = DISHES.filter((d) => d.category === 'Desserts');
+
+  // Bookmark ribbons for fast navigation
+  const BOOK_CHAPTER_TABS = [
+    { spread: 0, label: 'Cover & Index', pages: 'Prologue' },
+    { spread: 1, label: 'Starters & Wok', pages: 'pp. 2–3' },
+    { spread: 2, label: 'Curries & Dosas', pages: 'pp. 4–5' },
+    { spread: 3, label: 'Biryani & Pizzas', pages: 'pp. 6–7' },
+    { spread: 4, label: 'Drinks & Desserts', pages: 'pp. 8–9' },
+  ];
+
+  // Auto-flip book spread when searching for a dish
+  useEffect(() => {
+    if (!menuSearchQuery.trim()) return;
+    const query = menuSearchQuery.toLowerCase();
+    const findDish = (list: Dish[]) =>
+      list.some((d) => d.name.toLowerCase().includes(query) || d.description.toLowerCase().includes(query));
+    if (findDish(tandooriDishes) || findDish(chineseDishes)) {
+      if (currentSpread !== 1) turnToSpread(1);
+    } else if (findDish(curryDishes) || findDish(southIndianDishes)) {
+      if (currentSpread !== 2) turnToSpread(2);
+    } else if (findDish(riceBreadsDishes) || findDish(continentalDishes)) {
+      if (currentSpread !== 3) turnToSpread(3);
+    } else if (findDish(mocktailDishes) || findDish(dessertDishes)) {
+      if (currentSpread !== 4) turnToSpread(4);
+    }
+  }, [menuSearchQuery]);
+
   const heroDishes = [
     {
       title: 'Malai Paneer Tikka',
@@ -1309,23 +1404,27 @@ export const RasoraaExperience: React.FC = () => {
         </div>
       </section>
 
-      {/* ─── 5. ACT III: THE IMPERIAL CARTE (#menu) ─── */}
-      <section id="menu" className="py-28 relative bg-[#060A08] border-b border-white/[0.06]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* ─── 5. ACT III: THE IMPERIAL CARTE & INTERACTIVE MENU BOOK (#menu) ─── */}
+      <section id="menu" className="py-24 sm:py-32 relative bg-[#060D08] border-b border-white/[0.06] overflow-hidden">
+        {/* Subtle Ambient Glow */}
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-[#12361E]/20 blur-[140px] pointer-events-none rounded-full" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Section Header */}
-          <div className="text-center max-w-3xl mx-auto mb-14 space-y-5">
-            <span className="text-[#C5A880] text-xs font-sans tracking-[0.28em] uppercase">
-              02 / The Imperial Carte
+          <div className="text-center max-w-3xl mx-auto mb-12 space-y-4">
+            <span className="text-[#C5A880] text-xs font-sans tracking-[0.28em] uppercase inline-flex items-center gap-2">
+              <BookOpen size={14} className="text-[#C5A880]" />
+              <span>02 / The Imperial Folio</span>
             </span>
-            <h2 className="font-serif text-4xl sm:text-6xl font-light text-white">
-              Official Restaurant Menu
+            <h2 className="font-serif text-4xl sm:text-6xl font-light text-white tracking-tight">
+              Interactive Restaurant Book
             </h2>
             <p className="text-neutral-400 text-sm sm:text-base font-light leading-relaxed">
-              Breakfast · Lunch · Dinner — authentic multicuisine vegetarian gastronomy curated with whole ground spices, heritage dairy, and fresh garden botanicals.
+              Experience our official 6-page dining carte as an authentic royal folio. Turn pages, browse chapters, or inspect every freshly prepared delicacy.
             </p>
 
             {/* Chef's Fresh Preparation Pledge from Official Menu */}
-            <div className="max-w-2xl mx-auto p-4 sm:p-5 rounded-2xl bg-[#0D1812] border border-[#C5A880]/30 text-xs text-[#E8E4DA] font-light leading-relaxed text-center shadow-lg">
+            <div className="max-w-2xl mx-auto p-4 sm:p-5 rounded-2xl bg-[#0D1812] border border-[#C5A880]/30 text-xs text-[#E8E4DA] font-light leading-relaxed text-center shadow-xl">
               <span className="font-serif italic text-base text-[#C5A880] block pb-1">
                 “Fresh • Elegant • Authentic Dining Experience”
               </span>
@@ -1333,103 +1432,965 @@ export const RasoraaExperience: React.FC = () => {
                 All dishes are freshly prepared upon order. We kindly request 20–25 minutes for preparation to ensure every plate meets our highest standards of freshness and flavor.
               </p>
             </div>
-
-            {/* Live Interactive Dish Search Input */}
-            <div className="max-w-md mx-auto pt-2 relative">
-              <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
-              <input
-                type="text"
-                value={menuSearchQuery}
-                onChange={(e) => setMenuSearchQuery(e.target.value)}
-                placeholder="Search dishes (e.g. Paneer, Dosa, Biryani, Pasta)..."
-                className="w-full pl-11 pr-10 py-3 rounded-full bg-white/[0.04] border border-white/15 text-white placeholder-neutral-500 text-xs font-sans tracking-wide focus:outline-none focus:border-[#C5A880] transition-colors"
-              />
-              {menuSearchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setMenuSearchQuery('')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-neutral-400 hover:text-white"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-
-            {/* Category Filter Pills */}
-            <div className="flex flex-wrap items-center justify-center gap-2 pt-4">
-              {MENU_CATEGORIES.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setActiveCategory(cat)}
-                  className={`px-4 py-2 rounded-full text-[11px] font-sans tracking-[0.14em] uppercase transition-all duration-300 border ${
-                    activeCategory === cat || (cat === 'All Items' && activeCategory === 'All')
-                      ? 'bg-[#183620] text-[#FBF9F5] border-[#C5A880] shadow-[0_0_15px_rgba(197,168,128,0.2)]'
-                      : 'bg-white/[0.03] text-neutral-400 border-white/10 hover:border-white/30 hover:text-white'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
           </div>
 
-          {/* Michelin-Style Editorial Menu Grid */}
-          <div className="grid md:grid-cols-2 gap-x-16 gap-y-12">
-            {filteredDishes.map((dish) => (
-              <div
-                key={dish.id}
-                onClick={() => setPreviewDish(dish)}
-                className="group relative border-b border-white/[0.08] pb-8 cursor-pointer text-left transition-all duration-300"
-              >
-                <div className="flex items-baseline justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <span className="font-serif text-xl sm:text-2xl text-white font-light group-hover:text-[#C5A880] transition-colors">
-                      {dish.name}
+          {/* Folio Controls & Ribbon Tabs Bar */}
+          <div className="mb-8 space-y-4">
+            {/* Chapter Ribbon Bookmark Tabs */}
+            <div className="flex items-center justify-center gap-1.5 sm:gap-3 overflow-x-auto pb-2 scrollbar-none">
+              {BOOK_CHAPTER_TABS.map((tab) => {
+                const isActive = currentSpread === tab.spread && menuViewMode === 'book';
+                return (
+                  <button
+                    key={tab.spread}
+                    type="button"
+                    onClick={() => {
+                      setMenuViewMode('book');
+                      turnToSpread(tab.spread);
+                    }}
+                    className={`relative px-3.5 sm:px-5 py-2.5 rounded-t-xl text-xs font-sans tracking-wider uppercase transition-all duration-300 shrink-0 border-t border-x ${
+                      isActive
+                        ? 'bg-[#102417] text-[#C5A880] border-[#C5A880]/50 shadow-[0_-4px_16px_rgba(197,168,128,0.15)] -translate-y-1'
+                        : 'bg-white/[0.02] text-neutral-400 border-white/10 hover:text-white hover:bg-white/[0.05]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-1.5 font-medium">
+                      <Bookmark size={11} className={isActive ? 'text-[#C5A880] fill-[#C5A880]' : 'text-neutral-500'} />
+                      <span>{tab.label}</span>
+                    </div>
+                    <span className="text-[10px] block font-mono text-neutral-400 font-normal lowercase">
+                      {tab.pages}
                     </span>
-                    {dish.isJain && (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-sans text-[#22AA00] tracking-wider uppercase">
-                        <span className="w-1.5 h-1.5 rounded-full bg-[#22AA00]" />
-                        Jain
-                      </span>
+                    {isActive && (
+                      <span className="absolute -bottom-1 left-0 right-0 h-1 bg-[#102417]" />
                     )}
-                  </div>
-                  <span className="font-mono text-base text-[#C5A880] font-light shrink-0">
-                    ₹{dish.price}
-                  </span>
-                </div>
+                  </button>
+                );
+              })}
+            </div>
 
-                <p className="text-neutral-400 text-xs sm:text-sm font-light leading-relaxed pt-2">
-                  {dish.description}
-                </p>
-
-                <div className="flex items-center justify-between pt-3 text-[11px] font-sans text-neutral-500">
-                  <span>{dish.origin}</span>
-                  <span className="text-[#C5A880] group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
-                    <span>View Chronicle</span>
-                    <ArrowUpRight size={12} />
-                  </span>
-                </div>
+            {/* Utility Toolbar: Search, Audio Toggle, View Mode */}
+            <div className="flex flex-wrap items-center justify-between gap-4 max-w-5xl mx-auto px-2">
+              {/* Search Bar */}
+              <div className="relative flex-1 min-w-[260px] max-w-md">
+                <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400" />
+                <input
+                  type="text"
+                  value={menuSearchQuery}
+                  onChange={(e) => setMenuSearchQuery(e.target.value)}
+                  placeholder="Search dish (e.g. Malai Paneer, Dosa, Biryani)..."
+                  className="w-full pl-10 pr-9 py-2.5 rounded-full bg-white/[0.04] border border-white/15 text-white placeholder-neutral-500 text-xs font-sans tracking-wide focus:outline-none focus:border-[#C5A880] transition-colors"
+                />
+                {menuSearchQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setMenuSearchQuery('')}
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs text-neutral-400 hover:text-white"
+                  >
+                    ✕
+                  </button>
+                )}
               </div>
-            ))}
 
-            {filteredDishes.length === 0 && (
-              <div className="col-span-2 py-14 text-center text-neutral-400 space-y-3">
-                <p className="font-serif text-2xl text-white font-light">No dishes found matching "{menuSearchQuery}"</p>
-                <p className="text-xs text-neutral-400">Try searching for Paneer, Dosa, Biryani, Pasta, Sizzler, or browse by category.</p>
+              {/* View Switcher & Audio */}
+              <div className="flex items-center gap-2">
                 <button
                   type="button"
-                  onClick={() => {
-                    setMenuSearchQuery('');
-                    setActiveCategory('All Items');
-                  }}
-                  className="px-5 py-2 rounded-full border border-[#C5A880] text-xs font-sans uppercase tracking-widest text-white hover:bg-white/10"
+                  onClick={() => setIsAudioMuted(!isAudioMuted)}
+                  title={isAudioMuted ? 'Turn Sound On' : 'Mute Page Sound'}
+                  className="p-2.5 rounded-full border border-white/10 bg-white/[0.03] text-neutral-400 hover:text-white hover:border-white/30 transition-all text-xs"
                 >
-                  Reset Menu
+                  {isAudioMuted ? <VolumeX size={15} /> : <Volume2 size={15} className="text-[#C5A880]" />}
                 </button>
+
+                <div className="inline-flex rounded-full p-1 bg-white/[0.04] border border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => setMenuViewMode('book')}
+                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-sans tracking-wider uppercase transition-all ${
+                      menuViewMode === 'book'
+                        ? 'bg-[#183620] text-[#FBF9F5] border border-[#C5A880]/50 shadow-md'
+                        : 'text-neutral-400 hover:text-white'
+                    }`}
+                  >
+                    <BookOpen size={12} className={menuViewMode === 'book' ? 'text-[#C5A880]' : ''} />
+                    <span>Folio Book</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMenuViewMode('grid')}
+                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-sans tracking-wider uppercase transition-all ${
+                      menuViewMode === 'grid'
+                        ? 'bg-[#183620] text-[#FBF9F5] border border-[#C5A880]/50 shadow-md'
+                        : 'text-neutral-400 hover:text-white'
+                    }`}
+                  >
+                    <Grid size={12} className={menuViewMode === 'grid' ? 'text-[#C5A880]' : ''} />
+                    <span>Catalog</span>
+                  </button>
+                </div>
               </div>
-            )}
+            </div>
           </div>
 
+          {/* ═══════════════════════════════════════════════════════════════
+              BOOK VIEW: 3D REALISTIC INTERACTIVE PHYSICAL MENU FOLIO
+             ═══════════════════════════════════════════════════════════════ */}
+          {menuViewMode === 'book' && (
+            <div className="relative max-w-6xl mx-auto">
+              {/* Outer Leatherette Hardcover Binder */}
+              <div className="relative rounded-3xl p-3 sm:p-6 md:p-8 bg-gradient-to-br from-[#08150D] via-[#0B1E13] to-[#06110A] border-2 border-[#C5A880]/40 shadow-[0_30px_90px_rgba(0,0,0,0.85),0_0_50px_rgba(20,50,30,0.25)]">
+                {/* Brass Corner Brackets */}
+                <div className="absolute top-2 left-2 w-6 h-6 border-t-2 border-l-2 border-[#C5A880] rounded-tl-sm pointer-events-none" />
+                <div className="absolute top-2 right-2 w-6 h-6 border-t-2 border-r-2 border-[#C5A880] rounded-tr-sm pointer-events-none" />
+                <div className="absolute bottom-2 left-2 w-6 h-6 border-b-2 border-l-2 border-[#C5A880] rounded-bl-sm pointer-events-none" />
+                <div className="absolute bottom-2 right-2 w-6 h-6 border-b-2 border-r-2 border-[#C5A880] rounded-br-sm pointer-events-none" />
+
+                {/* Golden Silk Bookmark Ribbon hanging from top center spine */}
+                <div className="hidden md:block absolute -top-1 left-1/2 -translate-x-1/2 w-5 h-16 bg-gradient-to-b from-[#C5A880] via-[#D8C4A0] to-[#8E7044] rounded-b-md shadow-lg z-30 pointer-events-none">
+                  <div className="w-full h-full flex items-end justify-center pb-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#08150D]" />
+                  </div>
+                </div>
+
+                {/* Left & Right Page Turning Side Buttons */}
+                {currentSpread > 0 && (
+                  <button
+                    type="button"
+                    onClick={handlePrevSpread}
+                    aria-label="Previous Page"
+                    className="absolute -left-3 sm:-left-6 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#0E2016] border border-[#C5A880]/60 text-[#C5A880] hover:text-white hover:bg-[#183620] hover:scale-110 flex items-center justify-center shadow-2xl transition-all"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                )}
+                {currentSpread < 4 && (
+                  <button
+                    type="button"
+                    onClick={handleNextSpread}
+                    aria-label="Next Page"
+                    className="absolute -right-3 sm:-right-6 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#0E2016] border border-[#C5A880]/60 text-[#C5A880] hover:text-white hover:bg-[#183620] hover:scale-110 flex items-center justify-center shadow-2xl transition-all"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                )}
+
+                {/* Animated Spread Content */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentSpread}
+                    initial={{
+                      opacity: 0,
+                      rotateY: flipDirection === 'next' ? 6 : -6,
+                      scale: 0.985,
+                    }}
+                    animate={{
+                      opacity: 1,
+                      rotateY: 0,
+                      scale: 1,
+                    }}
+                    exit={{
+                      opacity: 0,
+                      rotateY: flipDirection === 'next' ? -6 : 6,
+                      scale: 0.985,
+                    }}
+                    transition={{ duration: 0.35, ease: 'easeInOut' }}
+                    style={{ perspective: 1400 }}
+                    className="relative grid md:grid-cols-2 gap-0 min-h-[660px] rounded-2xl overflow-hidden bg-[#0A1710] border border-[#C5A880]/20 shadow-inner"
+                  >
+                    {/* 3D Spine Fold / Crease Shadow (Center Seam) */}
+                    <div className="hidden md:block absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-10 bg-gradient-to-r from-black/55 via-black/15 to-black/55 z-20 pointer-events-none" />
+
+                    {/* ────────────────────────────────────────────────────────
+                        SPREAD 0: COVER & PROLOGUE
+                       ──────────────────────────────────────────────────────── */}
+                    {currentSpread === 0 && (
+                      <>
+                        {/* Left Page: Welcome & Philosophy */}
+                        <div className="p-6 sm:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#C5A880]/20 relative bg-gradient-to-br from-[#0B1A12] to-[#08140D] text-left">
+                          {/* Inner Filigree Border */}
+                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
+
+                          <div className="relative z-10 space-y-6 pt-3">
+                            <div className="flex items-center gap-3">
+                              <img src="/rr-monogram.jpg" alt="RR Crest" className="w-10 h-10 object-contain rounded-full border border-[#C5A880]/40" />
+                              <div>
+                                <span className="font-serif text-[#C5A880] text-sm tracking-wider block">
+                                  Rasoraa Pure Veg
+                                </span>
+                                <span className="text-[10px] text-neutral-400 font-mono tracking-widest uppercase">
+                                  Heritage Town · Pondicherry
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="space-y-2">
+                              <span className="text-[#C5A880] text-[10px] font-sans tracking-[0.24em] uppercase block">
+                                Imperial Decree
+                              </span>
+                              <h3 className="font-serif text-2xl sm:text-3xl text-white font-light leading-snug">
+                                The Sanctuary of Living Fire & Vegetarian Alchemy
+                              </h3>
+                            </div>
+
+                            <p className="text-neutral-300 text-xs sm:text-sm font-light leading-relaxed">
+                              Welcome to Rasoraa. Rooted in the rich cultural tapestry of French and Tamil Pondicherry, our kitchens celebrate pure vegetarian gastronomy with charcoal clay pits at 400°C, slow-simmered Awadhi dum handis, and crisp stone-ground dosas.
+                            </p>
+
+                            <div className="space-y-3 pt-2">
+                              <div className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/10">
+                                <span className="w-2 h-2 rounded-full bg-[#22AA00] mt-1 shrink-0 shadow-[0_0_8px_#22AA00]" />
+                                <div>
+                                  <h4 className="text-xs text-white font-medium">100% Shuddh Shakahari & Strict Jain Hearth</h4>
+                                  <p className="text-[11px] text-neutral-400 font-light">
+                                    Every preparation follows sacred satvik purity. Dedicated Jain cooking vessels and zero onion/garlic options available on decree.
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/10">
+                                <span className="w-2 h-2 rounded-full bg-[#C5A880] mt-1 shrink-0 shadow-[0_0_8px_#C5A880]" />
+                                <div>
+                                  <h4 className="text-xs text-white font-medium">Freshness Decree — Made to Order</h4>
+                                  <p className="text-[11px] text-neutral-400 font-light">
+                                    No precooked gravies. We request 20–25 minutes for preparation so whole spices and pure cultured ghee reveal their true aromatics.
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="relative z-10 pt-6 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-400">
+                            <span>Heritage Town Pondicherry — 605 001</span>
+                            <span className="text-[#C5A880] font-mono">Prologue</span>
+                          </div>
+                        </div>
+
+                        {/* Right Page: Royal Table of Chapters */}
+                        <div className="p-6 sm:p-10 flex flex-col justify-between relative bg-gradient-to-bl from-[#0C1E14] to-[#091710] text-left">
+                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
+
+                          <div className="relative z-10 space-y-6 pt-3">
+                            <div className="text-center pb-2">
+                              <img src="/logo.png" alt="Rasoraa Logo" className="h-16 mx-auto object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]" />
+                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light pt-2">
+                                The Imperial Carte
+                              </h3>
+                              <p className="text-[10px] text-[#C5A880] font-mono uppercase tracking-[0.2em]">
+                                Table of Chapters
+                              </p>
+                            </div>
+
+                            {/* Clickable Chapter Index */}
+                            <div className="space-y-2">
+                              {[
+                                { ch: 'Chapter I', title: 'Tandoori Hearth & Clay Pit Kebabs', page: 2, spread: 1 },
+                                { ch: 'Chapter II', title: 'Indo-Chinese Wok & Sizzler Iron', page: 3, spread: 1 },
+                                { ch: 'Chapter III', title: 'Royal Awadhi Handis & Curries', page: 4, spread: 2 },
+                                { ch: 'Chapter IV', title: 'South Indian Specialities & Dosas', page: 5, spread: 2 },
+                                { ch: 'Chapter V', title: 'Dum Biryani & Artisanal Tandoor Breads', page: 6, spread: 3 },
+                                { ch: 'Chapter VI', title: 'Stone Hearth Pizzas & Pastas', page: 7, spread: 3 },
+                                { ch: 'Chapter VII', title: 'Artisanal Mocktails & Shakes', page: 8, spread: 4 },
+                                { ch: 'Chapter VIII', title: 'Royal Desserts & Founder Epilogue', page: 9, spread: 4 },
+                              ].map((item) => (
+                                <button
+                                  key={item.ch}
+                                  type="button"
+                                  onClick={() => turnToSpread(item.spread)}
+                                  className="w-full flex items-center justify-between py-1.5 px-3 rounded-lg hover:bg-white/[0.05] transition-colors group text-left"
+                                >
+                                  <div className="flex items-center gap-2.5">
+                                    <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-wider group-hover:translate-x-0.5 transition-transform">
+                                      ✦ {item.ch}
+                                    </span>
+                                    <span className="text-xs text-neutral-300 font-light group-hover:text-white transition-colors">
+                                      {item.title}
+                                    </span>
+                                  </div>
+                                  <span className="text-[10px] text-[#C5A880] font-mono shrink-0">
+                                    p. {item.page}
+                                  </span>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="relative z-10 pt-4 flex items-center justify-between">
+                            <span className="text-[11px] text-neutral-500 font-mono">Page 1</span>
+                            <button
+                              type="button"
+                              onClick={() => turnToSpread(1)}
+                              className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#183620] hover:bg-[#204a2c] text-[#FBF9F5] border border-[#C5A880] text-xs font-sans uppercase tracking-widest transition-all shadow-lg group"
+                            >
+                              <span>Open Menu — Turn Page</span>
+                              <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform text-[#C5A880]" />
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* ────────────────────────────────────────────────────────
+                        SPREAD 1: CHAPTER I (TANDOOR) & CHAPTER II (CHINESE)
+                       ──────────────────────────────────────────────────────── */}
+                    {currentSpread === 1 && (
+                      <>
+                        {/* Left Page (Page 2): Tandoori Starters */}
+                        <div className="p-6 sm:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#C5A880]/20 relative bg-gradient-to-br from-[#0B1A12] to-[#08140D] text-left">
+                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
+
+                          <div className="relative z-10 space-y-4">
+                            <div className="border-b border-[#C5A880]/30 pb-3">
+                              <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
+                                Chapter I
+                              </span>
+                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
+                                Tandoori Hearth & Kebabs
+                              </h3>
+                              <p className="text-[11px] text-neutral-400 font-light pt-0.5">
+                                Roasted at 400°C over aromatic fruitwood coals with saffron cream
+                              </p>
+                            </div>
+
+                            <div className="space-y-3.5">
+                              {tandooriDishes.slice(0, 6).map((dish) => (
+                                <div
+                                  key={dish.id}
+                                  onClick={() => setPreviewDish(dish)}
+                                  className="group cursor-pointer p-2 rounded-lg hover:bg-white/[0.04] transition-all border-l-2 border-transparent hover:border-[#C5A880]"
+                                >
+                                  <div className="flex items-baseline justify-between gap-3">
+                                    <div className="flex items-center gap-2">
+                                      <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
+                                        {dish.name}
+                                      </h4>
+                                      {dish.isJain && (
+                                        <span className="text-[9px] font-mono text-[#22AA00] uppercase tracking-wider">
+                                          🌱 Jain
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
+                                      ₹{dish.price}
+                                    </span>
+                                  </div>
+                                  <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5 line-clamp-2">
+                                    {dish.description}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="relative z-10 pt-3 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
+                            <button
+                              type="button"
+                              onClick={() => turnToSpread(0)}
+                              className="text-neutral-400 hover:text-[#C5A880] transition-colors flex items-center gap-1"
+                            >
+                              <ChevronLeft size={12} />
+                              <span>Cover</span>
+                            </button>
+                            <span>Page 2</span>
+                          </div>
+                        </div>
+
+                        {/* Right Page (Page 3): Chinese Starters & Sizzlers */}
+                        <div className="p-6 sm:p-8 flex flex-col justify-between relative bg-gradient-to-bl from-[#0C1E14] to-[#091710] text-left">
+                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
+
+                          <div className="relative z-10 space-y-4">
+                            <div className="border-b border-[#C5A880]/30 pb-3">
+                              <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
+                                Chapter II
+                              </span>
+                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
+                                Indo-Chinese & Sizzlers
+                              </h3>
+                              <p className="text-[11px] text-neutral-400 font-light pt-0.5">
+                                High wok-hei tossed botanicals & smoking cast-iron platters
+                              </p>
+                            </div>
+
+                            <div className="space-y-3.5">
+                              {chineseDishes.slice(0, 6).map((dish) => (
+                                <div
+                                  key={dish.id}
+                                  onClick={() => setPreviewDish(dish)}
+                                  className="group cursor-pointer p-2 rounded-lg hover:bg-white/[0.04] transition-all border-l-2 border-transparent hover:border-[#C5A880]"
+                                >
+                                  <div className="flex items-baseline justify-between gap-3">
+                                    <div className="flex items-center gap-2">
+                                      <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
+                                        {dish.name}
+                                      </h4>
+                                      {dish.isJain && (
+                                        <span className="text-[9px] font-mono text-[#22AA00] uppercase tracking-wider">
+                                          🌱 Jain
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
+                                      ₹{dish.price}
+                                    </span>
+                                  </div>
+                                  <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5 line-clamp-2">
+                                    {dish.description}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="relative z-10 pt-3 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
+                            <span>Page 3</span>
+                            <button
+                              type="button"
+                              onClick={() => turnToSpread(2)}
+                              className="text-neutral-400 hover:text-[#C5A880] transition-colors flex items-center gap-1"
+                            >
+                              <span>Next Page</span>
+                              <ChevronRight size={12} />
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* ────────────────────────────────────────────────────────
+                        SPREAD 2: CHAPTER III (CURRIES) & CHAPTER IV (DOSAS)
+                       ──────────────────────────────────────────────────────── */}
+                    {currentSpread === 2 && (
+                      <>
+                        {/* Left Page (Page 4): Indian Curries & Handis */}
+                        <div className="p-6 sm:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#C5A880]/20 relative bg-gradient-to-br from-[#0B1A12] to-[#08140D] text-left">
+                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
+
+                          <div className="relative z-10 space-y-4">
+                            <div className="border-b border-[#C5A880]/30 pb-3">
+                              <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
+                                Chapter III
+                              </span>
+                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
+                                Royal Awadhi & Handi Curries
+                              </h3>
+                              <p className="text-[11px] text-neutral-400 font-light pt-0.5">
+                                Slow-simmered earthenware handis infused with whole spices
+                              </p>
+                            </div>
+
+                            <div className="space-y-3.5">
+                              {curryDishes.slice(0, 6).map((dish) => (
+                                <div
+                                  key={dish.id}
+                                  onClick={() => setPreviewDish(dish)}
+                                  className="group cursor-pointer p-2 rounded-lg hover:bg-white/[0.04] transition-all border-l-2 border-transparent hover:border-[#C5A880]"
+                                >
+                                  <div className="flex items-baseline justify-between gap-3">
+                                    <div className="flex items-center gap-2">
+                                      <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
+                                        {dish.name}
+                                      </h4>
+                                      {dish.isJain && (
+                                        <span className="text-[9px] font-mono text-[#22AA00] uppercase tracking-wider">
+                                          🌱 Jain
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
+                                      ₹{dish.price}
+                                    </span>
+                                  </div>
+                                  <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5 line-clamp-2">
+                                    {dish.description}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="relative z-10 pt-3 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
+                            <button
+                              type="button"
+                              onClick={() => turnToSpread(1)}
+                              className="text-neutral-400 hover:text-[#C5A880] transition-colors flex items-center gap-1"
+                            >
+                              <ChevronLeft size={12} />
+                              <span>Prev Page</span>
+                            </button>
+                            <span>Page 4</span>
+                          </div>
+                        </div>
+
+                        {/* Right Page (Page 5): South Indian Heritage & Dosas */}
+                        <div className="p-6 sm:p-8 flex flex-col justify-between relative bg-gradient-to-bl from-[#0C1E14] to-[#091710] text-left">
+                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
+
+                          <div className="relative z-10 space-y-4">
+                            <div className="border-b border-[#C5A880]/30 pb-3">
+                              <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
+                                Chapter IV
+                              </span>
+                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
+                                South Indian & Dosas
+                              </h3>
+                              <p className="text-[11px] text-neutral-400 font-light pt-0.5">
+                                Fermented stone-ground batter crisped in golden desi ghee
+                              </p>
+                            </div>
+
+                            <div className="space-y-3.5">
+                              {southIndianDishes.slice(0, 6).map((dish) => (
+                                <div
+                                  key={dish.id}
+                                  onClick={() => setPreviewDish(dish)}
+                                  className="group cursor-pointer p-2 rounded-lg hover:bg-white/[0.04] transition-all border-l-2 border-transparent hover:border-[#C5A880]"
+                                >
+                                  <div className="flex items-baseline justify-between gap-3">
+                                    <div className="flex items-center gap-2">
+                                      <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
+                                        {dish.name}
+                                      </h4>
+                                      {dish.isJain && (
+                                        <span className="text-[9px] font-mono text-[#22AA00] uppercase tracking-wider">
+                                          🌱 Jain
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
+                                      ₹{dish.price}
+                                    </span>
+                                  </div>
+                                  <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5 line-clamp-2">
+                                    {dish.description}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="relative z-10 pt-3 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
+                            <span>Page 5</span>
+                            <button
+                              type="button"
+                              onClick={() => turnToSpread(3)}
+                              className="text-neutral-400 hover:text-[#C5A880] transition-colors flex items-center gap-1"
+                            >
+                              <span>Next Page</span>
+                              <ChevronRight size={12} />
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* ────────────────────────────────────────────────────────
+                        SPREAD 3: CHAPTER V (BIRYANI & BREADS) & CHAPTER VI (PIZZA)
+                       ──────────────────────────────────────────────────────── */}
+                    {currentSpread === 3 && (
+                      <>
+                        {/* Left Page (Page 6): Biryani, Rice & Breads */}
+                        <div className="p-6 sm:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#C5A880]/20 relative bg-gradient-to-br from-[#0B1A12] to-[#08140D] text-left">
+                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
+
+                          <div className="relative z-10 space-y-4">
+                            <div className="border-b border-[#C5A880]/30 pb-3">
+                              <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
+                                Chapter V
+                              </span>
+                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
+                                Dum Biryani & Artisanal Breads
+                              </h3>
+                              <p className="text-[11px] text-neutral-400 font-light pt-0.5">
+                                Aged basmati sealed in clay purdah & clay oven flatbreads
+                              </p>
+                            </div>
+
+                            <div className="space-y-3.5">
+                              {riceBreadsDishes.slice(0, 6).map((dish) => (
+                                <div
+                                  key={dish.id}
+                                  onClick={() => setPreviewDish(dish)}
+                                  className="group cursor-pointer p-2 rounded-lg hover:bg-white/[0.04] transition-all border-l-2 border-transparent hover:border-[#C5A880]"
+                                >
+                                  <div className="flex items-baseline justify-between gap-3">
+                                    <div className="flex items-center gap-2">
+                                      <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
+                                        {dish.name}
+                                      </h4>
+                                      {dish.isJain && (
+                                        <span className="text-[9px] font-mono text-[#22AA00] uppercase tracking-wider">
+                                          🌱 Jain
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
+                                      ₹{dish.price}
+                                    </span>
+                                  </div>
+                                  <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5 line-clamp-2">
+                                    {dish.description}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="relative z-10 pt-3 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
+                            <button
+                              type="button"
+                              onClick={() => turnToSpread(2)}
+                              className="text-neutral-400 hover:text-[#C5A880] transition-colors flex items-center gap-1"
+                            >
+                              <ChevronLeft size={12} />
+                              <span>Prev Page</span>
+                            </button>
+                            <span>Page 6</span>
+                          </div>
+                        </div>
+
+                        {/* Right Page (Page 7): Pizzas & Pastas */}
+                        <div className="p-6 sm:p-8 flex flex-col justify-between relative bg-gradient-to-bl from-[#0C1E14] to-[#091710] text-left">
+                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
+
+                          <div className="relative z-10 space-y-4">
+                            <div className="border-b border-[#C5A880]/30 pb-3">
+                              <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
+                                Chapter VI
+                              </span>
+                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
+                                Hearth Pizzas & Pastas
+                              </h3>
+                              <p className="text-[11px] text-neutral-400 font-light pt-0.5">
+                                Hand-stretched sourdough crusts & durum wheat pastas
+                              </p>
+                            </div>
+
+                            <div className="space-y-3.5">
+                              {continentalDishes.slice(0, 6).map((dish) => (
+                                <div
+                                  key={dish.id}
+                                  onClick={() => setPreviewDish(dish)}
+                                  className="group cursor-pointer p-2 rounded-lg hover:bg-white/[0.04] transition-all border-l-2 border-transparent hover:border-[#C5A880]"
+                                >
+                                  <div className="flex items-baseline justify-between gap-3">
+                                    <div className="flex items-center gap-2">
+                                      <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
+                                        {dish.name}
+                                      </h4>
+                                      {dish.isJain && (
+                                        <span className="text-[9px] font-mono text-[#22AA00] uppercase tracking-wider">
+                                          🌱 Jain
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
+                                      ₹{dish.price}
+                                    </span>
+                                  </div>
+                                  <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5 line-clamp-2">
+                                    {dish.description}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="relative z-10 pt-3 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
+                            <span>Page 7</span>
+                            <button
+                              type="button"
+                              onClick={() => turnToSpread(4)}
+                              className="text-neutral-400 hover:text-[#C5A880] transition-colors flex items-center gap-1"
+                            >
+                              <span>Next Page</span>
+                              <ChevronRight size={12} />
+                            </button>
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {/* ────────────────────────────────────────────────────────
+                        SPREAD 4: CHAPTER VII (MOCKTAILS) & CHAPTER VIII (DESSERTS & EPILOGUE)
+                       ──────────────────────────────────────────────────────── */}
+                    {currentSpread === 4 && (
+                      <>
+                        {/* Left Page (Page 8): Mocktails & Shakes */}
+                        <div className="p-6 sm:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#C5A880]/20 relative bg-gradient-to-br from-[#0B1A12] to-[#08140D] text-left">
+                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
+
+                          <div className="relative z-10 space-y-4">
+                            <div className="border-b border-[#C5A880]/30 pb-3">
+                              <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
+                                Chapter VII
+                              </span>
+                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
+                                Artisanal Coolers & Shakes
+                              </h3>
+                              <p className="text-[11px] text-neutral-400 font-light pt-0.5">
+                                Cold-pressed fruit botanicals, garden herbs, and thick shakes
+                              </p>
+                            </div>
+
+                            <div className="space-y-3.5">
+                              {mocktailDishes.slice(0, 6).map((dish) => (
+                                <div
+                                  key={dish.id}
+                                  onClick={() => setPreviewDish(dish)}
+                                  className="group cursor-pointer p-2 rounded-lg hover:bg-white/[0.04] transition-all border-l-2 border-transparent hover:border-[#C5A880]"
+                                >
+                                  <div className="flex items-baseline justify-between gap-3">
+                                    <div className="flex items-center gap-2">
+                                      <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
+                                        {dish.name}
+                                      </h4>
+                                      {dish.isJain && (
+                                        <span className="text-[9px] font-mono text-[#22AA00] uppercase tracking-wider">
+                                          🌱 Jain
+                                        </span>
+                                      )}
+                                    </div>
+                                    <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
+                                      ₹{dish.price}
+                                    </span>
+                                  </div>
+                                  <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5 line-clamp-2">
+                                    {dish.description}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="relative z-10 pt-3 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
+                            <button
+                              type="button"
+                              onClick={() => turnToSpread(3)}
+                              className="text-neutral-400 hover:text-[#C5A880] transition-colors flex items-center gap-1"
+                            >
+                              <ChevronLeft size={12} />
+                              <span>Prev Page</span>
+                            </button>
+                            <span>Page 8</span>
+                          </div>
+                        </div>
+
+                        {/* Right Page (Page 9): Desserts & Founder Epilogue */}
+                        <div className="p-6 sm:p-8 flex flex-col justify-between relative bg-gradient-to-bl from-[#0C1E14] to-[#091710] text-left">
+                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
+
+                          <div className="relative z-10 space-y-4">
+                            <div className="border-b border-[#C5A880]/30 pb-3">
+                              <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
+                                Chapter VIII
+                              </span>
+                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
+                                Desserts & Royal Epilogue
+                              </h3>
+                              <p className="text-[11px] text-neutral-400 font-light pt-0.5">
+                                Sizzling cast-iron skillet sweets and heritage hospitality
+                              </p>
+                            </div>
+
+                            {/* Desserts List */}
+                            <div className="space-y-3">
+                              {dessertDishes.map((dish) => (
+                                <div
+                                  key={dish.id}
+                                  onClick={() => setPreviewDish(dish)}
+                                  className="group cursor-pointer p-2 rounded-lg hover:bg-white/[0.04] transition-all border-l-2 border-transparent hover:border-[#C5A880]"
+                                >
+                                  <div className="flex items-baseline justify-between gap-3">
+                                    <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
+                                      {dish.name}
+                                    </h4>
+                                    <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
+                                      ₹{dish.price}
+                                    </span>
+                                  </div>
+                                  <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5">
+                                    {dish.description}
+                                  </p>
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Royal Epilogue & Address Box */}
+                            <div className="p-4 rounded-xl bg-black/40 border border-[#C5A880]/30 space-y-2 text-center">
+                              <span className="font-serif italic text-sm text-[#C5A880] block">
+                                “Thank You • Visit Again”
+                              </span>
+                              <p className="text-[11px] text-neutral-300 font-light leading-relaxed">
+                                Rasoraa Multicuisine Pure Veg Restaurant<br />
+                                39, Ambalathadayar Madam Street, Heritage Town, Pondicherry — 605 001
+                              </p>
+                              <div className="pt-2 flex items-center justify-center gap-3 text-[11px]">
+                                <a
+                                  href="tel:+919484594845"
+                                  className="text-[#C5A880] hover:underline flex items-center gap-1"
+                                >
+                                  <Phone size={11} />
+                                  <span>+91 94845 94845</span>
+                                </a>
+                                <span className="text-neutral-600">|</span>
+                                <a
+                                  href="https://wa.me/919484594845"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-[#22AA00] hover:underline flex items-center gap-1"
+                                >
+                                  <MessageCircle size={11} />
+                                  <span>WhatsApp Concierge</span>
+                                </a>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="relative z-10 pt-3 border-t border-[#C5A880]/20 flex items-center justify-between">
+                            <span className="text-[11px] text-neutral-500 font-mono">Page 9 / Epilogue</span>
+                            <a
+                              href="#reserve"
+                              className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#183620] hover:bg-[#204a2c] text-[#FBF9F5] border border-[#C5A880] text-xs font-sans uppercase tracking-widest transition-all shadow-lg"
+                            >
+                              <Calendar size={12} className="text-[#C5A880]" />
+                              <span>Reserve Table</span>
+                            </a>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Bottom Folio Navigation & Spread Indicator */}
+                <div className="mt-6 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-neutral-400 px-2">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={currentSpread === 0}
+                      onClick={handlePrevSpread}
+                      className="px-3 py-1.5 rounded-lg border border-white/10 hover:border-[#C5A880] disabled:opacity-30 disabled:hover:border-white/10 transition-colors flex items-center gap-1 text-white"
+                    >
+                      <ChevronLeft size={13} />
+                      <span>Turn Back</span>
+                    </button>
+                    <button
+                      type="button"
+                      disabled={currentSpread === 4}
+                      onClick={handleNextSpread}
+                      className="px-3 py-1.5 rounded-lg border border-white/10 hover:border-[#C5A880] disabled:opacity-30 disabled:hover:border-white/10 transition-colors flex items-center gap-1 text-white"
+                    >
+                      <span>Turn Forward</span>
+                      <ChevronRight size={13} />
+                    </button>
+                  </div>
+
+                  {/* Spread Indicators Dots */}
+                  <div className="flex items-center gap-2">
+                    {[0, 1, 2, 3, 4].map((i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => turnToSpread(i)}
+                        title={`Go to Spread ${i + 1}`}
+                        className={`h-2 rounded-full transition-all ${
+                          currentSpread === i ? 'w-8 bg-[#C5A880]' : 'w-2 bg-white/20 hover:bg-white/40'
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  <span className="text-[11px] text-neutral-400">
+                    Spread {currentSpread + 1} of 5 · Official Rasoraa Folio
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ═══════════════════════════════════════════════════════════════
+              CATALOG VIEW: FULL DISH GRID & CATEGORY SEARCH (ALTERNATIVE)
+             ═══════════════════════════════════════════════════════════════ */}
+          {menuViewMode === 'grid' && (
+            <div className="space-y-10 max-w-6xl mx-auto">
+              {/* Category Filter Pills */}
+              <div className="flex flex-wrap items-center justify-center gap-2">
+                {MENU_CATEGORIES.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={`px-4 py-2 rounded-full text-[11px] font-sans tracking-[0.14em] uppercase transition-all duration-300 border ${
+                      activeCategory === cat || (cat === 'All Items' && activeCategory === 'All')
+                        ? 'bg-[#183620] text-[#FBF9F5] border-[#C5A880] shadow-[0_0_15px_rgba(197,168,128,0.2)]'
+                        : 'bg-white/[0.03] text-neutral-400 border-white/10 hover:border-white/30 hover:text-white'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+
+              {/* Michelin-Style Editorial Menu Grid */}
+              <div className="grid md:grid-cols-2 gap-x-16 gap-y-10 text-left">
+                {filteredDishes.map((dish) => (
+                  <div
+                    key={dish.id}
+                    onClick={() => setPreviewDish(dish)}
+                    className="group relative border-b border-white/[0.08] pb-6 cursor-pointer text-left transition-all duration-300 hover:border-[#C5A880]/50"
+                  >
+                    <div className="flex items-baseline justify-between gap-4">
+                      <div className="flex items-center gap-3">
+                        <span className="font-serif text-xl sm:text-2xl text-white font-light group-hover:text-[#C5A880] transition-colors">
+                          {dish.name}
+                        </span>
+                        {dish.isJain && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-sans text-[#22AA00] tracking-wider uppercase">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#22AA00]" />
+                            Jain
+                          </span>
+                        )}
+                      </div>
+                      <span className="font-mono text-base text-[#C5A880] font-light shrink-0">
+                        ₹{dish.price}
+                      </span>
+                    </div>
+
+                    <p className="text-neutral-400 text-xs sm:text-sm font-light leading-relaxed pt-2">
+                      {dish.description}
+                    </p>
+
+                    <div className="flex items-center justify-between pt-3 text-[11px] font-sans text-neutral-500">
+                      <span>{dish.origin}</span>
+                      <span className="text-[#C5A880] group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">
+                        <span>View Chronicle</span>
+                        <ArrowUpRight size={12} />
+                      </span>
+                    </div>
+                  </div>
+                ))}
+
+                {filteredDishes.length === 0 && (
+                  <div className="col-span-2 py-14 text-center text-neutral-400 space-y-3">
+                    <p className="font-serif text-2xl text-white font-light">No dishes found matching "{menuSearchQuery}"</p>
+                    <p className="text-xs text-neutral-400">Try searching for Paneer, Dosa, Biryani, Pasta, Sizzler, or browse by category.</p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setMenuSearchQuery('');
+                        setActiveCategory('All Items');
+                      }}
+                      className="px-5 py-2 rounded-full border border-[#C5A880] text-xs font-sans uppercase tracking-widest text-white hover:bg-white/10"
+                    >
+                      Reset Menu
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Reserve CTA Footer */}
           <div className="mt-16 text-center">
             <a
               href="#reserve"
