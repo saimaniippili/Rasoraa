@@ -158,31 +158,31 @@ const PRIVATE_EVENTS = [
   },
 ];
 
-/* ─── Sanctuaries of Delhi ─── */
+/* ─── Dining Sanctuaries & Heritage Salons ─── */
 const SANCTUARIES = [
   {
-    id: 'cp',
-    name: 'The Imperial Arcade',
-    location: 'Connaught Place, Inner Circle',
-    hours: '12:00 PM – 11:30 PM',
-    phone: '+91 11 4100 2800',
-    desc: 'High colonnaded heritage arches, white Makrana marble floors, and hand-beaten copper lanterns in the historic center of the capital.',
+    id: 'heritage',
+    name: 'The Heritage Town Flagship',
+    location: '39, Ambalathadayar Madam St, Heritage Town, Pondicherry',
+    hours: '11:30 AM – 11:30 PM Daily',
+    phone: '+91 94845 94845',
+    desc: 'Grand heritage mansion blending French colonial archways with traditional courtyard dining, brass lanterns, and live tandoor and wok stations.',
   },
   {
-    id: 'mehrauli',
-    name: 'The Qutub Haveli',
-    location: 'Kalka Das Marg, Mehrauli',
-    hours: '1:00 PM – 12:00 AM',
-    phone: '+91 11 4100 2801',
-    desc: 'Overlooking ancient 12th-century monuments, featuring an open-air cobblestone courtyard surrounded by fragrant neem trees.',
+    id: 'courtyard',
+    name: 'The Chettinad-Awadh Courtyard',
+    location: 'Heritage Town, Central Atrium, Pondicherry',
+    hours: '12:00 PM – 11:00 PM',
+    phone: '+91 94845 94845',
+    desc: 'Open-air botanical salon under starry coastal skies, shaded by ancient teak pillars with evening sitar and flute acoustics.',
   },
   {
-    id: 'aerocity',
-    name: 'The Aerocity Pavilion',
-    location: 'Worldmark 03, Aerocity',
-    hours: '12:00 PM – 11:30 PM',
-    phone: '+91 11 4100 2802',
-    desc: 'Contemporary architectural sanctuary with acoustic walnut walls, quiet private dining salons, and seamless global accessibility.',
+    id: 'salon',
+    name: 'The Rajan R Private Dining Suite',
+    location: 'Heritage Town, First Floor Salon, Pondicherry',
+    hours: '1:00 PM – 11:30 PM (By Prior Decree)',
+    phone: '+91 99420 23456',
+    desc: 'Bespoke private dining suite curated by Founder & Managing Partner Rajan R for exclusive family celebrations and executive banquets.',
   },
 ];
 
@@ -273,7 +273,7 @@ export const RasoraaExperience: React.FC = () => {
   const today = new Date();
   const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-  const [selectedSanctuary, setSelectedSanctuary] = useState('cp');
+  const [selectedSanctuary, setSelectedSanctuary] = useState('heritage');
   const [guestCount, setGuestCount] = useState(2);
   const [selectedDate, setSelectedDate] = useState<string>(todayISO);
   const [calendarViewDate, setCalendarViewDate] = useState<Date>(() => new Date());
@@ -396,9 +396,9 @@ export const RasoraaExperience: React.FC = () => {
             <span className="text-[#C5A880]">Strict Jain Hearth on Decree</span>
           </div>
           <div className="hidden md:flex items-center space-x-6 text-neutral-400">
-            <span>Connaught Place · Mehrauli · Aerocity</span>
+            <span>39, Ambalathadayar Madam St · Heritage Town, Pondicherry</span>
             <span className="text-neutral-600">|</span>
-            <span className="text-neutral-300 font-mono">28.6139° N, 77.2090° E</span>
+            <span className="text-neutral-300 font-mono">11.9360° N, 79.8336° E</span>
           </div>
         </div>
       </div>
@@ -460,11 +460,11 @@ export const RasoraaExperience: React.FC = () => {
           {/* Right Action Bar */}
           <div className="flex items-center gap-4">
             <a
-              href="tel:+911141002800"
+              href="tel:+919484594845"
               className="hidden xl:flex items-center gap-2 text-xs font-mono text-neutral-300 hover:text-white px-4 py-2 rounded-full border border-white/10 hover:border-[#C5A880]/50 transition-colors bg-white/[0.03] whitespace-nowrap"
             >
               <Phone size={12} className="text-[#C5A880]" />
-              <span>+91 11 4100 2800</span>
+              <span>+91 94845 94845</span>
             </a>
 
             <a
@@ -560,7 +560,7 @@ export const RasoraaExperience: React.FC = () => {
                     <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                       <Instagram size={18} />
                     </a>
-                    <a href="https://wa.me/911141002800" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+                    <a href="https://wa.me/919484594845" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
                       <MessageCircle size={18} className="text-[#25D366]" />
                     </a>
                   </div>
@@ -641,9 +641,9 @@ export const RasoraaExperience: React.FC = () => {
                   </span>
                 </div>
                 <div>
-                  <span className="block font-serif text-2xl text-white font-light">3 Sanctuaries</span>
+                  <span className="block font-serif text-2xl text-white font-light">Heritage Town</span>
                   <span className="text-[11px] font-sans uppercase tracking-[0.2em] text-neutral-400">
-                    Delhi NCR
+                    Pondicherry
                   </span>
                 </div>
               </div>
@@ -752,9 +752,9 @@ export const RasoraaExperience: React.FC = () => {
             <span className="text-[#C5A880]">✦</span>
             <span className="text-white font-light">PAN-ASIAN WOK HEI</span>
             <span className="text-[#C5A880]">✦</span>
-            <span className="text-[#E8E4DA] font-light">CONNAUGHT PLACE &amp; MEHRAULI</span>
+            <span className="text-[#E8E4DA] font-light">HERITAGE TOWN PONDICHERRY</span>
             <span className="text-[#C5A880]">✦</span>
-            <span className="text-white font-light">ROYAL VEGETARIAN GASTRONOMY</span>
+            <span className="text-white font-light">CHEF RAJAN R SIGNATURES</span>
             <span className="text-[#C5A880]">✦</span>
           </div>
 
@@ -769,9 +769,9 @@ export const RasoraaExperience: React.FC = () => {
             <span className="text-[#C5A880]">✦</span>
             <span className="text-white font-light">PAN-ASIAN WOK HEI</span>
             <span className="text-[#C5A880]">✦</span>
-            <span className="text-[#E8E4DA] font-light">CONNAUGHT PLACE &amp; MEHRAULI</span>
+            <span className="text-[#E8E4DA] font-light">HERITAGE TOWN PONDICHERRY</span>
             <span className="text-[#C5A880]">✦</span>
-            <span className="text-white font-light">ROYAL VEGETARIAN GASTRONOMY</span>
+            <span className="text-white font-light">CHEF RAJAN R SIGNATURES</span>
             <span className="text-[#C5A880]">✦</span>
           </div>
         </div>
@@ -1068,7 +1068,7 @@ export const RasoraaExperience: React.FC = () => {
             {/* Left: Sanctuary Details */}
             <div className="lg:col-span-5 space-y-6">
               <h3 className="font-serif text-2xl text-white font-light pb-2 border-b border-white/10">
-                Delhi Sanctuaries
+                Pondicherry Sanctuaries &amp; Salons
               </h3>
 
               <div className="space-y-4">
@@ -1110,7 +1110,7 @@ export const RasoraaExperience: React.FC = () => {
                   </span>
                 </div>
                 <a
-                  href="https://wa.me/911141002800"
+                  href="https://wa.me/919484594845"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-4 py-2 rounded-full bg-[#25D366] hover:bg-[#1EBE5D] text-black font-semibold text-xs tracking-wider uppercase transition-colors shrink-0 inline-flex items-center gap-1.5"
@@ -1441,7 +1441,7 @@ export const RasoraaExperience: React.FC = () => {
                   <Instagram size={15} />
                 </a>
                 <a
-                  href="https://wa.me/911141002800"
+                  href="https://wa.me/919484594845"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full border border-white/10 bg-white/[0.03] flex items-center justify-center text-neutral-300 hover:text-white hover:bg-[#25D366] hover:border-[#25D366] transition-all"
@@ -1452,39 +1452,45 @@ export const RasoraaExperience: React.FC = () => {
               </div>
             </div>
 
-            {/* Sanctuaries */}
+            {/* Sanctuaries & Address */}
             <div className="lg:col-span-4 space-y-3 text-left">
               <h4 className="font-sans text-xs text-white uppercase tracking-[0.22em]">
-                Sanctuaries
+                Flagship Heritage Address
               </h4>
-              <ul className="space-y-2 text-xs font-light text-neutral-400">
-                <li className="hover:text-white transition-colors">
-                  Connaught Place — Inner Circle, Block C
-                </li>
-                <li className="hover:text-white transition-colors">
-                  The Haveli at Mehrauli — Qutub Colonnade
-                </li>
-                <li className="hover:text-white transition-colors">
-                  The Aerocity Imperial Lounge — Worldmark 03
-                </li>
-              </ul>
+              <p className="text-xs font-light text-neutral-300 leading-relaxed">
+                39, Ambalathadayar Madam Street,<br />
+                Heritage Town, Pondicherry — 605 001
+              </p>
+              <div className="pt-2 text-xs font-light text-neutral-400">
+                <span className="text-[#C5A880] block font-serif text-sm">Rajan R</span>
+                <span>Founder &amp; Managing Partner</span>
+              </div>
+              <div className="pt-1 text-xs font-mono text-neutral-400">
+                <a href="mailto:rajan@rasoraa.com" className="hover:text-[#C5A880] transition-colors">
+                  rajan@rasoraa.com
+                </a>
+              </div>
             </div>
 
             {/* Concierge & Hours */}
             <div className="lg:col-span-3 space-y-3 text-left">
               <h4 className="font-sans text-xs text-white uppercase tracking-[0.22em]">
-                Concierge &amp; Hours
+                Concierge &amp; Reservations
               </h4>
               <ul className="space-y-2 text-xs font-light text-neutral-400">
-                <li>Daily: 12:00 PM – 11:30 PM</li>
+                <li>Daily: 11:30 AM – 11:30 PM</li>
                 <li>
-                  <a href="tel:+911141002800" className="text-[#C5A880] hover:underline font-mono">
-                    +91 11 4100 2800
+                  <a href="tel:+919484594845" className="text-[#C5A880] hover:underline font-mono">
+                    +91 94845 94845
+                  </a>
+                  <span className="text-neutral-500 mx-1.5">/</span>
+                  <a href="tel:+919942023456" className="text-[#C5A880] hover:underline font-mono">
+                    99420 23456
                   </a>
                 </li>
                 <li>
                   <a
-                    href="https://wa.me/911141002800"
+                    href="https://wa.me/919484594845"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-[#25D366] hover:underline flex items-center gap-1.5 pt-1"
