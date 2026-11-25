@@ -41,7 +41,7 @@ export const RasoraaPage: React.FC<RasoraaPageProps> = ({
   if (spreadIndex === 0) {
     if (isLeft) {
       return (
-        <div className="h-full p-6 sm:p-10 flex flex-col justify-between relative rasoraa-parchment-page text-left select-none overflow-hidden">
+        <div className="h-full p-4 sm:p-7 md:p-10 flex flex-col justify-between relative rasoraa-parchment-page text-left select-none overflow-hidden">
           {/* Spine shadow overlay */}
           <div className="absolute inset-0 left-page-spine-shadow pointer-events-none" />
 
@@ -122,7 +122,7 @@ export const RasoraaPage: React.FC<RasoraaPageProps> = ({
     } else {
       // Right Page: Official Carte Frontispiece & Table of Chapters
       return (
-        <div className="h-full p-6 sm:p-10 flex flex-col justify-between relative rasoraa-parchment-page text-left select-none overflow-hidden">
+        <div className="h-full p-4 sm:p-7 md:p-10 flex flex-col justify-between relative rasoraa-parchment-page text-left select-none overflow-hidden">
           <div className="absolute inset-0 right-page-spine-shadow pointer-events-none" />
           <div className="absolute inset-3 sm:inset-5 border border-[#C5A880]/40 pointer-events-none rounded-sm" />
           <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-sm" />
@@ -204,7 +204,7 @@ export const RasoraaPage: React.FC<RasoraaPageProps> = ({
     prevSpread?: number,
     nextSpread?: number
   ) => (
-    <div className="h-full p-6 sm:p-8 flex flex-col justify-between relative rasoraa-parchment-page text-left select-none overflow-hidden">
+    <div className="h-full p-4 sm:p-7 md:p-8 flex flex-col justify-between relative rasoraa-parchment-page text-left select-none overflow-hidden">
       {/* Spine shadow overlay depending on left/right */}
       <div className={`absolute inset-0 ${isLeft ? 'left-page-spine-shadow' : 'right-page-spine-shadow'} pointer-events-none`} />
 
@@ -387,7 +387,7 @@ export const RasoraaPage: React.FC<RasoraaPageProps> = ({
     } else {
       // Page 9: Desserts & Epilogue
       return (
-        <div className="h-full p-6 sm:p-8 flex flex-col justify-between relative rasoraa-parchment-page text-left select-none overflow-hidden">
+        <div className="h-full p-4 sm:p-7 md:p-8 flex flex-col justify-between relative rasoraa-parchment-page text-left select-none overflow-hidden">
           <div className="absolute inset-0 right-page-spine-shadow pointer-events-none" />
           <div className="absolute inset-3 sm:inset-5 border border-[#C5A880]/35 pointer-events-none rounded-sm" />
           <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/15 pointer-events-none rounded-sm" />

@@ -20,8 +20,22 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
   const [menuViewMode, setMenuViewMode] = useState<'book' | 'grid'>('book');
   const [isAudioMuted, setIsAudioMuted] = useState(false);
   const [mobilePage, setMobilePage] = useState(0);
+  const [mobileTurnDirection, setMobileTurnDirection] = useState<'next' | 'prev'>('next');
+  const [isMobileTurning, setIsMobileTurning] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCatalogCategory, setActiveCatalogCategory] = useState<string>('All Items');
+
+  const MOBILE_CHAPTER_NAMES = [
+    'Cover · Freshness Decree',
+    'Index · Tandoori Hearth',
+    'Wok & Sizzlers',
+    'Royal Awadhi Handi Curries',
+    'South Indian Specialities',
+    'Dum Biryani & Breads',
+    'Stone Hearth Pizzas & Pastas',
+    'Artisanal Coolers & Shakes',
+    'Desserts & Epilogue',
+  ];
 
   // Pre-filter dishes for book chapters
   const tandooriDishes = OFFICIAL_DISHES.filter((d) => d.category === 'Tandoori Starters');
@@ -42,6 +56,9 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
         (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (!AudioCtx) return;
       const ctx = new AudioCtx();
+      if (ctx.state === 'suspended') {
+        ctx.resume();
+      }
       const now = ctx.currentTime;
 
       // Phase 1: High-frequency paper friction scrape as leaf peels off (0 - 90ms)
@@ -115,6 +132,40 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
     if (currentSpread > 0 && !isTurning) {
       turnToSpread(currentSpread - 1);
     }
+  };
+
+  const handleNextMobilePage = () => {
+    if (mobilePage < 8 && !isMobileTurning) {
+      setMobileTurnDirection('next');
+      setIsMobileTurning(true);
+      const nextP = mobilePage + 1;
+      setMobilePage(nextP);
+      setCurrentSpread(Math.floor(nextP / 2));
+      playRealisticPaperTurnSound();
+      setTimeout(() => setIsMobileTurning(false), 700);
+    }
+  };
+
+  const handlePrevMobilePage = () => {
+    if (mobilePage > 0 && !isMobileTurning) {
+      setMobileTurnDirection('prev');
+      setIsMobileTurning(true);
+      const prevP = mobilePage - 1;
+      setMobilePage(prevP);
+      setCurrentSpread(Math.floor(prevP / 2));
+      playRealisticPaperTurnSound();
+      setTimeout(() => setIsMobileTurning(false), 700);
+    }
+  };
+
+  const handleJumpMobilePage = (p: number) => {
+    if (p === mobilePage || isMobileTurning) return;
+    setMobileTurnDirection(p > mobilePage ? 'next' : 'prev');
+    setIsMobileTurning(true);
+    setMobilePage(p);
+    setCurrentSpread(Math.floor(p / 2));
+    playRealisticPaperTurnSound();
+    setTimeout(() => setIsMobileTurning(false), 700);
   };
 
   // Auto-flip book spread when searching for a dish
@@ -310,7 +361,7 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
                 </div>
 
                 {/* Stationary Right Page (Target Spread Unveiling Underneath) */}
-                <div className="absolute top-0 right-0 w-1/2 h-full z-10">
+                <div className="absolute top-0 right-0 w-1/2 h-full z-10 overflow-hidden">
                   <RasoraaPage
                     side="right"
                     spreadIndex={targetSpread}
@@ -324,13 +375,30 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
                     mocktailDishes={mocktailDishes}
                     dessertDishes={dessertDishes}
                   />
+                  {/* Moving cast shadow on revealed right page as the leaf pulls away */}
+                  <motion.div
+                    initial={{ opacity: 0.65, scaleX: 1 }}
+                    animate={{ opacity: 0, scaleX: 0.15 }}
+                    transition={{ duration: 0.85, ease: 'easeOut' }}
+                    style={{ transformOrigin: 'left center' }}
+                    className="absolute inset-0 page-cast-shadow-right"
+                  />
                 </div>
 
-                {/* The Physical Turning Leaf (Rotates 0deg -> -180deg around Spine) */}
+                {/* The Physical Turning Leaf (Bends, arches, and rotates around Spine) */}
                 <motion.div
-                  initial={{ rotateY: 0 }}
-                  animate={{ rotateY: -180 }}
-                  transition={{ duration: 0.75, ease: [0.32, 0, 0.24, 1] }}
+                  initial={{ rotateY: 0, rotateZ: 0, scaleX: 1, z: 0 }}
+                  animate={{
+                    rotateY: [0, -35, -90, -145, -180],
+                    rotateZ: [0, -3.5, -1, 2.5, 0],
+                    scaleX: [1, 0.94, 0.90, 0.95, 1],
+                    z: [0, 45, 75, 40, 0],
+                  }}
+                  transition={{
+                    duration: 0.85,
+                    ease: [0.25, 0.1, 0.25, 1],
+                    times: [0, 0.22, 0.5, 0.78, 1],
+                  }}
                   onAnimationComplete={() => {
                     setCurrentSpread(targetSpread);
                     setIsTurning(false);
@@ -348,7 +416,7 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
                       backfaceVisibility: 'hidden',
                       WebkitBackfaceVisibility: 'hidden',
                       transform: 'rotateY(0deg)',
-                      boxShadow: '-8px 0 24px rgba(0,0,0,0.45)',
+                      boxShadow: '-10px 4px 28px rgba(0,0,0,0.5)',
                     }}
                   >
                     <RasoraaPage
@@ -364,8 +432,8 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
                       mocktailDishes={mocktailDishes}
                       dessertDishes={dessertDishes}
                     />
-                    {/* Moving Paper Surface Shadow & Highlight Sheen */}
-                    <div className="absolute inset-0 bg-gradient-to-l from-black/25 via-white/[0.08] to-black/15 pointer-events-none" />
+                    {/* Rolling Curvature Sheen Overlay */}
+                    <div className="absolute inset-0 turning-paper-sheen-right" />
                   </div>
 
                   {/* Back Face: Target Left Page (Settles onto Left Stack) */}
@@ -375,7 +443,7 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
                       backfaceVisibility: 'hidden',
                       WebkitBackfaceVisibility: 'hidden',
                       transform: 'rotateY(180deg)',
-                      boxShadow: '8px 0 24px rgba(0,0,0,0.45)',
+                      boxShadow: '10px 4px 28px rgba(0,0,0,0.5)',
                     }}
                   >
                     <RasoraaPage
@@ -391,8 +459,8 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
                       mocktailDishes={mocktailDishes}
                       dessertDishes={dessertDishes}
                     />
-                    {/* Moving Paper Surface Shadow */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/25 via-white/[0.08] to-black/15 pointer-events-none" />
+                    {/* Rolling Curvature Sheen Overlay */}
+                    <div className="absolute inset-0 turning-paper-sheen-left" />
                   </div>
                 </motion.div>
               </div>
@@ -419,7 +487,7 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
                 </div>
 
                 {/* Stationary Left Page (Target Spread Unveiling Underneath) */}
-                <div className="absolute top-0 left-0 w-1/2 h-full border-r border-[#C5A880]/20 z-10">
+                <div className="absolute top-0 left-0 w-1/2 h-full border-r border-[#C5A880]/20 z-10 overflow-hidden">
                   <RasoraaPage
                     side="left"
                     spreadIndex={targetSpread}
@@ -433,13 +501,30 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
                     mocktailDishes={mocktailDishes}
                     dessertDishes={dessertDishes}
                   />
+                  {/* Moving cast shadow on revealed left page */}
+                  <motion.div
+                    initial={{ opacity: 0.65, scaleX: 1 }}
+                    animate={{ opacity: 0, scaleX: 0.15 }}
+                    transition={{ duration: 0.85, ease: 'easeOut' }}
+                    style={{ transformOrigin: 'right center' }}
+                    className="absolute inset-0 page-cast-shadow-left"
+                  />
                 </div>
 
-                {/* The Physical Turning Leaf (Rotates 0deg -> 180deg around Spine) */}
+                {/* The Physical Turning Leaf (Bends, arches, and rotates around Spine) */}
                 <motion.div
-                  initial={{ rotateY: 0 }}
-                  animate={{ rotateY: 180 }}
-                  transition={{ duration: 0.75, ease: [0.32, 0, 0.24, 1] }}
+                  initial={{ rotateY: 0, rotateZ: 0, scaleX: 1, z: 0 }}
+                  animate={{
+                    rotateY: [0, 35, 90, 145, 180],
+                    rotateZ: [0, 3.5, 1, -2.5, 0],
+                    scaleX: [1, 0.94, 0.90, 0.95, 1],
+                    z: [0, 45, 75, 40, 0],
+                  }}
+                  transition={{
+                    duration: 0.85,
+                    ease: [0.25, 0.1, 0.25, 1],
+                    times: [0, 0.22, 0.5, 0.78, 1],
+                  }}
                   onAnimationComplete={() => {
                     setCurrentSpread(targetSpread);
                     setIsTurning(false);
@@ -457,7 +542,7 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
                       backfaceVisibility: 'hidden',
                       WebkitBackfaceVisibility: 'hidden',
                       transform: 'rotateY(0deg)',
-                      boxShadow: '8px 0 24px rgba(0,0,0,0.45)',
+                      boxShadow: '10px 4px 28px rgba(0,0,0,0.5)',
                     }}
                   >
                     <RasoraaPage
@@ -473,7 +558,7 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
                       mocktailDishes={mocktailDishes}
                       dessertDishes={dessertDishes}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-r from-black/25 via-white/[0.08] to-black/15 pointer-events-none" />
+                    <div className="absolute inset-0 turning-paper-sheen-left" />
                   </div>
 
                   {/* Back Face: Target Right Page (Settles onto Right Stack) */}
@@ -483,7 +568,7 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
                       backfaceVisibility: 'hidden',
                       WebkitBackfaceVisibility: 'hidden',
                       transform: 'rotateY(180deg)',
-                      boxShadow: '-8px 0 24px rgba(0,0,0,0.45)',
+                      boxShadow: '-10px 4px 28px rgba(0,0,0,0.5)',
                     }}
                   >
                     <RasoraaPage
@@ -499,7 +584,7 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
                       mocktailDishes={mocktailDishes}
                       dessertDishes={dessertDishes}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-l from-black/25 via-white/[0.08] to-black/15 pointer-events-none" />
+                    <div className="absolute inset-0 turning-paper-sheen-right" />
                   </div>
                 </motion.div>
               </div>
@@ -507,67 +592,168 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
           </div>
 
           {/* ─────────────────────────────────────────────────────────────
-              MOBILE: SINGLE-PAGE TACTILE BOOKLET VIEW
+              MOBILE: HIGH-FIDELITY TACTILE 3D POCKET FOLIO
              ───────────────────────────────────────────────────────────── */}
           <div className="block md:hidden">
-            <div className="flex items-center justify-between mb-3 px-2 text-xs font-mono text-[#FAF7EE]">
+            {/* Top Navigation & Chapter Header */}
+            <div className="flex items-center justify-between mb-3 px-1 text-xs font-mono text-[#FAF7EE]">
               <button
                 type="button"
-                disabled={mobilePage === 0}
-                onClick={() => {
-                  const newP = Math.max(0, mobilePage - 1);
-                  setMobilePage(newP);
-                  setCurrentSpread(Math.floor(newP / 2));
-                  playRealisticPaperTurnSound();
-                }}
-                className="px-3 py-1.5 rounded-lg border border-[#C5A880]/30 hover:border-[#C5A880] disabled:opacity-30 flex items-center gap-1"
+                disabled={mobilePage === 0 || isMobileTurning}
+                onClick={handlePrevMobilePage}
+                className="px-3 py-1.5 rounded-lg border border-[#C5A880]/30 hover:border-[#C5A880] disabled:opacity-25 flex items-center gap-1 bg-[#09251A]/80 text-[#C5A880] transition-all"
               >
-                <ChevronLeft size={12} />
+                <ChevronLeft size={13} />
                 <span>Prev</span>
               </button>
-              <span className="text-[#C5A880] font-medium">Page {mobilePage + 1} of 9</span>
+              
+              <div className="text-center">
+                <span className="text-[#C5A880] font-medium block text-xs">
+                  Page {mobilePage + 1} of 9
+                </span>
+                <span className="text-[10px] text-neutral-400 font-sans tracking-wide block truncate max-w-[170px]">
+                  {MOBILE_CHAPTER_NAMES[mobilePage]}
+                </span>
+              </div>
+
               <button
                 type="button"
-                disabled={mobilePage === 8}
-                onClick={() => {
-                  const newP = Math.min(8, mobilePage + 1);
-                  setMobilePage(newP);
-                  setCurrentSpread(Math.floor(newP / 2));
-                  playRealisticPaperTurnSound();
-                }}
-                className="px-3 py-1.5 rounded-lg border border-[#C5A880]/30 hover:border-[#C5A880] disabled:opacity-30 flex items-center gap-1"
+                disabled={mobilePage === 8 || isMobileTurning}
+                onClick={handleNextMobilePage}
+                className="px-3 py-1.5 rounded-lg border border-[#C5A880]/30 hover:border-[#C5A880] disabled:opacity-25 flex items-center gap-1 bg-[#09251A]/80 text-[#C5A880] transition-all"
               >
                 <span>Next</span>
-                <ChevronRight size={12} />
+                <ChevronRight size={13} />
               </button>
             </div>
 
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={mobilePage}
-                initial={{ opacity: 0, x: 20, rotateY: 8 }}
-                animate={{ opacity: 1, x: 0, rotateY: 0 }}
-                exit={{ opacity: 0, x: -20, rotateY: -8 }}
-                transition={{ duration: 0.3 }}
-                className="rounded-xl overflow-hidden border border-[#C5A880]/35 shadow-2xl"
-              >
-                <RasoraaPage
-                  side={mobilePage % 2 === 0 ? 'left' : 'right'}
-                  spreadIndex={Math.floor(mobilePage / 2)}
-                  isInteractive={true}
-                  onTurnToSpread={turnToSpread}
-                  onSelectDish={onSelectDish}
-                  tandooriDishes={tandooriDishes}
-                  chineseDishes={chineseDishes}
-                  curryDishes={curryDishes}
-                  southIndianDishes={southIndianDishes}
-                  riceBreadsDishes={riceBreadsDishes}
-                  continentalDishes={continentalDishes}
-                  mocktailDishes={mocktailDishes}
-                  dessertDishes={dessertDishes}
+            {/* Mobile Touch Gesture Swipeable 3D Book Stage */}
+            <div className="mobile-folio-stage rounded-2xl overflow-hidden shadow-2xl border border-[#C5A880]/40 relative min-h-[580px] bg-[#FAF7EE]">
+              {/* Left Bound Leather Spine Strip */}
+              <div className="mobile-leather-spine-strip" />
+
+              {/* Swipe Cue Banner */}
+              <div className="absolute top-2 right-3 z-30 pointer-events-none">
+                <span className="text-[9px] font-mono tracking-wider text-[#8C7A62]/80 uppercase bg-[#FAF7EE]/90 px-2 py-0.5 rounded-full border border-[#C5A880]/30">
+                  ↔ Swipe or tap corners
+                </span>
+              </div>
+
+              <AnimatePresence initial={false} custom={mobileTurnDirection} mode="wait">
+                <motion.div
+                  key={mobilePage}
+                  custom={mobileTurnDirection}
+                  variants={{
+                    enter: (dir: 'next' | 'prev') => ({
+                      rotateY: dir === 'next' ? 24 : -85,
+                      x: dir === 'next' ? 15 : -15,
+                      opacity: dir === 'next' ? 0.35 : 0,
+                      scale: 0.96,
+                      transformOrigin: 'left center',
+                    }),
+                    center: {
+                      rotateY: 0,
+                      x: 0,
+                      opacity: 1,
+                      scale: 1,
+                      transformOrigin: 'left center',
+                      transition: {
+                        duration: 0.62,
+                        ease: [0.25, 1, 0.5, 1],
+                      },
+                    },
+                    exit: (dir: 'next' | 'prev') => ({
+                      rotateY: dir === 'next' ? -95 : 24,
+                      x: dir === 'next' ? -15 : 15,
+                      opacity: dir === 'next' ? 0 : 0.35,
+                      scale: 0.94,
+                      transformOrigin: 'left center',
+                      transition: {
+                        duration: 0.62,
+                        ease: [0.32, 0, 0.24, 1],
+                      },
+                    }),
+                  }}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x < -35 || info.velocity.x < -250) {
+                      handleNextMobilePage();
+                    } else if (info.offset.x > 35 || info.velocity.x > 250) {
+                      handlePrevMobilePage();
+                    }
+                  }}
+                  className="w-full h-full min-h-[580px] pl-3.5 relative select-none"
+                  style={{
+                    transformStyle: 'preserve-3d',
+                  }}
+                >
+                  <RasoraaPage
+                    side={mobilePage % 2 === 0 ? 'left' : 'right'}
+                    spreadIndex={Math.floor(mobilePage / 2)}
+                    isInteractive={true}
+                    onTurnToSpread={turnToSpread}
+                    onSelectDish={onSelectDish}
+                    tandooriDishes={tandooriDishes}
+                    chineseDishes={chineseDishes}
+                    curryDishes={curryDishes}
+                    southIndianDishes={southIndianDishes}
+                    riceBreadsDishes={riceBreadsDishes}
+                    continentalDishes={continentalDishes}
+                    mocktailDishes={mocktailDishes}
+                    dessertDishes={dessertDishes}
+                  />
+
+                  {/* Corner Peel Invites on Mobile */}
+                  {mobilePage < 8 && (
+                    <div
+                      onClick={handleNextMobilePage}
+                      className="absolute bottom-0 right-0 w-14 h-14 cursor-pointer z-30"
+                      title="Tap to turn page"
+                    >
+                      <div className="absolute bottom-0 right-0 w-12 h-12 mobile-corner-peel" />
+                      <span className="absolute bottom-1.5 right-1.5 text-[8px] font-mono text-[#6E5D48] tracking-tighter font-semibold">
+                        Turn ➔
+                      </span>
+                    </div>
+                  )}
+
+                  {mobilePage > 0 && (
+                    <div
+                      onClick={handlePrevMobilePage}
+                      className="absolute bottom-0 left-3.5 w-14 h-14 cursor-pointer z-30"
+                      title="Tap to turn back"
+                    >
+                      <div className="absolute bottom-0 left-0 w-10 h-10 dog-ear-curl-left" />
+                      <span className="absolute bottom-1 left-1 text-[8px] font-mono text-[#6E5D48] tracking-tighter font-semibold">
+                        ⬅ Back
+                      </span>
+                    </div>
+                  )}
+                </motion.div>
+              </AnimatePresence>
+            </div>
+
+            {/* Mobile 9-Page Fast Navigator Dots */}
+            <div className="mt-4 flex items-center justify-center gap-1.5">
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8].map((pageIdx) => (
+                <button
+                  key={pageIdx}
+                  type="button"
+                  onClick={() => handleJumpMobilePage(pageIdx)}
+                  title={`Go to ${MOBILE_CHAPTER_NAMES[pageIdx]}`}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    mobilePage === pageIdx
+                      ? 'w-7 bg-[#C5A880] shadow-[0_0_8px_rgba(197,168,128,0.4)]'
+                      : 'w-2 bg-[#C5A880]/30 hover:bg-[#C5A880]/60'
+                  }`}
                 />
-              </motion.div>
-            </AnimatePresence>
+              ))}
+            </div>
           </div>
 
           {/* Bottom Folio Navigation & Spread Indicator */}

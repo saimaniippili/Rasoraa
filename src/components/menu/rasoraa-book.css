@@ -150,7 +150,7 @@
 
 /* 3D Perspective Container */
 .book-stage-perspective {
-  perspective: 2800px;
+  perspective: 2600px;
   transform-style: preserve-3d;
 }
 
@@ -168,3 +168,98 @@
   border-top-right-radius: 4px;
   transition: all 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
+
+/* ════════════════════════════════════════════════════════════════════════════
+   ENHANCED 3D PAPER PHYSICS & SHADOW CURVATURE
+   ════════════════════════════════════════════════════════════════════════════ */
+
+/* Realistic cylindrical light sheen that rolls across the page as it bends */
+.turning-paper-sheen-right {
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.28) 0%,
+    rgba(255, 255, 255, 0.22) 35%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(0, 0, 0, 0.18) 75%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.turning-paper-sheen-left {
+  background: linear-gradient(
+    270deg,
+    rgba(0, 0, 0, 0.28) 0%,
+    rgba(255, 255, 255, 0.22) 35%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(0, 0, 0, 0.18) 75%,
+    rgba(0, 0, 0, 0.35) 100%
+  );
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+/* Cast shadow moving across the stationary page underneath */
+.page-cast-shadow-right {
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.15) 45%,
+    transparent 100%
+  );
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+.page-cast-shadow-left {
+  background: linear-gradient(
+    to left,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.15) 45%,
+    transparent 100%
+  );
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+/* Mobile 3D Folio Stage & Left Leather Spine Binding */
+.mobile-folio-stage {
+  perspective: 1600px;
+  transform-style: preserve-3d;
+  position: relative;
+  touch-action: pan-y;
+}
+
+.mobile-leather-spine-strip {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 14px;
+  background: linear-gradient(to right, #06140E 0%, #09251A 50%, #0D3323 85%, #071911 100%);
+  border-right: 1px solid rgba(197, 168, 128, 0.4);
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.6);
+  z-index: 30;
+  border-radius: 12px 0 0 12px;
+}
+
+/* Gold corner curl button for mobile */
+.mobile-corner-peel {
+  background: linear-gradient(135deg, transparent 48%, #C5A880 49%, #FAF7EE 53%, #ECE4D6 100%);
+  box-shadow: -3px -3px 8px rgba(0, 0, 0, 0.3);
+  border-top-left-radius: 6px;
+  animation: subtle-curl-pulse 3s infinite ease-in-out;
+}
+
+@keyframes subtle-curl-pulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 0px rgba(197, 168, 128, 0));
+  }
+  50% {
+    transform: scale(1.08);
+    filter: drop-shadow(0 0 6px rgba(197, 168, 128, 0.4));
+  }
+}
+
