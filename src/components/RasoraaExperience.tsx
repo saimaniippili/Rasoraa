@@ -785,56 +785,93 @@ export const RasoraaExperience: React.FC = () => {
 
   const [menuSearchQuery, setMenuSearchQuery] = useState('');
 
-  // ─── Interactive Luxury Menu Book State & Controls ───
-  // Spreads: 0: Cover & Index, 1: Starters & Wok, 2: Curries & Dosas, 3: Biryani & Pizzas, 4: Drinks & Desserts
+  // ─── Realistic 3D Paper-Turning Menu Folio State ───
   const [currentSpread, setCurrentSpread] = useState(0);
+  const [isTurning, setIsTurning] = useState(false);
+  const [targetSpread, setTargetSpread] = useState(0);
+  const [turnDirection, setTurnDirection] = useState<'next' | 'prev'>('next');
   const [menuViewMode, setMenuViewMode] = useState<'book' | 'grid'>('book');
   const [isAudioMuted, setIsAudioMuted] = useState(false);
-  const [flipDirection, setFlipDirection] = useState<'next' | 'prev'>('next');
+  const [mobilePage, setMobilePage] = useState(0);
 
-  // Realistic luxury parchment paper turn sound via Web Audio API (zero external assets needed)
-  const playPageTurnSound = () => {
+  // Realistic 3-Phase Paper Physics Audio (Friction scrape -> Air swoosh -> Soft landing)
+  const playRealisticPaperTurnSound = () => {
     if (isAudioMuted || typeof window === 'undefined') return;
     try {
       const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
       if (!AudioCtx) return;
       const ctx = new AudioCtx();
-      const bufferSize = ctx.sampleRate * 0.14;
-      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        const decay = Math.exp(-i / (bufferSize * 0.28));
-        data[i] = (Math.random() * 2 - 1) * decay * 0.08;
+      const now = ctx.currentTime;
+
+      // Phase 1: High-frequency paper friction scrape as leaf peels off (0 - 90ms)
+      const liftBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.1, ctx.sampleRate);
+      const liftData = liftBuffer.getChannelData(0);
+      for (let i = 0; i < liftData.length; i++) {
+        const decay = Math.exp(-i / (liftData.length * 0.3));
+        liftData[i] = (Math.random() * 2 - 1) * decay * 0.09;
       }
-      const noise = ctx.createBufferSource();
-      noise.buffer = buffer;
-      const bandpass = ctx.createBiquadFilter();
-      bandpass.type = 'bandpass';
-      bandpass.frequency.value = 1350;
-      bandpass.Q.value = 0.85;
-      noise.connect(bandpass);
-      bandpass.connect(ctx.destination);
-      noise.start();
+      const liftNoise = ctx.createBufferSource();
+      liftNoise.buffer = liftBuffer;
+      const liftFilter = ctx.createBiquadFilter();
+      liftFilter.type = 'highpass';
+      liftFilter.frequency.setValueAtTime(2600, now);
+      liftNoise.connect(liftFilter);
+      liftFilter.connect(ctx.destination);
+      liftNoise.start(now);
+
+      // Phase 2: Atmospheric swoosh as page arcs through 3D air (60ms - 280ms)
+      const swooshBuffer = ctx.createBuffer(1, ctx.sampleRate * 0.25, ctx.sampleRate);
+      const swooshData = swooshBuffer.getChannelData(0);
+      for (let i = 0; i < swooshData.length; i++) {
+        const envelope = Math.sin((i / swooshData.length) * Math.PI);
+        swooshData[i] = (Math.random() * 2 - 1) * envelope * 0.11;
+      }
+      const swooshNoise = ctx.createBufferSource();
+      swooshNoise.buffer = swooshBuffer;
+      const swooshFilter = ctx.createBiquadFilter();
+      swooshFilter.type = 'bandpass';
+      swooshFilter.frequency.setValueAtTime(1200, now + 0.05);
+      swooshFilter.frequency.exponentialRampToValueAtTime(700, now + 0.26);
+      swooshFilter.Q.value = 1.2;
+      swooshNoise.connect(swooshFilter);
+      swooshFilter.connect(ctx.destination);
+      swooshNoise.start(now + 0.05);
+
+      // Phase 3: Soft low-frequency pat as paper settles on opposite page (240ms - 340ms)
+      const landingOsc = ctx.createOscillator();
+      const landingGain = ctx.createGain();
+      landingOsc.type = 'sine';
+      landingOsc.frequency.setValueAtTime(140, now + 0.24);
+      landingOsc.frequency.exponentialRampToValueAtTime(50, now + 0.34);
+      landingGain.gain.setValueAtTime(0.035, now + 0.24);
+      landingGain.gain.exponentialRampToValueAtTime(0.001, now + 0.34);
+      landingOsc.connect(landingGain);
+      landingGain.connect(ctx.destination);
+      landingOsc.start(now + 0.24);
+      landingOsc.stop(now + 0.35);
     } catch {
-      // Audio policy safe fallback
+      // Audio safety
     }
   };
 
   const turnToSpread = (newSpread: number) => {
-    if (newSpread < 0 || newSpread > 4 || newSpread === currentSpread) return;
-    setFlipDirection(newSpread > currentSpread ? 'next' : 'prev');
-    setCurrentSpread(newSpread);
-    playPageTurnSound();
+    if (newSpread < 0 || newSpread > 4 || newSpread === currentSpread || isTurning) return;
+    const dir = newSpread > currentSpread ? 'next' : 'prev';
+    setTurnDirection(dir);
+    setTargetSpread(newSpread);
+    setIsTurning(true);
+    setMobilePage(newSpread * 2);
+    playRealisticPaperTurnSound();
   };
 
   const handleNextSpread = () => {
-    if (currentSpread < 4) {
+    if (currentSpread < 4 && !isTurning) {
       turnToSpread(currentSpread + 1);
     }
   };
 
   const handlePrevSpread = () => {
-    if (currentSpread > 0) {
+    if (currentSpread > 0 && !isTurning) {
       turnToSpread(currentSpread - 1);
     }
   };
@@ -926,6 +963,312 @@ export const RasoraaExperience: React.FC = () => {
       d.origin.toLowerCase().includes(menuSearchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+
+  // ─── Render Full Page Content for Physical Folio Book ───
+  const renderPageContent = (side: 'left' | 'right', spreadIdx: number, isInteractive: boolean = true) => {
+    // SPREAD 0: COVER & PROLOGUE
+    if (spreadIdx === 0) {
+      if (side === 'left') {
+        return (
+          <div className="h-full p-6 sm:p-10 flex flex-col justify-between relative bg-gradient-to-br from-[#0B1A12] to-[#08140D] text-left">
+            <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
+            <div className="relative z-10 space-y-5 pt-2">
+              <div className="flex items-center gap-3">
+                <img src="/rr-monogram.jpg" alt="RR Crest" className="w-10 h-10 object-contain rounded-full border border-[#C5A880]/40" />
+                <div>
+                  <span className="font-serif text-[#C5A880] text-sm tracking-wider block">
+                    Rasoraa Pure Veg
+                  </span>
+                  <span className="text-[10px] text-neutral-400 font-mono tracking-widest uppercase">
+                    Heritage Town · Pondicherry
+                  </span>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <span className="text-[#C5A880] text-[10px] font-sans tracking-[0.24em] uppercase block">
+                  Imperial Decree
+                </span>
+                <h3 className="font-serif text-2xl sm:text-3xl text-white font-light leading-snug">
+                  The Sanctuary of Living Fire & Vegetarian Alchemy
+                </h3>
+              </div>
+              <p className="text-neutral-300 text-xs sm:text-sm font-light leading-relaxed">
+                Welcome to Rasoraa. Rooted in the rich cultural tapestry of French and Tamil Pondicherry, our kitchens celebrate pure vegetarian gastronomy with charcoal clay pits at 400°C, slow-simmered Awadhi dum handis, and crisp stone-ground dosas.
+              </p>
+              <div className="space-y-3 pt-1">
+                <div className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/10">
+                  <span className="w-2 h-2 rounded-full bg-[#22AA00] mt-1 shrink-0 shadow-[0_0_8px_#22AA00]" />
+                  <div>
+                    <h4 className="text-xs text-white font-medium">100% Shuddh Shakahari & Strict Jain Hearth</h4>
+                    <p className="text-[11px] text-neutral-400 font-light">
+                      Dedicated Jain cooking vessels and zero onion/garlic options available on decree.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/10">
+                  <span className="w-2 h-2 rounded-full bg-[#C5A880] mt-1 shrink-0 shadow-[0_0_8px_#C5A880]" />
+                  <div>
+                    <h4 className="text-xs text-white font-medium">Freshness Decree — Made to Order</h4>
+                    <p className="text-[11px] text-neutral-400 font-light">
+                      No precooked gravies. We request 20–25 minutes for preparation so whole spices and pure cultured ghee reveal their true aromatics.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="relative z-10 pt-4 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-400">
+              <span>Heritage Town Pondicherry — 605 001</span>
+              <span className="text-[#C5A880] font-mono">Prologue</span>
+            </div>
+          </div>
+        );
+      } else {
+        return (
+          <div className="h-full p-6 sm:p-10 flex flex-col justify-between relative bg-gradient-to-bl from-[#0C1E14] to-[#091710] text-left">
+            <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
+            <div className="relative z-10 space-y-5 pt-2">
+              <div className="text-center pb-1">
+                <img src="/logo.png" alt="Rasoraa Logo" className="h-16 mx-auto object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]" />
+                <h3 className="font-serif text-xl sm:text-2xl text-white font-light pt-2">
+                  The Imperial Carte
+                </h3>
+                <p className="text-[10px] text-[#C5A880] font-mono uppercase tracking-[0.2em]">
+                  Table of Chapters
+                </p>
+              </div>
+              <div className="space-y-1.5">
+                {[
+                  { ch: 'Chapter I', title: 'Tandoori Hearth & Clay Pit Kebabs', page: 2, spread: 1 },
+                  { ch: 'Chapter II', title: 'Indo-Chinese Wok & Sizzler Iron', page: 3, spread: 1 },
+                  { ch: 'Chapter III', title: 'Royal Awadhi Handis & Curries', page: 4, spread: 2 },
+                  { ch: 'Chapter IV', title: 'South Indian Specialities & Dosas', page: 5, spread: 2 },
+                  { ch: 'Chapter V', title: 'Dum Biryani & Artisanal Tandoor Breads', page: 6, spread: 3 },
+                  { ch: 'Chapter VI', title: 'Stone Hearth Pizzas & Pastas', page: 7, spread: 3 },
+                  { ch: 'Chapter VII', title: 'Artisanal Mocktails & Shakes', page: 8, spread: 4 },
+                  { ch: 'Chapter VIII', title: 'Royal Desserts & Founder Epilogue', page: 9, spread: 4 },
+                ].map((item) => (
+                  <button
+                    key={item.ch}
+                    type="button"
+                    onClick={() => isInteractive && turnToSpread(item.spread)}
+                    className="w-full flex items-center justify-between py-1.5 px-3 rounded-lg hover:bg-white/[0.05] transition-colors group text-left"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-wider group-hover:translate-x-0.5 transition-transform">
+                        ✦ {item.ch}
+                      </span>
+                      <span className="text-xs text-neutral-300 font-light group-hover:text-white transition-colors">
+                        {item.title}
+                      </span>
+                    </div>
+                    <span className="text-[10px] text-[#C5A880] font-mono shrink-0">
+                      p. {item.page}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="relative z-10 pt-3 flex items-center justify-between">
+              <span className="text-[11px] text-neutral-500 font-mono">Page 1</span>
+              <button
+                type="button"
+                onClick={() => isInteractive && turnToSpread(1)}
+                className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#183620] hover:bg-[#204a2c] text-[#FBF9F5] border border-[#C5A880] text-xs font-sans uppercase tracking-widest transition-all shadow-lg group"
+              >
+                <span>Open Menu</span>
+                <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform text-[#C5A880]" />
+              </button>
+            </div>
+          </div>
+        );
+      }
+    }
+
+    // Helper for rendering dishes on a page
+    const renderDishList = (dishes: Dish[], chapter: string, title: string, subtitle: string, pageNum: number, prevLabel?: string, nextLabel?: string, prevSpread?: number, nextSpread?: number) => (
+      <div className="h-full p-6 sm:p-8 flex flex-col justify-between relative bg-gradient-to-br from-[#0B1A12] to-[#08140D] text-left">
+        <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
+        <div className="relative z-10 space-y-3.5">
+          <div className="border-b border-[#C5A880]/30 pb-2.5">
+            <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
+              {chapter}
+            </span>
+            <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
+              {title}
+            </h3>
+            <p className="text-[11px] text-neutral-400 font-light pt-0.5">
+              {subtitle}
+            </p>
+          </div>
+          <div className="space-y-3">
+            {dishes.slice(0, 6).map((dish) => (
+              <div
+                key={dish.id}
+                onClick={() => isInteractive && setPreviewDish(dish)}
+                className={`p-2 rounded-lg border-l-2 border-transparent transition-all ${
+                  isInteractive ? 'group cursor-pointer hover:bg-white/[0.04] hover:border-[#C5A880]' : ''
+                }`}
+              >
+                <div className="flex items-baseline justify-between gap-3">
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
+                      {dish.name}
+                    </h4>
+                    {dish.isJain && (
+                      <span className="text-[9px] font-mono text-[#22AA00] uppercase tracking-wider">
+                        🌱 Jain
+                      </span>
+                    )}
+                  </div>
+                  <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
+                    ₹{dish.price}
+                  </span>
+                </div>
+                <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5 line-clamp-2">
+                  {dish.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="relative z-10 pt-2.5 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
+          {prevLabel && prevSpread !== undefined ? (
+            <button
+              type="button"
+              onClick={() => isInteractive && turnToSpread(prevSpread)}
+              className="text-neutral-400 hover:text-[#C5A880] transition-colors flex items-center gap-1"
+            >
+              <ChevronLeft size={12} />
+              <span>{prevLabel}</span>
+            </button>
+          ) : (
+            <span />
+          )}
+          <span>Page {pageNum}</span>
+          {nextLabel && nextSpread !== undefined ? (
+            <button
+              type="button"
+              onClick={() => isInteractive && turnToSpread(nextSpread)}
+              className="text-neutral-400 hover:text-[#C5A880] transition-colors flex items-center gap-1"
+            >
+              <span>{nextLabel}</span>
+              <ChevronRight size={12} />
+            </button>
+          ) : (
+            <span />
+          )}
+        </div>
+      </div>
+    );
+
+    // SPREAD 1: CHAPTER I & II
+    if (spreadIdx === 1) {
+      if (side === 'left') {
+        return renderDishList(tandooriDishes, 'Chapter I', 'Tandoori Hearth & Kebabs', 'Roasted at 400°C over aromatic fruitwood coals with saffron cream', 2, 'Cover', undefined, 0);
+      } else {
+        return renderDishList(chineseDishes, 'Chapter II', 'Indo-Chinese & Sizzlers', 'High wok-hei tossed botanicals & smoking cast-iron platters', 3, undefined, 'Curries', undefined, 2);
+      }
+    }
+
+    // SPREAD 2: CHAPTER III & IV
+    if (spreadIdx === 2) {
+      if (side === 'left') {
+        return renderDishList(curryDishes, 'Chapter III', 'Royal Awadhi & Handi Curries', 'Slow-simmered earthenware handis infused with whole spices', 4, 'Starters', undefined, 1);
+      } else {
+        return renderDishList(southIndianDishes, 'Chapter IV', 'South Indian & Dosas', 'Fermented stone-ground batter crisped in golden desi ghee', 5, undefined, 'Biryanis', undefined, 3);
+      }
+    }
+
+    // SPREAD 3: CHAPTER V & VI
+    if (spreadIdx === 3) {
+      if (side === 'left') {
+        return renderDishList(riceBreadsDishes, 'Chapter V', 'Dum Biryani & Artisanal Breads', 'Aged basmati sealed in clay purdah & clay oven flatbreads', 6, 'Dosas', undefined, 2);
+      } else {
+        return renderDishList(continentalDishes, 'Chapter VI', 'Hearth Pizzas & Pastas', 'Hand-stretched sourdough crusts & durum wheat pastas', 7, undefined, 'Drinks', undefined, 4);
+      }
+    }
+
+    // SPREAD 4: CHAPTER VII & VIII (EPILOGUE)
+    if (spreadIdx === 4) {
+      if (side === 'left') {
+        return renderDishList(mocktailDishes, 'Chapter VII', 'Artisanal Coolers & Shakes', 'Cold-pressed fruit botanicals, garden herbs, and thick shakes', 8, 'Pizzas', undefined, 3);
+      } else {
+        return (
+          <div className="h-full p-6 sm:p-8 flex flex-col justify-between relative bg-gradient-to-bl from-[#0C1E14] to-[#091710] text-left">
+            <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
+            <div className="relative z-10 space-y-3.5">
+              <div className="border-b border-[#C5A880]/30 pb-2.5">
+                <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
+                  Chapter VIII
+                </span>
+                <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
+                  Desserts & Royal Epilogue
+                </h3>
+                <p className="text-[11px] text-neutral-400 font-light pt-0.5">
+                  Sizzling cast-iron skillet sweets and heritage hospitality
+                </p>
+              </div>
+              <div className="space-y-2.5">
+                {dessertDishes.map((dish) => (
+                  <div
+                    key={dish.id}
+                    onClick={() => isInteractive && setPreviewDish(dish)}
+                    className={`p-2 rounded-lg border-l-2 border-transparent transition-all ${
+                      isInteractive ? 'group cursor-pointer hover:bg-white/[0.04] hover:border-[#C5A880]' : ''
+                    }`}
+                  >
+                    <div className="flex items-baseline justify-between gap-3">
+                      <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
+                        {dish.name}
+                      </h4>
+                      <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
+                        ₹{dish.price}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5">
+                      {dish.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+              <div className="p-3.5 rounded-xl bg-black/40 border border-[#C5A880]/30 space-y-1.5 text-center">
+                <span className="font-serif italic text-sm text-[#C5A880] block">
+                  “Thank You • Visit Again”
+                </span>
+                <p className="text-[11px] text-neutral-300 font-light leading-relaxed">
+                  Rasoraa Multicuisine Pure Veg Restaurant<br />
+                  39, Ambalathadayar Madam Street, Heritage Town, Pondicherry — 605 001
+                </p>
+                <div className="pt-1 flex items-center justify-center gap-3 text-[11px]">
+                  <a href="tel:+919484594845" className="text-[#C5A880] hover:underline flex items-center gap-1">
+                    <Phone size={11} />
+                    <span>+91 94845 94845</span>
+                  </a>
+                  <span className="text-neutral-600">|</span>
+                  <a href="https://wa.me/919484594845" target="_blank" rel="noopener noreferrer" className="text-[#22AA00] hover:underline flex items-center gap-1">
+                    <MessageCircle size={11} />
+                    <span>WhatsApp</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div className="relative z-10 pt-2.5 border-t border-[#C5A880]/20 flex items-center justify-between">
+              <span className="text-[11px] text-neutral-500 font-mono">Page 9 / Epilogue</span>
+              <a
+                href="#reserve"
+                className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#183620] hover:bg-[#204a2c] text-[#FBF9F5] border border-[#C5A880] text-xs font-sans uppercase tracking-widest transition-all shadow-lg"
+              >
+                <Calendar size={12} className="text-[#C5A880]" />
+                <span>Reserve Table</span>
+              </a>
+            </div>
+          </div>
+        );
+      }
+    }
+
+    return null;
+  };
 
   const handleBookingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -1538,7 +1881,7 @@ export const RasoraaExperience: React.FC = () => {
              ═══════════════════════════════════════════════════════════════ */}
           {menuViewMode === 'book' && (
             <div className="relative max-w-6xl mx-auto">
-              {/* Outer Leatherette Hardcover Binder */}
+              {/* Outer Leatherette Hardcover Binder with Realistic Depth */}
               <div className="relative rounded-3xl p-3 sm:p-6 md:p-8 bg-gradient-to-br from-[#08150D] via-[#0B1E13] to-[#06110A] border-2 border-[#C5A880]/40 shadow-[0_30px_90px_rgba(0,0,0,0.85),0_0_50px_rgba(20,50,30,0.25)]">
                 {/* Brass Corner Brackets */}
                 <div className="absolute top-2 left-2 w-6 h-6 border-t-2 border-l-2 border-[#C5A880] rounded-tl-sm pointer-events-none" />
@@ -1546,20 +1889,41 @@ export const RasoraaExperience: React.FC = () => {
                 <div className="absolute bottom-2 left-2 w-6 h-6 border-b-2 border-l-2 border-[#C5A880] rounded-bl-sm pointer-events-none" />
                 <div className="absolute bottom-2 right-2 w-6 h-6 border-b-2 border-r-2 border-[#C5A880] rounded-br-sm pointer-events-none" />
 
-                {/* Golden Silk Bookmark Ribbon hanging from top center spine */}
+                {/* Golden Silk Bookmark Ribbon hanging over the top center spine */}
                 <div className="hidden md:block absolute -top-1 left-1/2 -translate-x-1/2 w-5 h-16 bg-gradient-to-b from-[#C5A880] via-[#D8C4A0] to-[#8E7044] rounded-b-md shadow-lg z-30 pointer-events-none">
                   <div className="w-full h-full flex items-end justify-center pb-1">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#08150D]" />
                   </div>
                 </div>
 
+                {/* Left Edge Physical Page Thickness Stack (Grows as you turn forward) */}
+                <div
+                  className="hidden md:block absolute -left-2 top-6 bottom-6 rounded-l-md pointer-events-none transition-all duration-500"
+                  style={{
+                    width: `${Math.max(3, currentSpread * 2.5 + 2)}px`,
+                    background: 'repeating-linear-gradient(to right, #1F3628 0px, rgba(197,168,128,0.25) 1px, #0B1910 2px)',
+                    boxShadow: '-4px 0 10px rgba(0,0,0,0.7)',
+                  }}
+                />
+
+                {/* Right Edge Physical Page Thickness Stack (Thins as you turn forward) */}
+                <div
+                  className="hidden md:block absolute -right-2 top-6 bottom-6 rounded-r-md pointer-events-none transition-all duration-500"
+                  style={{
+                    width: `${Math.max(3, (4 - currentSpread) * 2.5 + 2)}px`,
+                    background: 'repeating-linear-gradient(to left, #1F3628 0px, rgba(197,168,128,0.25) 1px, #0B1910 2px)',
+                    boxShadow: '4px 0 10px rgba(0,0,0,0.7)',
+                  }}
+                />
+
                 {/* Left & Right Page Turning Side Buttons */}
                 {currentSpread > 0 && (
                   <button
                     type="button"
+                    disabled={isTurning}
                     onClick={handlePrevSpread}
                     aria-label="Previous Page"
-                    className="absolute -left-3 sm:-left-6 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#0E2016] border border-[#C5A880]/60 text-[#C5A880] hover:text-white hover:bg-[#183620] hover:scale-110 flex items-center justify-center shadow-2xl transition-all"
+                    className="absolute -left-3 sm:-left-6 top-1/2 -translate-y-1/2 z-50 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#0E2016] border border-[#C5A880]/60 text-[#C5A880] hover:text-white hover:bg-[#183620] hover:scale-110 disabled:opacity-40 flex items-center justify-center shadow-2xl transition-all"
                   >
                     <ChevronLeft size={20} />
                   </button>
@@ -1567,708 +1931,269 @@ export const RasoraaExperience: React.FC = () => {
                 {currentSpread < 4 && (
                   <button
                     type="button"
+                    disabled={isTurning}
                     onClick={handleNextSpread}
                     aria-label="Next Page"
-                    className="absolute -right-3 sm:-right-6 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#0E2016] border border-[#C5A880]/60 text-[#C5A880] hover:text-white hover:bg-[#183620] hover:scale-110 flex items-center justify-center shadow-2xl transition-all"
+                    className="absolute -right-3 sm:-right-6 top-1/2 -translate-y-1/2 z-50 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#0E2016] border border-[#C5A880]/60 text-[#C5A880] hover:text-white hover:bg-[#183620] hover:scale-110 disabled:opacity-40 flex items-center justify-center shadow-2xl transition-all"
                   >
                     <ChevronRight size={20} />
                   </button>
                 )}
 
-                {/* Animated Spread Content */}
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentSpread}
-                    initial={{
-                      opacity: 0,
-                      rotateY: flipDirection === 'next' ? 6 : -6,
-                      scale: 0.985,
-                    }}
-                    animate={{
-                      opacity: 1,
-                      rotateY: 0,
-                      scale: 1,
-                    }}
-                    exit={{
-                      opacity: 0,
-                      rotateY: flipDirection === 'next' ? -6 : 6,
-                      scale: 0.985,
-                    }}
-                    transition={{ duration: 0.35, ease: 'easeInOut' }}
-                    style={{ perspective: 1400 }}
-                    className="relative grid md:grid-cols-2 gap-0 min-h-[660px] rounded-2xl overflow-hidden bg-[#0A1710] border border-[#C5A880]/20 shadow-inner"
-                  >
-                    {/* 3D Spine Fold / Crease Shadow (Center Seam) */}
-                    <div className="hidden md:block absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-10 bg-gradient-to-r from-black/55 via-black/15 to-black/55 z-20 pointer-events-none" />
+                {/* ══════════════════════════════════════════════════════════
+                    DESKTOP/TABLET: TRUE 3D PAPER LEAF TURNING EXPERIENCE
+                   ══════════════════════════════════════════════════════════ */}
+                <div
+                  className="hidden md:block relative min-h-[660px] rounded-2xl overflow-hidden bg-[#0A1710] border border-[#C5A880]/20 shadow-inner"
+                  style={{ perspective: 2600 }}
+                >
+                  {/* Central Spine Fold / 3D Shadow Valley */}
+                  <div className="absolute top-0 bottom-0 left-1/2 -translate-x-1/2 w-8 bg-gradient-to-r from-black/55 via-black/15 to-black/55 z-30 pointer-events-none" />
 
-                    {/* ────────────────────────────────────────────────────────
-                        SPREAD 0: COVER & PROLOGUE
-                       ──────────────────────────────────────────────────────── */}
-                    {currentSpread === 0 && (
-                      <>
-                        {/* Left Page: Welcome & Philosophy */}
-                        <div className="p-6 sm:p-10 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#C5A880]/20 relative bg-gradient-to-br from-[#0B1A12] to-[#08140D] text-left">
-                          {/* Inner Filigree Border */}
-                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
-
-                          <div className="relative z-10 space-y-6 pt-3">
-                            <div className="flex items-center gap-3">
-                              <img src="/rr-monogram.jpg" alt="RR Crest" className="w-10 h-10 object-contain rounded-full border border-[#C5A880]/40" />
-                              <div>
-                                <span className="font-serif text-[#C5A880] text-sm tracking-wider block">
-                                  Rasoraa Pure Veg
-                                </span>
-                                <span className="text-[10px] text-neutral-400 font-mono tracking-widest uppercase">
-                                  Heritage Town · Pondicherry
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="space-y-2">
-                              <span className="text-[#C5A880] text-[10px] font-sans tracking-[0.24em] uppercase block">
-                                Imperial Decree
-                              </span>
-                              <h3 className="font-serif text-2xl sm:text-3xl text-white font-light leading-snug">
-                                The Sanctuary of Living Fire & Vegetarian Alchemy
-                              </h3>
-                            </div>
-
-                            <p className="text-neutral-300 text-xs sm:text-sm font-light leading-relaxed">
-                              Welcome to Rasoraa. Rooted in the rich cultural tapestry of French and Tamil Pondicherry, our kitchens celebrate pure vegetarian gastronomy with charcoal clay pits at 400°C, slow-simmered Awadhi dum handis, and crisp stone-ground dosas.
-                            </p>
-
-                            <div className="space-y-3 pt-2">
-                              <div className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/10">
-                                <span className="w-2 h-2 rounded-full bg-[#22AA00] mt-1 shrink-0 shadow-[0_0_8px_#22AA00]" />
-                                <div>
-                                  <h4 className="text-xs text-white font-medium">100% Shuddh Shakahari & Strict Jain Hearth</h4>
-                                  <p className="text-[11px] text-neutral-400 font-light">
-                                    Every preparation follows sacred satvik purity. Dedicated Jain cooking vessels and zero onion/garlic options available on decree.
-                                  </p>
-                                </div>
-                              </div>
-
-                              <div className="flex items-start gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/10">
-                                <span className="w-2 h-2 rounded-full bg-[#C5A880] mt-1 shrink-0 shadow-[0_0_8px_#C5A880]" />
-                                <div>
-                                  <h4 className="text-xs text-white font-medium">Freshness Decree — Made to Order</h4>
-                                  <p className="text-[11px] text-neutral-400 font-light">
-                                    No precooked gravies. We request 20–25 minutes for preparation so whole spices and pure cultured ghee reveal their true aromatics.
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
+                  {/* ─── CASE A: NOT CURRENTLY TURNING (Resting Spread) ─── */}
+                  {!isTurning && (
+                    <div className="grid grid-cols-2 h-full min-h-[660px] relative">
+                      {/* Left Page */}
+                      <div className="relative h-full border-r border-[#C5A880]/20">
+                        {renderPageContent('left', currentSpread, true)}
+                        {/* Interactive Corner Dog-Ear Curl (Turn Back) */}
+                        {currentSpread > 0 && (
+                          <div
+                            onClick={handlePrevSpread}
+                            className="group/peelLeft absolute bottom-0 left-0 w-16 h-16 cursor-pointer z-30"
+                            title="Click to turn back"
+                          >
+                            <div className="absolute bottom-0 left-0 w-10 h-10 bg-black/50 blur-[4px] transition-all duration-300 group-hover/peelLeft:w-16 group-hover/peelLeft:h-16 group-hover/peelLeft:blur-[6px]" />
+                            <div
+                              className="absolute bottom-0 left-0 w-10 h-10 transition-all duration-300 group-hover/peelLeft:w-16 group-hover/peelLeft:h-16"
+                              style={{
+                                background: 'linear-gradient(225deg, transparent 50%, #C5A880 50%, #E8DFD0 52%, #12281A 54%)',
+                                boxShadow: '3px -3px 10px rgba(0,0,0,0.5)',
+                                borderTopRightRadius: '3px',
+                              }}
+                            />
+                            <span className="absolute bottom-1 left-1 text-[8px] font-mono text-[#C5A880] tracking-tighter opacity-70 group-hover/peelLeft:opacity-100 transition-opacity">
+                              ⬅ Back
+                            </span>
                           </div>
+                        )}
+                      </div>
 
-                          <div className="relative z-10 pt-6 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-400">
-                            <span>Heritage Town Pondicherry — 605 001</span>
-                            <span className="text-[#C5A880] font-mono">Prologue</span>
+                      {/* Right Page */}
+                      <div className="relative h-full">
+                        {renderPageContent('right', currentSpread, true)}
+                        {/* Interactive Corner Dog-Ear Curl (Turn Forward) */}
+                        {currentSpread < 4 && (
+                          <div
+                            onClick={handleNextSpread}
+                            className="group/peel absolute bottom-0 right-0 w-16 h-16 cursor-pointer z-30"
+                            title="Click to turn page"
+                          >
+                            <div className="absolute bottom-0 right-0 w-10 h-10 bg-black/50 blur-[4px] transition-all duration-300 group-hover/peel:w-16 group-hover/peel:h-16 group-hover/peel:blur-[6px]" />
+                            <div
+                              className="absolute bottom-0 right-0 w-10 h-10 transition-all duration-300 group-hover/peel:w-16 group-hover/peel:h-16"
+                              style={{
+                                background: 'linear-gradient(135deg, transparent 50%, #C5A880 50%, #E8DFD0 52%, #12281A 54%)',
+                                boxShadow: '-3px -3px 10px rgba(0,0,0,0.5)',
+                                borderTopLeftRadius: '3px',
+                              }}
+                            />
+                            <span className="absolute bottom-1 right-1 text-[8px] font-mono text-[#C5A880] tracking-tighter opacity-70 group-hover/peel:opacity-100 transition-opacity">
+                              Turn ➔
+                            </span>
                           </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ─── CASE B: TURNING NEXT (Right Leaf Flips to Left) ─── */}
+                  {isTurning && turnDirection === 'next' && (
+                    <div className="relative w-full h-full min-h-[660px]">
+                      {/* Stationary Left Page (Current Spread) */}
+                      <div className="absolute top-0 left-0 w-1/2 h-full border-r border-[#C5A880]/20 z-10">
+                        {renderPageContent('left', currentSpread, false)}
+                      </div>
+
+                      {/* Stationary Right Page (Target Spread Unveiling Underneath) */}
+                      <div className="absolute top-0 right-0 w-1/2 h-full z-10">
+                        {renderPageContent('right', targetSpread, false)}
+                      </div>
+
+                      {/* The Physical Turning Leaf (Rotates 0deg -> -180deg around Spine) */}
+                      <motion.div
+                        initial={{ rotateY: 0 }}
+                        animate={{ rotateY: -180 }}
+                        transition={{ duration: 0.72, ease: [0.32, 0, 0.24, 1] }}
+                        onAnimationComplete={() => {
+                          setCurrentSpread(targetSpread);
+                          setIsTurning(false);
+                        }}
+                        className="absolute top-0 right-0 w-1/2 h-full z-40"
+                        style={{
+                          transformOrigin: 'left center',
+                          transformStyle: 'preserve-3d',
+                        }}
+                      >
+                        {/* Front Face: Current Right Page */}
+                        <div
+                          className="absolute inset-0 overflow-hidden rounded-r-2xl bg-[#0A1710]"
+                          style={{
+                            backfaceVisibility: 'hidden',
+                            WebkitBackfaceVisibility: 'hidden',
+                            transform: 'rotateY(0deg)',
+                            boxShadow: '-8px 0 24px rgba(0,0,0,0.7)',
+                          }}
+                        >
+                          {renderPageContent('right', currentSpread, false)}
+                          {/* Moving Paper Surface Shadow & Highlight Sheen */}
+                          <div className="absolute inset-0 bg-gradient-to-l from-black/50 via-white/[0.05] to-black/30 pointer-events-none" />
                         </div>
 
-                        {/* Right Page: Royal Table of Chapters */}
-                        <div className="p-6 sm:p-10 flex flex-col justify-between relative bg-gradient-to-bl from-[#0C1E14] to-[#091710] text-left">
-                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
-
-                          <div className="relative z-10 space-y-6 pt-3">
-                            <div className="text-center pb-2">
-                              <img src="/logo.png" alt="Rasoraa Logo" className="h-16 mx-auto object-contain drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]" />
-                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light pt-2">
-                                The Imperial Carte
-                              </h3>
-                              <p className="text-[10px] text-[#C5A880] font-mono uppercase tracking-[0.2em]">
-                                Table of Chapters
-                              </p>
-                            </div>
-
-                            {/* Clickable Chapter Index */}
-                            <div className="space-y-2">
-                              {[
-                                { ch: 'Chapter I', title: 'Tandoori Hearth & Clay Pit Kebabs', page: 2, spread: 1 },
-                                { ch: 'Chapter II', title: 'Indo-Chinese Wok & Sizzler Iron', page: 3, spread: 1 },
-                                { ch: 'Chapter III', title: 'Royal Awadhi Handis & Curries', page: 4, spread: 2 },
-                                { ch: 'Chapter IV', title: 'South Indian Specialities & Dosas', page: 5, spread: 2 },
-                                { ch: 'Chapter V', title: 'Dum Biryani & Artisanal Tandoor Breads', page: 6, spread: 3 },
-                                { ch: 'Chapter VI', title: 'Stone Hearth Pizzas & Pastas', page: 7, spread: 3 },
-                                { ch: 'Chapter VII', title: 'Artisanal Mocktails & Shakes', page: 8, spread: 4 },
-                                { ch: 'Chapter VIII', title: 'Royal Desserts & Founder Epilogue', page: 9, spread: 4 },
-                              ].map((item) => (
-                                <button
-                                  key={item.ch}
-                                  type="button"
-                                  onClick={() => turnToSpread(item.spread)}
-                                  className="w-full flex items-center justify-between py-1.5 px-3 rounded-lg hover:bg-white/[0.05] transition-colors group text-left"
-                                >
-                                  <div className="flex items-center gap-2.5">
-                                    <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-wider group-hover:translate-x-0.5 transition-transform">
-                                      ✦ {item.ch}
-                                    </span>
-                                    <span className="text-xs text-neutral-300 font-light group-hover:text-white transition-colors">
-                                      {item.title}
-                                    </span>
-                                  </div>
-                                  <span className="text-[10px] text-[#C5A880] font-mono shrink-0">
-                                    p. {item.page}
-                                  </span>
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-
-                          <div className="relative z-10 pt-4 flex items-center justify-between">
-                            <span className="text-[11px] text-neutral-500 font-mono">Page 1</span>
-                            <button
-                              type="button"
-                              onClick={() => turnToSpread(1)}
-                              className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#183620] hover:bg-[#204a2c] text-[#FBF9F5] border border-[#C5A880] text-xs font-sans uppercase tracking-widest transition-all shadow-lg group"
-                            >
-                              <span>Open Menu — Turn Page</span>
-                              <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform text-[#C5A880]" />
-                            </button>
-                          </div>
+                        {/* Back Face: Target Left Page (Settles onto Left Stack) */}
+                        <div
+                          className="absolute inset-0 overflow-hidden rounded-l-2xl bg-[#0A1710]"
+                          style={{
+                            backfaceVisibility: 'hidden',
+                            WebkitBackfaceVisibility: 'hidden',
+                            transform: 'rotateY(180deg)',
+                            boxShadow: '8px 0 24px rgba(0,0,0,0.7)',
+                          }}
+                        >
+                          {renderPageContent('left', targetSpread, false)}
+                          {/* Moving Paper Surface Shadow */}
+                          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-white/[0.05] to-black/30 pointer-events-none" />
                         </div>
-                      </>
-                    )}
+                      </motion.div>
+                    </div>
+                  )}
 
-                    {/* ────────────────────────────────────────────────────────
-                        SPREAD 1: CHAPTER I (TANDOOR) & CHAPTER II (CHINESE)
-                       ──────────────────────────────────────────────────────── */}
-                    {currentSpread === 1 && (
-                      <>
-                        {/* Left Page (Page 2): Tandoori Starters */}
-                        <div className="p-6 sm:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#C5A880]/20 relative bg-gradient-to-br from-[#0B1A12] to-[#08140D] text-left">
-                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
+                  {/* ─── CASE C: TURNING PREV (Left Leaf Flips to Right) ─── */}
+                  {isTurning && turnDirection === 'prev' && (
+                    <div className="relative w-full h-full min-h-[660px]">
+                      {/* Stationary Right Page (Current Spread) */}
+                      <div className="absolute top-0 right-0 w-1/2 h-full z-10">
+                        {renderPageContent('right', currentSpread, false)}
+                      </div>
 
-                          <div className="relative z-10 space-y-4">
-                            <div className="border-b border-[#C5A880]/30 pb-3">
-                              <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
-                                Chapter I
-                              </span>
-                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
-                                Tandoori Hearth & Kebabs
-                              </h3>
-                              <p className="text-[11px] text-neutral-400 font-light pt-0.5">
-                                Roasted at 400°C over aromatic fruitwood coals with saffron cream
-                              </p>
-                            </div>
+                      {/* Stationary Left Page (Target Spread Unveiling Underneath) */}
+                      <div className="absolute top-0 left-0 w-1/2 h-full border-r border-[#C5A880]/20 z-10">
+                        {renderPageContent('left', targetSpread, false)}
+                      </div>
 
-                            <div className="space-y-3.5">
-                              {tandooriDishes.slice(0, 6).map((dish) => (
-                                <div
-                                  key={dish.id}
-                                  onClick={() => setPreviewDish(dish)}
-                                  className="group cursor-pointer p-2 rounded-lg hover:bg-white/[0.04] transition-all border-l-2 border-transparent hover:border-[#C5A880]"
-                                >
-                                  <div className="flex items-baseline justify-between gap-3">
-                                    <div className="flex items-center gap-2">
-                                      <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
-                                        {dish.name}
-                                      </h4>
-                                      {dish.isJain && (
-                                        <span className="text-[9px] font-mono text-[#22AA00] uppercase tracking-wider">
-                                          🌱 Jain
-                                        </span>
-                                      )}
-                                    </div>
-                                    <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
-                                      ₹{dish.price}
-                                    </span>
-                                  </div>
-                                  <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5 line-clamp-2">
-                                    {dish.description}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          <div className="relative z-10 pt-3 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
-                            <button
-                              type="button"
-                              onClick={() => turnToSpread(0)}
-                              className="text-neutral-400 hover:text-[#C5A880] transition-colors flex items-center gap-1"
-                            >
-                              <ChevronLeft size={12} />
-                              <span>Cover</span>
-                            </button>
-                            <span>Page 2</span>
-                          </div>
+                      {/* The Physical Turning Leaf (Rotates 0deg -> 180deg around Spine) */}
+                      <motion.div
+                        initial={{ rotateY: 0 }}
+                        animate={{ rotateY: 180 }}
+                        transition={{ duration: 0.72, ease: [0.32, 0, 0.24, 1] }}
+                        onAnimationComplete={() => {
+                          setCurrentSpread(targetSpread);
+                          setIsTurning(false);
+                        }}
+                        className="absolute top-0 left-0 w-1/2 h-full z-40"
+                        style={{
+                          transformOrigin: 'right center',
+                          transformStyle: 'preserve-3d',
+                        }}
+                      >
+                        {/* Front Face: Current Left Page */}
+                        <div
+                          className="absolute inset-0 overflow-hidden rounded-l-2xl bg-[#0A1710]"
+                          style={{
+                            backfaceVisibility: 'hidden',
+                            WebkitBackfaceVisibility: 'hidden',
+                            transform: 'rotateY(0deg)',
+                            boxShadow: '8px 0 24px rgba(0,0,0,0.7)',
+                          }}
+                        >
+                          {renderPageContent('left', currentSpread, false)}
+                          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-white/[0.05] to-black/30 pointer-events-none" />
                         </div>
 
-                        {/* Right Page (Page 3): Chinese Starters & Sizzlers */}
-                        <div className="p-6 sm:p-8 flex flex-col justify-between relative bg-gradient-to-bl from-[#0C1E14] to-[#091710] text-left">
-                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
-
-                          <div className="relative z-10 space-y-4">
-                            <div className="border-b border-[#C5A880]/30 pb-3">
-                              <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
-                                Chapter II
-                              </span>
-                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
-                                Indo-Chinese & Sizzlers
-                              </h3>
-                              <p className="text-[11px] text-neutral-400 font-light pt-0.5">
-                                High wok-hei tossed botanicals & smoking cast-iron platters
-                              </p>
-                            </div>
-
-                            <div className="space-y-3.5">
-                              {chineseDishes.slice(0, 6).map((dish) => (
-                                <div
-                                  key={dish.id}
-                                  onClick={() => setPreviewDish(dish)}
-                                  className="group cursor-pointer p-2 rounded-lg hover:bg-white/[0.04] transition-all border-l-2 border-transparent hover:border-[#C5A880]"
-                                >
-                                  <div className="flex items-baseline justify-between gap-3">
-                                    <div className="flex items-center gap-2">
-                                      <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
-                                        {dish.name}
-                                      </h4>
-                                      {dish.isJain && (
-                                        <span className="text-[9px] font-mono text-[#22AA00] uppercase tracking-wider">
-                                          🌱 Jain
-                                        </span>
-                                      )}
-                                    </div>
-                                    <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
-                                      ₹{dish.price}
-                                    </span>
-                                  </div>
-                                  <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5 line-clamp-2">
-                                    {dish.description}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          <div className="relative z-10 pt-3 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
-                            <span>Page 3</span>
-                            <button
-                              type="button"
-                              onClick={() => turnToSpread(2)}
-                              className="text-neutral-400 hover:text-[#C5A880] transition-colors flex items-center gap-1"
-                            >
-                              <span>Next Page</span>
-                              <ChevronRight size={12} />
-                            </button>
-                          </div>
+                        {/* Back Face: Target Right Page (Settles onto Right Stack) */}
+                        <div
+                          className="absolute inset-0 overflow-hidden rounded-r-2xl bg-[#0A1710]"
+                          style={{
+                            backfaceVisibility: 'hidden',
+                            WebkitBackfaceVisibility: 'hidden',
+                            transform: 'rotateY(180deg)',
+                            boxShadow: '-8px 0 24px rgba(0,0,0,0.7)',
+                          }}
+                        >
+                          {renderPageContent('right', targetSpread, false)}
+                          <div className="absolute inset-0 bg-gradient-to-l from-black/50 via-white/[0.05] to-black/30 pointer-events-none" />
                         </div>
-                      </>
-                    )}
+                      </motion.div>
+                    </div>
+                  )}
+                </div>
 
-                    {/* ────────────────────────────────────────────────────────
-                        SPREAD 2: CHAPTER III (CURRIES) & CHAPTER IV (DOSAS)
-                       ──────────────────────────────────────────────────────── */}
-                    {currentSpread === 2 && (
-                      <>
-                        {/* Left Page (Page 4): Indian Curries & Handis */}
-                        <div className="p-6 sm:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#C5A880]/20 relative bg-gradient-to-br from-[#0B1A12] to-[#08140D] text-left">
-                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
+                {/* ══════════════════════════════════════════════════════════
+                    MOBILE: TACTILE SINGLE PAGE TURNING FOLIO
+                   ══════════════════════════════════════════════════════════ */}
+                <div className="block md:hidden">
+                  <div className="flex items-center justify-between mb-3 px-2 text-xs font-mono text-neutral-400">
+                    <button
+                      type="button"
+                      disabled={mobilePage === 0}
+                      onClick={() => {
+                        const newP = Math.max(0, mobilePage - 1);
+                        setMobilePage(newP);
+                        setCurrentSpread(Math.floor(newP / 2));
+                        playRealisticPaperTurnSound();
+                      }}
+                      className="px-3 py-1.5 rounded-lg border border-white/10 hover:border-[#C5A880] disabled:opacity-30 text-white flex items-center gap-1"
+                    >
+                      <ChevronLeft size={12} />
+                      <span>Prev</span>
+                    </button>
+                    <span className="text-[#C5A880]">
+                      Page {mobilePage + 1} of 9
+                    </span>
+                    <button
+                      type="button"
+                      disabled={mobilePage === 8}
+                      onClick={() => {
+                        const newP = Math.min(8, mobilePage + 1);
+                        setMobilePage(newP);
+                        setCurrentSpread(Math.floor(newP / 2));
+                        playRealisticPaperTurnSound();
+                      }}
+                      className="px-3 py-1.5 rounded-lg border border-white/10 hover:border-[#C5A880] disabled:opacity-30 text-white flex items-center gap-1"
+                    >
+                      <span>Next</span>
+                      <ChevronRight size={12} />
+                    </button>
+                  </div>
 
-                          <div className="relative z-10 space-y-4">
-                            <div className="border-b border-[#C5A880]/30 pb-3">
-                              <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
-                                Chapter III
-                              </span>
-                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
-                                Royal Awadhi & Handi Curries
-                              </h3>
-                              <p className="text-[11px] text-neutral-400 font-light pt-0.5">
-                                Slow-simmered earthenware handis infused with whole spices
-                              </p>
-                            </div>
-
-                            <div className="space-y-3.5">
-                              {curryDishes.slice(0, 6).map((dish) => (
-                                <div
-                                  key={dish.id}
-                                  onClick={() => setPreviewDish(dish)}
-                                  className="group cursor-pointer p-2 rounded-lg hover:bg-white/[0.04] transition-all border-l-2 border-transparent hover:border-[#C5A880]"
-                                >
-                                  <div className="flex items-baseline justify-between gap-3">
-                                    <div className="flex items-center gap-2">
-                                      <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
-                                        {dish.name}
-                                      </h4>
-                                      {dish.isJain && (
-                                        <span className="text-[9px] font-mono text-[#22AA00] uppercase tracking-wider">
-                                          🌱 Jain
-                                        </span>
-                                      )}
-                                    </div>
-                                    <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
-                                      ₹{dish.price}
-                                    </span>
-                                  </div>
-                                  <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5 line-clamp-2">
-                                    {dish.description}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          <div className="relative z-10 pt-3 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
-                            <button
-                              type="button"
-                              onClick={() => turnToSpread(1)}
-                              className="text-neutral-400 hover:text-[#C5A880] transition-colors flex items-center gap-1"
-                            >
-                              <ChevronLeft size={12} />
-                              <span>Prev Page</span>
-                            </button>
-                            <span>Page 4</span>
-                          </div>
-                        </div>
-
-                        {/* Right Page (Page 5): South Indian Heritage & Dosas */}
-                        <div className="p-6 sm:p-8 flex flex-col justify-between relative bg-gradient-to-bl from-[#0C1E14] to-[#091710] text-left">
-                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
-
-                          <div className="relative z-10 space-y-4">
-                            <div className="border-b border-[#C5A880]/30 pb-3">
-                              <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
-                                Chapter IV
-                              </span>
-                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
-                                South Indian & Dosas
-                              </h3>
-                              <p className="text-[11px] text-neutral-400 font-light pt-0.5">
-                                Fermented stone-ground batter crisped in golden desi ghee
-                              </p>
-                            </div>
-
-                            <div className="space-y-3.5">
-                              {southIndianDishes.slice(0, 6).map((dish) => (
-                                <div
-                                  key={dish.id}
-                                  onClick={() => setPreviewDish(dish)}
-                                  className="group cursor-pointer p-2 rounded-lg hover:bg-white/[0.04] transition-all border-l-2 border-transparent hover:border-[#C5A880]"
-                                >
-                                  <div className="flex items-baseline justify-between gap-3">
-                                    <div className="flex items-center gap-2">
-                                      <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
-                                        {dish.name}
-                                      </h4>
-                                      {dish.isJain && (
-                                        <span className="text-[9px] font-mono text-[#22AA00] uppercase tracking-wider">
-                                          🌱 Jain
-                                        </span>
-                                      )}
-                                    </div>
-                                    <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
-                                      ₹{dish.price}
-                                    </span>
-                                  </div>
-                                  <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5 line-clamp-2">
-                                    {dish.description}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          <div className="relative z-10 pt-3 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
-                            <span>Page 5</span>
-                            <button
-                              type="button"
-                              onClick={() => turnToSpread(3)}
-                              className="text-neutral-400 hover:text-[#C5A880] transition-colors flex items-center gap-1"
-                            >
-                              <span>Next Page</span>
-                              <ChevronRight size={12} />
-                            </button>
-                          </div>
-                        </div>
-                      </>
-                    )}
-
-                    {/* ────────────────────────────────────────────────────────
-                        SPREAD 3: CHAPTER V (BIRYANI & BREADS) & CHAPTER VI (PIZZA)
-                       ──────────────────────────────────────────────────────── */}
-                    {currentSpread === 3 && (
-                      <>
-                        {/* Left Page (Page 6): Biryani, Rice & Breads */}
-                        <div className="p-6 sm:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#C5A880]/20 relative bg-gradient-to-br from-[#0B1A12] to-[#08140D] text-left">
-                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
-
-                          <div className="relative z-10 space-y-4">
-                            <div className="border-b border-[#C5A880]/30 pb-3">
-                              <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
-                                Chapter V
-                              </span>
-                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
-                                Dum Biryani & Artisanal Breads
-                              </h3>
-                              <p className="text-[11px] text-neutral-400 font-light pt-0.5">
-                                Aged basmati sealed in clay purdah & clay oven flatbreads
-                              </p>
-                            </div>
-
-                            <div className="space-y-3.5">
-                              {riceBreadsDishes.slice(0, 6).map((dish) => (
-                                <div
-                                  key={dish.id}
-                                  onClick={() => setPreviewDish(dish)}
-                                  className="group cursor-pointer p-2 rounded-lg hover:bg-white/[0.04] transition-all border-l-2 border-transparent hover:border-[#C5A880]"
-                                >
-                                  <div className="flex items-baseline justify-between gap-3">
-                                    <div className="flex items-center gap-2">
-                                      <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
-                                        {dish.name}
-                                      </h4>
-                                      {dish.isJain && (
-                                        <span className="text-[9px] font-mono text-[#22AA00] uppercase tracking-wider">
-                                          🌱 Jain
-                                        </span>
-                                      )}
-                                    </div>
-                                    <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
-                                      ₹{dish.price}
-                                    </span>
-                                  </div>
-                                  <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5 line-clamp-2">
-                                    {dish.description}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          <div className="relative z-10 pt-3 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
-                            <button
-                              type="button"
-                              onClick={() => turnToSpread(2)}
-                              className="text-neutral-400 hover:text-[#C5A880] transition-colors flex items-center gap-1"
-                            >
-                              <ChevronLeft size={12} />
-                              <span>Prev Page</span>
-                            </button>
-                            <span>Page 6</span>
-                          </div>
-                        </div>
-
-                        {/* Right Page (Page 7): Pizzas & Pastas */}
-                        <div className="p-6 sm:p-8 flex flex-col justify-between relative bg-gradient-to-bl from-[#0C1E14] to-[#091710] text-left">
-                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
-
-                          <div className="relative z-10 space-y-4">
-                            <div className="border-b border-[#C5A880]/30 pb-3">
-                              <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
-                                Chapter VI
-                              </span>
-                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
-                                Hearth Pizzas & Pastas
-                              </h3>
-                              <p className="text-[11px] text-neutral-400 font-light pt-0.5">
-                                Hand-stretched sourdough crusts & durum wheat pastas
-                              </p>
-                            </div>
-
-                            <div className="space-y-3.5">
-                              {continentalDishes.slice(0, 6).map((dish) => (
-                                <div
-                                  key={dish.id}
-                                  onClick={() => setPreviewDish(dish)}
-                                  className="group cursor-pointer p-2 rounded-lg hover:bg-white/[0.04] transition-all border-l-2 border-transparent hover:border-[#C5A880]"
-                                >
-                                  <div className="flex items-baseline justify-between gap-3">
-                                    <div className="flex items-center gap-2">
-                                      <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
-                                        {dish.name}
-                                      </h4>
-                                      {dish.isJain && (
-                                        <span className="text-[9px] font-mono text-[#22AA00] uppercase tracking-wider">
-                                          🌱 Jain
-                                        </span>
-                                      )}
-                                    </div>
-                                    <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
-                                      ₹{dish.price}
-                                    </span>
-                                  </div>
-                                  <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5 line-clamp-2">
-                                    {dish.description}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          <div className="relative z-10 pt-3 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
-                            <span>Page 7</span>
-                            <button
-                              type="button"
-                              onClick={() => turnToSpread(4)}
-                              className="text-neutral-400 hover:text-[#C5A880] transition-colors flex items-center gap-1"
-                            >
-                              <span>Next Page</span>
-                              <ChevronRight size={12} />
-                            </button>
-                          </div>
-                        </div>
-                      </>
-                    )}
-
-                    {/* ────────────────────────────────────────────────────────
-                        SPREAD 4: CHAPTER VII (MOCKTAILS) & CHAPTER VIII (DESSERTS & EPILOGUE)
-                       ──────────────────────────────────────────────────────── */}
-                    {currentSpread === 4 && (
-                      <>
-                        {/* Left Page (Page 8): Mocktails & Shakes */}
-                        <div className="p-6 sm:p-8 flex flex-col justify-between border-b md:border-b-0 md:border-r border-[#C5A880]/20 relative bg-gradient-to-br from-[#0B1A12] to-[#08140D] text-left">
-                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
-
-                          <div className="relative z-10 space-y-4">
-                            <div className="border-b border-[#C5A880]/30 pb-3">
-                              <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
-                                Chapter VII
-                              </span>
-                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
-                                Artisanal Coolers & Shakes
-                              </h3>
-                              <p className="text-[11px] text-neutral-400 font-light pt-0.5">
-                                Cold-pressed fruit botanicals, garden herbs, and thick shakes
-                              </p>
-                            </div>
-
-                            <div className="space-y-3.5">
-                              {mocktailDishes.slice(0, 6).map((dish) => (
-                                <div
-                                  key={dish.id}
-                                  onClick={() => setPreviewDish(dish)}
-                                  className="group cursor-pointer p-2 rounded-lg hover:bg-white/[0.04] transition-all border-l-2 border-transparent hover:border-[#C5A880]"
-                                >
-                                  <div className="flex items-baseline justify-between gap-3">
-                                    <div className="flex items-center gap-2">
-                                      <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
-                                        {dish.name}
-                                      </h4>
-                                      {dish.isJain && (
-                                        <span className="text-[9px] font-mono text-[#22AA00] uppercase tracking-wider">
-                                          🌱 Jain
-                                        </span>
-                                      )}
-                                    </div>
-                                    <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
-                                      ₹{dish.price}
-                                    </span>
-                                  </div>
-                                  <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5 line-clamp-2">
-                                    {dish.description}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-
-                          <div className="relative z-10 pt-3 border-t border-[#C5A880]/20 flex items-center justify-between text-[11px] text-neutral-500 font-mono">
-                            <button
-                              type="button"
-                              onClick={() => turnToSpread(3)}
-                              className="text-neutral-400 hover:text-[#C5A880] transition-colors flex items-center gap-1"
-                            >
-                              <ChevronLeft size={12} />
-                              <span>Prev Page</span>
-                            </button>
-                            <span>Page 8</span>
-                          </div>
-                        </div>
-
-                        {/* Right Page (Page 9): Desserts & Founder Epilogue */}
-                        <div className="p-6 sm:p-8 flex flex-col justify-between relative bg-gradient-to-bl from-[#0C1E14] to-[#091710] text-left">
-                          <div className="absolute inset-4 sm:inset-6 border border-[#C5A880]/20 pointer-events-none rounded-xl" />
-
-                          <div className="relative z-10 space-y-4">
-                            <div className="border-b border-[#C5A880]/30 pb-3">
-                              <span className="text-[#C5A880] text-[10px] font-mono uppercase tracking-[0.22em] block">
-                                Chapter VIII
-                              </span>
-                              <h3 className="font-serif text-xl sm:text-2xl text-white font-light">
-                                Desserts & Royal Epilogue
-                              </h3>
-                              <p className="text-[11px] text-neutral-400 font-light pt-0.5">
-                                Sizzling cast-iron skillet sweets and heritage hospitality
-                              </p>
-                            </div>
-
-                            {/* Desserts List */}
-                            <div className="space-y-3">
-                              {dessertDishes.map((dish) => (
-                                <div
-                                  key={dish.id}
-                                  onClick={() => setPreviewDish(dish)}
-                                  className="group cursor-pointer p-2 rounded-lg hover:bg-white/[0.04] transition-all border-l-2 border-transparent hover:border-[#C5A880]"
-                                >
-                                  <div className="flex items-baseline justify-between gap-3">
-                                    <h4 className="font-serif text-sm sm:text-base text-white group-hover:text-[#C5A880] transition-colors font-light">
-                                      {dish.name}
-                                    </h4>
-                                    <span className="font-mono text-xs text-[#C5A880] font-medium shrink-0">
-                                      ₹{dish.price}
-                                    </span>
-                                  </div>
-                                  <p className="text-[11px] text-neutral-400 font-light leading-relaxed pt-0.5">
-                                    {dish.description}
-                                  </p>
-                                </div>
-                              ))}
-                            </div>
-
-                            {/* Royal Epilogue & Address Box */}
-                            <div className="p-4 rounded-xl bg-black/40 border border-[#C5A880]/30 space-y-2 text-center">
-                              <span className="font-serif italic text-sm text-[#C5A880] block">
-                                “Thank You • Visit Again”
-                              </span>
-                              <p className="text-[11px] text-neutral-300 font-light leading-relaxed">
-                                Rasoraa Multicuisine Pure Veg Restaurant<br />
-                                39, Ambalathadayar Madam Street, Heritage Town, Pondicherry — 605 001
-                              </p>
-                              <div className="pt-2 flex items-center justify-center gap-3 text-[11px]">
-                                <a
-                                  href="tel:+919484594845"
-                                  className="text-[#C5A880] hover:underline flex items-center gap-1"
-                                >
-                                  <Phone size={11} />
-                                  <span>+91 94845 94845</span>
-                                </a>
-                                <span className="text-neutral-600">|</span>
-                                <a
-                                  href="https://wa.me/919484594845"
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-[#22AA00] hover:underline flex items-center gap-1"
-                                >
-                                  <MessageCircle size={11} />
-                                  <span>WhatsApp Concierge</span>
-                                </a>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="relative z-10 pt-3 border-t border-[#C5A880]/20 flex items-center justify-between">
-                            <span className="text-[11px] text-neutral-500 font-mono">Page 9 / Epilogue</span>
-                            <a
-                              href="#reserve"
-                              className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#183620] hover:bg-[#204a2c] text-[#FBF9F5] border border-[#C5A880] text-xs font-sans uppercase tracking-widest transition-all shadow-lg"
-                            >
-                              <Calendar size={12} className="text-[#C5A880]" />
-                              <span>Reserve Table</span>
-                            </a>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </motion.div>
-                </AnimatePresence>
+                  <AnimatePresence mode="wait">
+                    <motion.div
+                      key={mobilePage}
+                      initial={{ opacity: 0, x: 20, rotateY: 8 }}
+                      animate={{ opacity: 1, x: 0, rotateY: 0 }}
+                      exit={{ opacity: 0, x: -20, rotateY: -8 }}
+                      transition={{ duration: 0.3 }}
+                      className="rounded-2xl overflow-hidden border border-[#C5A880]/30 shadow-2xl bg-[#0A1710]"
+                    >
+                      {mobilePage === 0 && renderPageContent('left', 0, true)}
+                      {mobilePage === 1 && renderPageContent('right', 0, true)}
+                      {mobilePage === 2 && renderPageContent('left', 1, true)}
+                      {mobilePage === 3 && renderPageContent('right', 1, true)}
+                      {mobilePage === 4 && renderPageContent('left', 2, true)}
+                      {mobilePage === 5 && renderPageContent('right', 2, true)}
+                      {mobilePage === 6 && renderPageContent('left', 3, true)}
+                      {mobilePage === 7 && renderPageContent('right', 3, true)}
+                      {mobilePage === 8 && renderPageContent('right', 4, true)}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
 
                 {/* Bottom Folio Navigation & Spread Indicator */}
                 <div className="mt-6 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-neutral-400 px-2">
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      disabled={currentSpread === 0}
+                      disabled={currentSpread === 0 || isTurning}
                       onClick={handlePrevSpread}
                       className="px-3 py-1.5 rounded-lg border border-white/10 hover:border-[#C5A880] disabled:opacity-30 disabled:hover:border-white/10 transition-colors flex items-center gap-1 text-white"
                     >
@@ -2277,7 +2202,7 @@ export const RasoraaExperience: React.FC = () => {
                     </button>
                     <button
                       type="button"
-                      disabled={currentSpread === 4}
+                      disabled={currentSpread === 4 || isTurning}
                       onClick={handleNextSpread}
                       className="px-3 py-1.5 rounded-lg border border-white/10 hover:border-[#C5A880] disabled:opacity-30 disabled:hover:border-white/10 transition-colors flex items-center gap-1 text-white"
                     >
