@@ -14,16 +14,25 @@ import {
   Minus,
   Phone,
   Plus,
+  Search,
   Sparkles,
   Users,
   X,
 } from 'lucide-react';
 
-/* ─── Curated Imperial Carte ─── */
+/* ─── Official Rasoraa Menu Items & Exact Pricelist ─── */
 type Dish = {
   id: string;
   name: string;
-  category: 'Awadhi Dum' | 'Royal Tandoor' | 'Pan-Asian Wok' | 'Continental Hearth';
+  category:
+    | 'Tandoori Starters'
+    | 'Indian Curries'
+    | 'South Indian & Dosas'
+    | 'Rice, Biryani & Breads'
+    | 'Chinese & Sizzlers'
+    | 'Continental, Pastas & Pizzas'
+    | 'Mocktails & Shakes'
+    | 'Desserts';
   price: number;
   description: string;
   origin: string;
@@ -32,64 +41,489 @@ type Dish = {
 };
 
 const DISHES: Dish[] = [
+  /* ─── Tandoori Starters & Kebabs ─── */
   {
-    id: 'd1',
-    name: 'Dal Rasoraa Imperial',
-    category: 'Awadhi Dum',
-    price: 680,
-    description: 'Black urad lentils simmered for sixteen hours in a sealed clay handi over sal wood embers, enriched with stone-crushed cardamom and cultured Gir cow butter.',
-    origin: 'Royal Awadh Courts',
-    isJain: true,
-    image: '/dish-awadhi.jpg',
-  },
-  {
-    id: 'd2',
-    name: 'Angari Malai Paneer Tikka',
-    category: 'Royal Tandoor',
-    price: 740,
-    description: 'Handcrafted fresh Gir cow milk paneer steeped in wild mountain saffron and hung curd, flash-roasted in a 400°C charcoal clay pit.',
+    id: 't1',
+    name: 'Malai Paneer Tikka',
+    category: 'Tandoori Starters',
+    price: 369,
+    description: 'Fresh artisan cottage cheese steeped in mountain cardamom cream, hung curd, and saffron, roasted in our 400°C clay tandoor.',
     origin: 'Northwest Frontier',
     isJain: true,
     image: '/dish-tandoor.jpg',
   },
   {
-    id: 'd3',
-    name: 'Subz Awadhi Dum Biryani',
-    category: 'Awadhi Dum',
-    price: 750,
-    description: 'Four-year aged Himalayan basmati layered with tender farm vegetables and Damascus rose attar, slow-steamed under a whole-wheat dough seal.',
-    origin: 'Lucknowi Hearth',
-    isJain: true,
-    image: '/dish-awadhi.jpg',
-  },
-  {
-    id: 'd4',
-    name: 'Truffle Edamame Hakka Noodles',
-    category: 'Pan-Asian Wok',
-    price: 720,
-    description: 'Hand-pulled wheat noodles seared with intense wok hei breath, tossed with tender young edamame, wild shiitake, and shaved black winter truffle oil.',
-    origin: 'Canton-Himalayan Lineage',
-    isJain: true,
-    image: '/dish-oriental.jpg',
-  },
-  {
-    id: 'd5',
-    name: 'Bhutte Ke Kebab & Mint Emulsion',
-    category: 'Royal Tandoor',
-    price: 660,
-    description: 'Monsoon sweet corn stone-pounded with toasted royal cumin and wild mint, pan-crisped on seasoned copper skillets.',
-    origin: 'Mughlai Nizami',
+    id: 't2',
+    name: 'Achari Paneer Tikka',
+    category: 'Tandoori Starters',
+    price: 369,
+    description: 'Tender paneer cubes infused with cold-pressed mustard oil and pickling spices, charred over glowing fruitwood coals.',
+    origin: 'Punjabi Hearth',
     isJain: true,
     image: '/dish-tandoor.jpg',
   },
   {
-    id: 'd6',
-    name: 'Wild Morel & Herb Gratin',
-    category: 'Continental Hearth',
-    price: 780,
-    description: 'Wild foraged Kashmiri gucchi morels in a velvet herb reduction, served over stone-hearth sourdough with cultured cream.',
-    origin: 'Artisanal Hearth',
+    id: 't3',
+    name: 'Malai Broccoli',
+    category: 'Tandoori Starters',
+    price: 399,
+    description: 'Tender fresh broccoli florets marinated in velvety cashew cream, cheese, and mace, gently blistered in clay heat.',
+    origin: 'Royal Nizami',
+    isJain: true,
+    image: '/dish-tandoor.jpg',
+  },
+  {
+    id: 't4',
+    name: 'Mushroom Tikka',
+    category: 'Tandoori Starters',
+    price: 379,
+    description: 'Plump button mushrooms marinated in smoked mustard oil, roasted cumin, and crushed red chillies, char-skewered.',
+    origin: 'Himalayan Foothills',
+    isJain: true,
+    image: '/dish-tandoor.jpg',
+  },
+  {
+    id: 't5',
+    name: 'Hara Bhara Kebab',
+    category: 'Tandoori Starters',
+    price: 299,
+    description: 'Finely mashed garden spinach, sweet green peas, and cottage cheese patties pan-crisped in seasoned ghee.',
+    origin: 'Mughlai Lineage',
+    isJain: true,
+    image: '/dish-tandoor.jpg',
+  },
+  {
+    id: 't6',
+    name: 'Assorted Platter',
+    category: 'Tandoori Starters',
+    price: 599,
+    description: 'Grand royal selection featuring malai paneer, achari tikka, tandoori mushrooms, and hara bhara kebabs.',
+    origin: 'Chef Rajan Signature',
+    isJain: true,
+    image: '/dish-tandoor.jpg',
+  },
+
+  /* ─── Indian Curries & Handis ─── */
+  {
+    id: 'c1',
+    name: 'Dal Makhani',
+    category: 'Indian Curries',
+    price: 319,
+    description: 'Slow-simmered black urad lentils infused overnight with cultured butter, rich cream, and wood charcoal smoke.',
+    origin: 'Punjab Heritage',
+    isJain: true,
+    image: '/dish-awadhi.jpg',
+  },
+  {
+    id: 'c2',
+    name: 'Paneer Butter Masala',
+    category: 'Indian Curries',
+    price: 369,
+    description: 'Soft cottage cheese simmered in a silky, rich reduction of ripe tomatoes, cashews, and aromatic kasuri methi.',
+    origin: 'Royal Darbar',
+    isJain: true,
+    image: '/dish-awadhi.jpg',
+  },
+  {
+    id: 'c3',
+    name: 'Handi Paneer',
+    category: 'Indian Curries',
+    price: 369,
+    description: 'Earthenware clay handi preparation with stone-ground coriander, roasted red chillies, and rich spiced gravy.',
+    origin: 'Awadh Lineage',
+    isJain: true,
+    image: '/dish-awadhi.jpg',
+  },
+  {
+    id: 'c4',
+    name: 'Paneer Tikka Masala',
+    category: 'Indian Curries',
+    price: 389,
+    description: 'Smoky tandoor-charred cottage cheese folded into a robust, velvet spiced onion-tomato and bell pepper gravy.',
+    origin: 'Northwest Frontier',
+    isJain: true,
+    image: '/dish-awadhi.jpg',
+  },
+  {
+    id: 'c5',
+    name: 'Paneer Lababdar',
+    category: 'Indian Curries',
+    price: 369,
+    description: 'Grated and cubed cottage cheese simmered with royal melon seeds, fresh cream, and fragrant whole spices.',
+    origin: 'Mughlai Imperial',
+    isJain: true,
+    image: '/dish-awadhi.jpg',
+  },
+  {
+    id: 'c6',
+    name: 'Sooji Makhani Bhopali',
+    category: 'Indian Curries',
+    price: 429,
+    description: 'Rare heritage culinary jewel from the Nawabs of Bhopal, slow-cooked in a rich buttery tomato makhani reduction.',
+    origin: 'Bhopal Royal Court',
+    isJain: true,
+    image: '/dish-awadhi.jpg',
+  },
+  {
+    id: 'c7',
+    name: 'Malai Kofta (White Gravy)',
+    category: 'Indian Curries',
+    price: 369,
+    description: 'Melt-in-mouth cottage cheese and mawa dumplings rested in an aromatic cashew-cardamom white velvet sauce.',
+    origin: 'Kashmiri Wazwan',
+    isJain: true,
+    image: '/dish-awadhi.jpg',
+  },
+  {
+    id: 'c8',
+    name: 'Diwani Handi',
+    category: 'Indian Curries',
+    price: 379,
+    description: 'Medley of seasonal farm-fresh vegetables and baby corn slow-cooked in hand-beaten copper cookware.',
+    origin: 'Deccan Royalty',
+    isJain: true,
+    image: '/dish-awadhi.jpg',
+  },
+
+  /* ─── South Indian & Dosas ─── */
+  {
+    id: 's1',
+    name: 'Garlic Podi Dosa',
+    category: 'South Indian & Dosas',
+    price: 109,
+    description: 'Golden fermented rice-lentil crepe dusted with spiced roasted lentil gun powder (podi) and pure ghee.',
+    origin: 'Tamil Heritage Town',
     isJain: false,
+    image: '/dish-continental.jpg',
+  },
+  {
+    id: 's2',
+    name: 'Paneer Dosa',
+    category: 'South Indian & Dosas',
+    price: 125,
+    description: 'Crisp golden paper dosa filled with spiced grated cottage cheese, green chillies, and fresh coriander.',
+    origin: 'Chettinad Lineage',
+    isJain: true,
+    image: '/dish-continental.jpg',
+  },
+  {
+    id: 's3',
+    name: 'Mushroom Dosa',
+    category: 'South Indian & Dosas',
+    price: 115,
+    description: 'Thin buttery crepe rolled with seasoned button mushroom roast and fresh curry leaf tempering.',
+    origin: 'Coastal Malabar',
+    isJain: true,
+    image: '/dish-continental.jpg',
+  },
+  {
+    id: 's4',
+    name: 'Pizza Dosa',
+    category: 'South Indian & Dosas',
+    price: 139,
+    description: 'Fusion delight topped with bell peppers, sweet corn, Italian herbs, mozzarella cheese, and tomato coulis.',
+    origin: 'Modern Multicuisine',
+    isJain: true,
+    image: '/dish-continental.jpg',
+  },
+  {
+    id: 's5',
+    name: 'Rava Dosa',
+    category: 'South Indian & Dosas',
+    price: 77,
+    description: 'Lacy, crispy semolina crepe spiced with crushed black peppercorns, roasted cumin, and ginger.',
+    origin: 'Udupi Tradition',
+    isJain: true,
+    image: '/dish-continental.jpg',
+  },
+  {
+    id: 's6',
+    name: 'South Indian Thali',
+    category: 'South Indian & Dosas',
+    price: 199,
+    description: 'Traditional multi-bowl lunch feast featuring aromatic sambar, rasam, kootu, poriyal, curd, appalam, and rice.',
+    origin: 'Heritage Town Pondicherry',
+    isJain: true,
+    image: '/dish-awadhi.jpg',
+  },
+
+  /* ─── Rice, Biryani & Breads ─── */
+  {
+    id: 'r1',
+    name: 'Hyderabadi Biryani',
+    category: 'Rice, Biryani & Breads',
+    price: 399,
+    description: 'Aged long-grain basmati layered with marinated farm vegetables, saffron, and mint, slow-steamed under dough seal.',
+    origin: 'Nizami Heritage',
+    isJain: true,
+    image: '/dish-awadhi.jpg',
+  },
+  {
+    id: 'r2',
+    name: 'Jeera Rice',
+    category: 'Rice, Biryani & Breads',
+    price: 329,
+    description: 'Fragrant basmati rice gently tempered with crackling royal cumin seeds and pure desi ghee.',
+    origin: 'Vedic Kitchen',
+    isJain: true,
+    image: '/dish-awadhi.jpg',
+  },
+  {
+    id: 'r3',
+    name: 'Burnt Garlic Fried Rice',
+    category: 'Rice, Biryani & Breads',
+    price: 319,
+    description: 'Wok-tossed basmati rice infused with golden crisp garlic bits, scallions, and garden greens.',
+    origin: 'Wok Hearth',
+    isJain: false,
+    image: '/dish-oriental.jpg',
+  },
+  {
+    id: 'r4',
+    name: 'Cheese Chilli Naan',
+    category: 'Rice, Biryani & Breads',
+    price: 139,
+    description: 'Tandoori leavened flatbread stuffed with green chillies and molten cheddar cheese, brushed with butter.',
+    origin: 'Clay Oven Craft',
+    isJain: true,
+    image: '/dish-tandoor.jpg',
+  },
+  {
+    id: 'r5',
+    name: 'Garlic Naan',
+    category: 'Rice, Biryani & Breads',
+    price: 99,
+    description: 'Crisp and fluffy tandoori naan bread topped with aromatic minced garlic and fresh coriander butter.',
+    origin: 'Northwest Frontier',
+    isJain: false,
+    image: '/dish-tandoor.jpg',
+  },
+  {
+    id: 'r6',
+    name: 'North Indian Thali',
+    category: 'Rice, Biryani & Breads',
+    price: 230,
+    description: 'Grand royal thali with two curries, dal makhani, paneer preparation, jeera rice, butter naan, raita, and dessert.',
+    origin: 'Imperial Feast',
+    isJain: true,
+    image: '/dish-awadhi.jpg',
+  },
+
+  /* ─── Chinese & Sizzlers ─── */
+  {
+    id: 'w1',
+    name: 'Dragon Paneer',
+    category: 'Chinese & Sizzlers',
+    price: 349,
+    description: 'Crispy fried cottage cheese batons tossed in spicy fiery schezwan glaze, toasted cashews, and bell peppers.',
+    origin: 'Canton Hearth',
+    isJain: true,
+    image: '/dish-oriental.jpg',
+  },
+  {
+    id: 'w2',
+    name: 'Honey Chilli Lotus Stem',
+    category: 'Chinese & Sizzlers',
+    price: 399,
+    description: 'Crunchy lotus stem slivers glazed with wild forest honey, toasted white sesame, and bird’s eye chillies.',
+    origin: 'Himalayan Silk Road',
+    isJain: true,
+    image: '/dish-oriental.jpg',
+  },
+  {
+    id: 'w3',
+    name: 'Chilli Paneer (Dry)',
+    category: 'Chinese & Sizzlers',
+    price: 339,
+    description: 'Tender paneer cubes wok-charred with capsicum, onions, spring garlic, and dark soy reduction.',
+    origin: 'Indo-Chinese Classic',
+    isJain: false,
+    image: '/dish-oriental.jpg',
+  },
+  {
+    id: 'w4',
+    name: 'Crispy Corn',
+    category: 'Chinese & Sizzlers',
+    price: 299,
+    description: 'Batter-crisped sweet corn kernels tossed with freshly crushed black pepper, spring greens, and tangy spices.',
+    origin: 'Pan-Asian Wok',
+    isJain: true,
+    image: '/dish-oriental.jpg',
+  },
+  {
+    id: 'w5',
+    name: 'Chinese Sizzler',
+    category: 'Chinese & Sizzlers',
+    price: 499,
+    description: 'Smoking iron platter with wok noodles, fried rice, crispy paneer manchurian, spring rolls, and hot garlic sauce.',
+    origin: 'Signature Sizzler',
+    isJain: false,
+    image: '/dish-oriental.jpg',
+  },
+  {
+    id: 'w6',
+    name: 'Continental Sizzler',
+    category: 'Chinese & Sizzlers',
+    price: 499,
+    description: 'Sizzling cast-iron skillet loaded with herb butter rice, crispy potato wedges, grilled vegetables, and cheese sauce.',
+    origin: 'Artisanal Hearth',
+    isJain: true,
+    image: '/dish-continental.jpg',
+  },
+
+  /* ─── Continental, Pastas & Pizzas ─── */
+  {
+    id: 'p1',
+    name: 'Queen Margherita Pizza',
+    category: 'Continental, Pastas & Pizzas',
+    price: 389,
+    description: 'Stone-hearth baked crust topped with San Marzano tomato coulis, fresh sweet basil leaves, and molten mozzarella.',
+    origin: 'Stone Hearth Bake',
+    isJain: true,
+    image: '/dish-continental.jpg',
+  },
+  {
+    id: 'p2',
+    name: 'Paneer Makhani Pizza',
+    category: 'Continental, Pastas & Pizzas',
+    price: 459,
+    description: 'Hand-stretched dough topped with smoky tandoori paneer, royal makhani drizzle, bell peppers, and mozzarella.',
+    origin: 'Multicuisine Fusion',
+    isJain: true,
+    image: '/dish-continental.jpg',
+  },
+  {
+    id: 'p3',
+    name: 'Aglio E Olio Spaghetti',
+    category: 'Continental, Pastas & Pizzas',
+    price: 349,
+    description: 'Al dente spaghetti tossed with extra virgin cold-pressed olive oil, golden garlic slivers, and chilli flakes.',
+    origin: 'Mediterranean Hearth',
+    isJain: false,
+    image: '/dish-continental.jpg',
+  },
+  {
+    id: 'p4',
+    name: 'Alfredo Pasta (White Sauce)',
+    category: 'Continental, Pastas & Pizzas',
+    price: 299,
+    description: 'Penne pasta enveloped in a velvety parmesan and rich herb cream sauce with sweet corn and mushrooms.',
+    origin: 'Italian Classical',
+    isJain: true,
+    image: '/dish-continental.jpg',
+  },
+  {
+    id: 'p5',
+    name: 'Paneer Tikka Quesadilla',
+    category: 'Continental, Pastas & Pizzas',
+    price: 389,
+    description: 'Crisp Mexican toasted tortilla folded with tandoori paneer, roasted corn, fresh salsa, and melted cheddar.',
+    origin: 'Continental Mexican',
+    isJain: true,
+    image: '/dish-continental.jpg',
+  },
+  {
+    id: 'p6',
+    name: '6 Balls 6 Dips',
+    category: 'Continental, Pastas & Pizzas',
+    price: 289,
+    description: 'Crispy fried cheese and corn croquettes served with six chef-curated signature sauces and emulsion dips.',
+    origin: 'Appetizer Platter',
+    isJain: true,
+    image: '/dish-continental.jpg',
+  },
+
+  /* ─── Mocktails, Coolers & Shakes ─── */
+  {
+    id: 'm1',
+    name: 'Cranberry Basil Cooler',
+    category: 'Mocktails & Shakes',
+    price: 230,
+    description: 'Tart cranberry nectar muddled with fresh garden basil leaves, lime, and sparkling soda.',
+    origin: 'Artisanal Cooler',
+    isJain: true,
+    image: '/dish-oriental.jpg',
+  },
+  {
+    id: 'm2',
+    name: 'Virgin Mojito',
+    category: 'Mocktails & Shakes',
+    price: 190,
+    description: 'Refreshing blend of crushed garden mint, fresh lime wedges, organic cane sugar, and effervescent club soda.',
+    origin: 'Signature Mocktail',
+    isJain: true,
+    image: '/dish-oriental.jpg',
+  },
+  {
+    id: 'm3',
+    name: 'Virgin Sangria',
+    category: 'Mocktails & Shakes',
+    price: 230,
+    description: 'Hand-diced apples, oranges, and berries steeped in rich grape and citrus juices with cinnamon essence.',
+    origin: 'Botanical Blend',
+    isJain: true,
+    image: '/dish-oriental.jpg',
+  },
+  {
+    id: 'm4',
+    name: 'Spicy Guava',
+    category: 'Mocktails & Shakes',
+    price: 200,
+    description: 'Ripe pink guava puree shaken with black salt, lemon juice, roasted cumin, and a red chilli-salt rim.',
+    origin: 'Indian Botanical',
+    isJain: true,
+    image: '/dish-oriental.jpg',
+  },
+  {
+    id: 'm5',
+    name: 'Biscoff Shake',
+    category: 'Mocktails & Shakes',
+    price: 230,
+    description: 'Thick creamy gourmet shake spun with genuine Lotus Biscoff spread, caramel, and biscuit crumble.',
+    origin: 'Gourmet Shake',
+    isJain: true,
+    image: '/dish-oriental.jpg',
+  },
+  {
+    id: 'm6',
+    name: 'Nutty Brownie Shake',
+    category: 'Mocktails & Shakes',
+    price: 210,
+    description: 'Fudgy dark chocolate walnut brownie blended with Madagascar vanilla ice cream and chocolate drizzle.',
+    origin: 'Artisanal Shake',
+    isJain: true,
+    image: '/dish-oriental.jpg',
+  },
+
+  /* ─── Desserts ─── */
+  {
+    id: 'd1',
+    name: 'Sizzling Brownie',
+    category: 'Desserts',
+    price: 289,
+    description: 'Warm walnut chocolate brownie on a smoking cast-iron skillet, topped with rich vanilla ice cream and hot fudge.',
+    origin: 'Hot Skillet Craft',
+    isJain: true,
+    image: '/dish-continental.jpg',
+  },
+  {
+    id: 'd2',
+    name: 'Panna Cotta',
+    category: 'Desserts',
+    price: 189,
+    description: 'Silky, delicate eggless cream dessert infused with vanilla bean and crowned with wild berry coulis.',
+    origin: 'Italian Classic',
+    isJain: true,
+    image: '/dish-continental.jpg',
+  },
+  {
+    id: 'd3',
+    name: 'Brownie with Ice Cream',
+    category: 'Desserts',
+    price: 199,
+    description: 'Freshly baked dark chocolate brownie served with a generous scoop of vanilla bean ice cream.',
+    origin: 'Sweet Hearth',
+    isJain: true,
     image: '/dish-continental.jpg',
   },
 ];
@@ -344,37 +778,59 @@ export const RasoraaExperience: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const [menuSearchQuery, setMenuSearchQuery] = useState('');
+
   const heroDishes = [
     {
-      title: 'Dal Rasoraa Imperial',
-      subtitle: '16-Hour Wood Charcoal Handi Dum',
-      discipline: 'The Awadhi Dum',
-      origin: 'Awadh Royal Courts',
-      image: '/dish-awadhi.jpg',
-      price: '₹680',
-    },
-    {
-      title: 'Angari Malai Paneer Tikka',
-      subtitle: '400°C Clay Pit Metallurgy & Saffron',
-      discipline: 'Live Tandoor Fire',
+      title: 'Malai Paneer Tikka',
+      subtitle: '400°C Clay Pit Metallurgy & Saffron Cream',
+      discipline: 'Tandoori Starter',
       origin: 'Northwest Frontier',
       image: '/dish-tandoor.jpg',
-      price: '₹740',
+      price: '₹369',
     },
     {
-      title: 'Truffle Edamame Noodles',
-      subtitle: 'Wok Hei Breath & Black Winter Truffle',
-      discipline: 'Pan-Asian Hearth',
-      origin: 'Canton-Himalayan Lineage',
+      title: 'Dal Makhani Imperial',
+      subtitle: '16-Hour Slow Simmered Earthen Handi Dum',
+      discipline: 'Royal Indian Curry',
+      origin: 'Punjab Heritage',
+      image: '/dish-awadhi.jpg',
+      price: '₹319',
+    },
+    {
+      title: 'Honey Chilli Lotus Stem',
+      subtitle: 'Wild Honey Glaze, Sesame & High Wok Hei',
+      discipline: 'Chinese Starter',
+      origin: 'Himalayan Silk Road',
       image: '/dish-oriental.jpg',
-      price: '₹720',
+      price: '₹399',
     },
   ];
 
-  const filteredDishes =
-    activeCategory === 'All'
-      ? DISHES
-      : DISHES.filter((d) => d.category === activeCategory);
+  const MENU_CATEGORIES = [
+    'All Items',
+    'Tandoori Starters',
+    'Indian Curries',
+    'South Indian & Dosas',
+    'Rice, Biryani & Breads',
+    'Chinese & Sizzlers',
+    'Continental, Pastas & Pizzas',
+    'Mocktails & Shakes',
+    'Desserts',
+  ];
+
+  const filteredDishes = DISHES.filter((d) => {
+    const matchesCategory =
+      activeCategory === 'All' || activeCategory === 'All Items'
+        ? true
+        : d.category === activeCategory;
+    const matchesSearch =
+      menuSearchQuery.trim() === '' ||
+      d.name.toLowerCase().includes(menuSearchQuery.toLowerCase()) ||
+      d.description.toLowerCase().includes(menuSearchQuery.toLowerCase()) ||
+      d.origin.toLowerCase().includes(menuSearchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   const handleBookingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -857,34 +1313,63 @@ export const RasoraaExperience: React.FC = () => {
       <section id="menu" className="py-28 relative bg-[#060A08] border-b border-white/[0.06]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Section Header */}
-          <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
+          <div className="text-center max-w-3xl mx-auto mb-14 space-y-5">
             <span className="text-[#C5A880] text-xs font-sans tracking-[0.28em] uppercase">
               02 / The Imperial Carte
             </span>
             <h2 className="font-serif text-4xl sm:text-6xl font-light text-white">
-              Curated Degustation
+              Official Restaurant Menu
             </h2>
             <p className="text-neutral-400 text-sm sm:text-base font-light leading-relaxed">
-              Every dish is individually composed from farm-harvested botanicals, hand-ground whole spices, and heritage dairy.
+              Breakfast · Lunch · Dinner — authentic multicuisine vegetarian gastronomy curated with whole ground spices, heritage dairy, and fresh garden botanicals.
             </p>
 
-            {/* Category Filter Pills */}
-            <div className="flex flex-wrap items-center justify-center gap-2 pt-6">
-              {(['All', 'Awadhi Dum', 'Royal Tandoor', 'Pan-Asian Wok', 'Continental Hearth'] as const).map(
-                (cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setActiveCategory(cat)}
-                    className={`px-5 py-2 rounded-full text-xs font-sans tracking-[0.16em] uppercase transition-all duration-300 border ${
-                      activeCategory === cat
-                        ? 'bg-[#183620] text-[#FBF9F5] border-[#C5A880] shadow-[0_0_15px_rgba(197,168,128,0.2)]'
-                        : 'bg-white/[0.03] text-neutral-400 border-white/10 hover:border-white/30 hover:text-white'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                )
+            {/* Chef's Fresh Preparation Pledge from Official Menu */}
+            <div className="max-w-2xl mx-auto p-4 sm:p-5 rounded-2xl bg-[#0D1812] border border-[#C5A880]/30 text-xs text-[#E8E4DA] font-light leading-relaxed text-center shadow-lg">
+              <span className="font-serif italic text-base text-[#C5A880] block pb-1">
+                “Fresh • Elegant • Authentic Dining Experience”
+              </span>
+              <p className="text-neutral-300">
+                All dishes are freshly prepared upon order. We kindly request 20–25 minutes for preparation to ensure every plate meets our highest standards of freshness and flavor.
+              </p>
+            </div>
+
+            {/* Live Interactive Dish Search Input */}
+            <div className="max-w-md mx-auto pt-2 relative">
+              <Search size={15} className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400" />
+              <input
+                type="text"
+                value={menuSearchQuery}
+                onChange={(e) => setMenuSearchQuery(e.target.value)}
+                placeholder="Search dishes (e.g. Paneer, Dosa, Biryani, Pasta)..."
+                className="w-full pl-11 pr-10 py-3 rounded-full bg-white/[0.04] border border-white/15 text-white placeholder-neutral-500 text-xs font-sans tracking-wide focus:outline-none focus:border-[#C5A880] transition-colors"
+              />
+              {menuSearchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setMenuSearchQuery('')}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-xs text-neutral-400 hover:text-white"
+                >
+                  ✕
+                </button>
               )}
+            </div>
+
+            {/* Category Filter Pills */}
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-4">
+              {MENU_CATEGORIES.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-4 py-2 rounded-full text-[11px] font-sans tracking-[0.14em] uppercase transition-all duration-300 border ${
+                    activeCategory === cat || (cat === 'All Items' && activeCategory === 'All')
+                      ? 'bg-[#183620] text-[#FBF9F5] border-[#C5A880] shadow-[0_0_15px_rgba(197,168,128,0.2)]'
+                      : 'bg-white/[0.03] text-neutral-400 border-white/10 hover:border-white/30 hover:text-white'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
             </div>
           </div>
 
@@ -926,6 +1411,23 @@ export const RasoraaExperience: React.FC = () => {
                 </div>
               </div>
             ))}
+
+            {filteredDishes.length === 0 && (
+              <div className="col-span-2 py-14 text-center text-neutral-400 space-y-3">
+                <p className="font-serif text-2xl text-white font-light">No dishes found matching "{menuSearchQuery}"</p>
+                <p className="text-xs text-neutral-400">Try searching for Paneer, Dosa, Biryani, Pasta, Sizzler, or browse by category.</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuSearchQuery('');
+                    setActiveCategory('All Items');
+                  }}
+                  className="px-5 py-2 rounded-full border border-[#C5A880] text-xs font-sans uppercase tracking-widest text-white hover:bg-white/10"
+                >
+                  Reset Menu
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="mt-16 text-center">
