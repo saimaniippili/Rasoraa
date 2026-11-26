@@ -163,7 +163,15 @@ const SANCTUARIES = [
     phone: '+91 99420 23456',
     desc: 'Bespoke private dining suite curated by Founder & Managing Partner Rajan R for exclusive family celebrations and executive banquets.',
   },
-];
+] as const;
+
+type SanctuaryId = (typeof SANCTUARIES)[number]['id'];
+
+const BOOKING_FEES_PER_GUEST: Record<SanctuaryId, number> = {
+  heritage: 100,
+  courtyard: 150,
+  salon: 200,
+};
 
 /* ─── Subtle Floating Embers Canvas ─── */
 const EmberCanvas: React.FC = () => {
@@ -250,8 +258,15 @@ export const RasoraaExperience: React.FC = () => {
   const today = new Date();
   const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-  const [selectedSanctuary, setSelectedSanctuary] = useState('heritage');
+  const [selectedSanctuary, setSelectedSanctuary] = useState<SanctuaryId>('heritage');
   const [guestCount, setGuestCount] = useState(2);
+  const [guestCountInput, setGuestCountInput] = useState('2');
+  const bookingFeePerGuest = BOOKING_FEES_PER_GUEST[selectedSanctuary];
+  const totalBookingFee = bookingFeePerGuest * guestCount;
+  const updateGuestCount = (count: number) => {
+    setGuestCount(count);
+    setGuestCountInput(String(count));
+  };
   const [selectedDate, setSelectedDate] = useState<string>(todayISO);
   const [calendarViewDate, setCalendarViewDate] = useState<Date>(() => new Date());
   const [selectedTime, setSelectedTime] = useState('8:00 PM');
@@ -952,6 +967,9 @@ export const RasoraaExperience: React.FC = () => {
                     <p className="text-xs text-neutral-400 font-light pt-1.5 leading-relaxed">
                       {s.desc}
                     </p>
+                    <p className="text-xs font-mono text-[#C5A880] pt-2">
+                      ₹{BOOKING_FEES_PER_GUEST[s.id]} per guest
+                    </p>
                   </div>
                 ))}
               </div>
@@ -1024,21 +1042,48 @@ export const RasoraaExperience: React.FC = () => {
                       <div className="flex items-center gap-3">
                         <button
                           type="button"
-                          onClick={() => setGuestCount(Math.max(1, guestCount - 1))}
+                          onClick={() => updateGuestCount(Math.max(1, guestCount - 1))}
                           className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:border-[#C5A880] transition-colors"
                         >
                           <Minus size={13} />
                         </button>
-                        <span className="font-serif text-xl text-white font-light w-16 text-center">
-                          {guestCount} {guestCount === 1 ? 'Guest' : 'Guests'}
-                        </span>
+                        <div className="font-serif text-xl text-white font-light w-16 text-center">
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            value={guestCountInput}
+                            aria-label="Number of guests"
+                            onChange={(e) => {
+                              const value = e.currentTarget.value;
+                              if (/^\d{0,2}$/.test(value)) {
+                                setGuestCountInput(value);
+                                const count = Number(value);
+                                if (count >= 1 && count <= 16) {
+                                  setGuestCount(count);
+                                }
+                              }
+                            }}
+                            onBlur={() => setGuestCountInput(String(guestCount))}
+                            className="w-full appearance-none border-0 bg-transparent p-0 text-center outline-none ring-0"
+                          />
+                          <span className="block">{guestCount === 1 ? 'Guest' : 'Guests'}</span>
+                        </div>
                         <button
                           type="button"
-                          onClick={() => setGuestCount(Math.min(16, guestCount + 1))}
+                          onClick={() => updateGuestCount(Math.min(16, guestCount + 1))}
                           className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:border-[#C5A880] transition-colors"
                         >
                           <Plus size={13} />
                         </button>
+                      </div>
+                      <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3">
+                        <span className="text-xs text-neutral-400">
+                          Booking Amount ({guestCount} × ₹{bookingFeePerGuest})
+                        </span>
+                        <span className="font-mono text-sm text-[#C5A880]" aria-live="polite">
+                          ₹{totalBookingFee}
+                        </span>
                       </div>
                     </div>
 
