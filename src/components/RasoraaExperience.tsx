@@ -307,20 +307,20 @@ export const RasoraaExperience: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#070B08] text-[#FBF9F5] font-sans selection:bg-[#22AA00] selection:text-black overflow-x-hidden">
       {/* ─── 0. TOP BENEDICTION BAR ─── */}
-      <div className="border-b border-white/[0.06] bg-[#040705] text-[11px] font-sans tracking-[0.2em] uppercase py-2.5 px-4 sm:px-8 text-neutral-400">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center space-x-3">
-            <span className="inline-flex items-center gap-2 text-[#22AA00] font-medium">
+      <div className="border-b border-white/[0.06] bg-[#040705] text-[10.5px] font-sans tracking-[0.12em] uppercase py-2 px-4 sm:px-8 text-neutral-400">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
+          <div className="flex items-center space-x-3 shrink-0 whitespace-nowrap">
+            <span className="inline-flex items-center gap-1.5 text-[#22AA00] font-medium">
               <span className="w-1.5 h-1.5 rounded-full bg-[#22AA00] shadow-[0_0_8px_#22AA00]" />
               100% Shuddh Shakahari
             </span>
-            <span className="text-neutral-600">|</span>
+            <span className="text-neutral-700">|</span>
             <span className="text-[#C5A880]">Strict Jain Hearth on Decree</span>
           </div>
-          <div className="hidden md:flex items-center space-x-6 text-neutral-400">
+          <div className="hidden md:flex items-center space-x-4 text-neutral-400 text-[10px] shrink-0 whitespace-nowrap">
             <span>39, Ambalathadayar Madam St · Heritage Town, Pondicherry</span>
-            <span className="text-neutral-600">|</span>
-            <span className="text-neutral-300 font-mono">11.9360° N, 79.8336° E</span>
+            <span className="text-neutral-700">|</span>
+            <span className="text-neutral-300 font-mono">Pondicherry — 605 001</span>
           </div>
         </div>
       </div>
@@ -333,73 +333,73 @@ export const RasoraaExperience: React.FC = () => {
             : 'bg-transparent border-b border-white/[0.04]'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-22 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
           {/* Brand Logo & Editorial Wordmark */}
-          <a href="#hero" className="flex items-center gap-3.5 group flex-shrink-0">
+          <a href="#hero" className="flex items-center gap-3 group shrink-0">
             <img
               src="/logo.png"
               alt="RASORAA"
-              className="h-10 sm:h-11 w-auto object-contain filter drop-shadow-[0_2px_8px_rgba(34,170,0,0.3)] transition-transform duration-500 group-hover:scale-105"
+              className="h-9 sm:h-10 w-auto object-contain filter drop-shadow-[0_2px_8px_rgba(34,170,0,0.3)] transition-transform duration-500 group-hover:scale-105"
             />
             <div className="flex flex-col">
-              <span className="font-serif text-2xl sm:text-3xl font-light tracking-[0.26em] text-white transition-colors leading-none">
+              <span className="font-serif text-xl sm:text-2xl font-light tracking-[0.22em] text-white transition-colors leading-none">
                 RASORAA
               </span>
-              <span className="text-[9px] font-sans font-medium tracking-[0.3em] text-[#C5A880] uppercase mt-1">
+              <span className="text-[8.5px] font-sans font-medium tracking-[0.22em] text-[#C5A880] uppercase mt-1 whitespace-nowrap">
                 Pure Veg &amp; Jain Haute Cuisine
               </span>
             </div>
           </a>
 
-          {/* Clean 6-Link Editorial Navigation */}
-          <nav className="hidden lg:flex items-center gap-8 xl:gap-10 text-[12px] font-sans tracking-[0.22em] uppercase text-neutral-300 font-light">
-            <a href="#hero" className="hover:text-[#C5A880] transition-colors py-1 relative group">
+          {/* Clean 6-Link Editorial Navigation with zero line-wrapping */}
+          <nav className="hidden lg:flex items-center gap-5 xl:gap-7 2xl:gap-8 text-[11.5px] font-sans tracking-[0.16em] uppercase text-neutral-300 font-light shrink-0">
+            <a href="#hero" className="hover:text-[#C5A880] transition-colors py-1 relative group whitespace-nowrap">
               <span>Home</span>
               <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#C5A880] transition-all duration-300 group-hover:w-full" />
             </a>
-            <a href="#about" className="hover:text-[#C5A880] transition-colors py-1 relative group">
+            <a href="#about" className="hover:text-[#C5A880] transition-colors py-1 relative group whitespace-nowrap">
               <span>About Us</span>
               <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#C5A880] transition-all duration-300 group-hover:w-full" />
             </a>
-            <a href="#menu" className="hover:text-[#C5A880] transition-colors py-1 relative group">
+            <a href="#menu" className="hover:text-[#C5A880] transition-colors py-1 relative group whitespace-nowrap">
               <span>Menu</span>
               <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#C5A880] transition-all duration-300 group-hover:w-full" />
             </a>
-            <a href="#gallery" className="hover:text-[#C5A880] transition-colors py-1 relative group">
+            <a href="#gallery" className="hover:text-[#C5A880] transition-colors py-1 relative group whitespace-nowrap">
               <span>Gallery</span>
               <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#C5A880] transition-all duration-300 group-hover:w-full" />
             </a>
-            <a href="#events" className="hover:text-[#C5A880] transition-colors py-1 relative group">
+            <a href="#events" className="hover:text-[#C5A880] transition-colors py-1 relative group whitespace-nowrap">
               <span>Events</span>
               <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#C5A880] transition-all duration-300 group-hover:w-full" />
             </a>
-            <a href="#contact" className="hover:text-[#C5A880] transition-colors py-1 relative group">
+            <a href="#contact" className="hover:text-[#C5A880] transition-colors py-1 relative group whitespace-nowrap">
               <span>Contact</span>
               <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#C5A880] transition-all duration-300 group-hover:w-full" />
             </a>
           </nav>
 
           {/* Right Action Bar */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 shrink-0">
             <a
               href="tel:+919484594845"
-              className="hidden xl:flex items-center gap-2 text-xs font-mono text-neutral-300 hover:text-white px-4 py-2 rounded-full border border-white/10 hover:border-[#C5A880]/50 transition-colors bg-white/[0.03] whitespace-nowrap"
+              className="hidden xl:inline-flex items-center gap-1.5 text-xs font-mono text-neutral-300 hover:text-white px-3.5 py-2 rounded-full border border-white/10 hover:border-[#C5A880]/50 transition-colors bg-white/[0.03] whitespace-nowrap shrink-0"
             >
-              <Phone size={12} className="text-[#C5A880]" />
+              <Phone size={11} className="text-[#C5A880]" />
               <span>+91 94845 94845</span>
             </a>
 
             <a
               href="#reserve"
-              className="px-6 py-2.5 rounded-full border border-[#C5A880]/60 bg-gradient-to-r from-[#162E1D] via-[#0D2214] to-[#162E1D] hover:border-[#C5A880] text-[#FBF9F5] hover:text-white text-xs font-medium tracking-[0.18em] uppercase transition-all duration-300 shadow-[0_0_20px_rgba(0,0,0,0.6)] hover:shadow-[0_0_25px_rgba(197,168,128,0.25)] hover:-translate-y-0.5 whitespace-nowrap inline-flex items-center gap-2"
+              className="px-5 py-2 rounded-full border border-[#C5A880]/60 bg-gradient-to-r from-[#162E1D] via-[#0D2214] to-[#162E1D] hover:border-[#C5A880] text-[#FBF9F5] hover:text-white text-xs font-medium tracking-[0.16em] uppercase transition-all duration-300 shadow-[0_0_20px_rgba(0,0,0,0.6)] hover:shadow-[0_0_25px_rgba(197,168,128,0.25)] hover:-translate-y-0.5 whitespace-nowrap shrink-0 inline-flex items-center gap-2"
             >
-              <Calendar size={13} className="text-[#C5A880]" />
+              <Calendar size={12} className="text-[#C5A880]" />
               <span>Book Table</span>
             </a>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2.5 rounded-full border border-white/10 text-neutral-200 hover:text-[#C5A880] transition-colors"
+              className="lg:hidden p-2 rounded-full border border-white/10 text-neutral-200 hover:text-[#C5A880] transition-colors"
               aria-label="Toggle Menu"
             >
               {mobileMenuOpen ? <X size={20} /> : <MenuIcon size={20} />}
