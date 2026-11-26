@@ -11,11 +11,11 @@ export const RasoraaCover: React.FC<RasoraaCoverProps> = ({ children, currentSpr
   const rightStackWidth = Math.max(3, (4 - currentSpread) * 3 + 2);
 
   return (
-    <div className="relative mx-auto max-w-6xl">
+    <div className="relative mx-auto max-w-6xl w-full">
       {/* Outer Padded Leather Hardcover Casing */}
-      <div className="rasoraa-leather-casing rasoraa-leather-texture p-3 sm:p-5 md:p-7 relative transition-all duration-700">
+      <div className="rasoraa-leather-casing rasoraa-leather-texture p-2.5 sm:p-4 md:p-6 lg:p-7 relative transition-all duration-700 w-full overflow-hidden sm:overflow-visible">
         {/* Golden Perimeter Hand-Stitching */}
-        <div className="absolute inset-2 sm:inset-3 rasoraa-gold-stitching pointer-events-none z-10" />
+        <div className="absolute inset-1.5 sm:inset-3 rasoraa-gold-stitching pointer-events-none z-10" />
 
         {/* Embossed Brass Corner Protectors */}
         <div className="brass-corner-tl" />
@@ -23,15 +23,15 @@ export const RasoraaCover: React.FC<RasoraaCoverProps> = ({ children, currentSpr
         <div className="brass-corner-bl" />
         <div className="brass-corner-br" />
 
-        {/* Left Physical Paper Edge Stack */}
+        {/* Left Physical Paper Edge Stack (Visible on desktop open book) */}
         <div
-          className="hidden md:block absolute -left-2 top-8 bottom-8 paper-stack-left pointer-events-none transition-all duration-500 z-10"
+          className="hidden lg:block absolute -left-2 top-8 bottom-8 paper-stack-left pointer-events-none transition-all duration-500 z-10"
           style={{ width: `${leftStackWidth}px` }}
         />
 
-        {/* Right Physical Paper Edge Stack */}
+        {/* Right Physical Paper Edge Stack (Visible on desktop open book) */}
         <div
-          className="hidden md:block absolute -right-2 top-8 bottom-8 paper-stack-right pointer-events-none transition-all duration-500 z-10"
+          className="hidden lg:block absolute -right-2 top-8 bottom-8 paper-stack-right pointer-events-none transition-all duration-500 z-10"
           style={{ width: `${rightStackWidth}px` }}
         />
 

@@ -236,14 +236,14 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
          ══════════════════════════════════════════════════════════════════ */}
       {menuViewMode === 'book' && (
         <RasoraaCover currentSpread={currentSpread}>
-          {/* Side Turn Buttons */}
+          {/* Side Turn Buttons (Visible on desktop viewports) */}
           {currentSpread > 0 && (
             <button
               type="button"
               disabled={isTurning}
               onClick={handlePrevSpread}
               aria-label="Previous Page"
-              className="absolute -left-3 sm:-left-6 top-1/2 -translate-y-1/2 z-50 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#09251A] border border-[#C5A880]/60 text-[#C5A880] hover:text-white hover:bg-[#0E3525] hover:scale-110 disabled:opacity-40 flex items-center justify-center shadow-2xl transition-all"
+              className="hidden lg:flex absolute -left-5 xl:-left-7 top-1/2 -translate-y-1/2 z-50 w-11 h-11 xl:w-12 xl:h-12 rounded-full bg-[#09251A] border border-[#C5A880]/60 text-[#C5A880] hover:text-white hover:bg-[#0E3525] hover:scale-110 disabled:opacity-40 items-center justify-center shadow-2xl transition-all"
             >
               <ChevronLeft size={20} />
             </button>
@@ -254,16 +254,16 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
               disabled={isTurning}
               onClick={handleNextSpread}
               aria-label="Next Page"
-              className="absolute -right-3 sm:-right-6 top-1/2 -translate-y-1/2 z-50 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[#09251A] border border-[#C5A880]/60 text-[#C5A880] hover:text-white hover:bg-[#0E3525] hover:scale-110 disabled:opacity-40 flex items-center justify-center shadow-2xl transition-all"
+              className="hidden lg:flex absolute -right-5 xl:-right-7 top-1/2 -translate-y-1/2 z-50 w-11 h-11 xl:w-12 xl:h-12 rounded-full bg-[#09251A] border border-[#C5A880]/60 text-[#C5A880] hover:text-white hover:bg-[#0E3525] hover:scale-110 disabled:opacity-40 items-center justify-center shadow-2xl transition-all"
             >
               <ChevronRight size={20} />
             </button>
           )}
 
           {/* ─────────────────────────────────────────────────────────────
-              DESKTOP/TABLET: 3D TWO-PAGE OPEN BOOK CANVAS
+              DESKTOP (>= 1024px): 3D TWO-PAGE OPEN BOOK CANVAS
              ───────────────────────────────────────────────────────────── */}
-          <div className="hidden md:block relative min-h-[660px] rounded-xl overflow-hidden border border-[#C5A880]/30 shadow-2xl book-stage-perspective">
+          <div className="hidden lg:block relative min-h-[640px] xl:min-h-[670px] rounded-xl overflow-hidden border border-[#C5A880]/30 shadow-2xl book-stage-perspective">
             {/* Spine Recessed Shadow & Hanging Ribbon */}
             <RasoraaSpine />
 
@@ -592,9 +592,9 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
           </div>
 
           {/* ─────────────────────────────────────────────────────────────
-              MOBILE: HIGH-FIDELITY TACTILE 3D POCKET FOLIO
+              MOBILE & TABLET (< 1024px): HIGH-FIDELITY TACTILE 3D POCKET FOLIO
              ───────────────────────────────────────────────────────────── */}
-          <div className="block md:hidden">
+          <div className="block lg:hidden w-full">
             {/* Top Navigation & Chapter Header */}
             <div className="flex items-center justify-between mb-3 px-1 text-xs font-mono text-[#FAF7EE]">
               <button
@@ -756,14 +756,14 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
             </div>
           </div>
 
-          {/* Bottom Folio Navigation & Spread Indicator */}
-          <div className="mt-5 flex flex-wrap items-center justify-between gap-4 text-xs font-mono text-[#C5A880] px-2">
+          {/* Bottom Folio Navigation & Spread Indicator (Desktop & Tablet) */}
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-[#C5A880] px-1 sm:px-2">
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 disabled={currentSpread === 0 || isTurning}
                 onClick={handlePrevSpread}
-                className="px-3 py-1.5 rounded-lg border border-[#C5A880]/30 hover:border-[#C5A880] disabled:opacity-30 disabled:hover:border-[#C5A880]/30 transition-colors flex items-center gap-1 text-[#FAF7EE]"
+                className="px-3 py-1.5 rounded-lg border border-[#C5A880]/30 hover:border-[#C5A880] disabled:opacity-30 disabled:hover:border-[#C5A880]/30 transition-colors flex items-center gap-1 text-[#FAF7EE] text-[11px] sm:text-xs"
               >
                 <ChevronLeft size={13} />
                 <span>Turn Back</span>
@@ -772,7 +772,7 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
                 type="button"
                 disabled={currentSpread === 4 || isTurning}
                 onClick={handleNextSpread}
-                className="px-3 py-1.5 rounded-lg border border-[#C5A880]/30 hover:border-[#C5A880] disabled:opacity-30 disabled:hover:border-[#C5A880]/30 transition-colors flex items-center gap-1 text-[#FAF7EE]"
+                className="px-3 py-1.5 rounded-lg border border-[#C5A880]/30 hover:border-[#C5A880] disabled:opacity-30 disabled:hover:border-[#C5A880]/30 transition-colors flex items-center gap-1 text-[#FAF7EE] text-[11px] sm:text-xs"
               >
                 <span>Turn Forward</span>
                 <ChevronRight size={13} />
@@ -780,7 +780,7 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
             </div>
 
             {/* Spread Indicators Dots */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               {[0, 1, 2, 3, 4].map((i) => (
                 <button
                   key={i}
@@ -788,13 +788,13 @@ export const RasoraaBook: React.FC<RasoraaBookProps> = ({ onSelectDish }) => {
                   onClick={() => turnToSpread(i)}
                   title={`Go to Spread ${i + 1}`}
                   className={`h-2 rounded-full transition-all ${
-                    currentSpread === i ? 'w-8 bg-[#C5A880]' : 'w-2 bg-[#C5A880]/30 hover:bg-[#C5A880]/60'
+                    currentSpread === i ? 'w-7 sm:w-8 bg-[#C5A880]' : 'w-2 bg-[#C5A880]/30 hover:bg-[#C5A880]/60'
                   }`}
                 />
               ))}
             </div>
 
-            <span className="text-[11px] text-[#A69986]">
+            <span className="text-[10px] sm:text-[11px] text-[#A69986] truncate">
               Spread {currentSpread + 1} of 5 · Official Rasoraa Folio
             </span>
           </div>

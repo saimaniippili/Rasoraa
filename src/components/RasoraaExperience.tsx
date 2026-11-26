@@ -516,24 +516,24 @@ export const RasoraaExperience: React.FC = () => {
                 <p className="font-serif italic text-2xl sm:text-3xl text-[#E8E4DA] font-light tracking-wide">
                   Where Ancient Living Fire Meets
                 </p>
-                <h1 className="font-serif text-5xl sm:text-7xl xl:text-8xl font-light tracking-tight text-white leading-[1.04]">
+                <h1 className="font-serif text-3.5xl sm:text-6xl xl:text-7xl font-light tracking-tight text-white leading-[1.08] break-words">
                   Vegetarian Craft,{' '}
-                  <br />
+                  <br className="hidden sm:block" />
                   <span className="italic font-serif font-light text-transparent bg-clip-text bg-gradient-to-r from-[#FAF8F5] via-[#E8E4DA] to-[#C5A880]">
                     Elevated to Royalty.
                   </span>
                 </h1>
               </div>
 
-              <p className="text-neutral-300 text-base sm:text-lg max-w-xl font-light leading-relaxed mx-auto lg:mx-0">
+              <p className="text-neutral-300 text-sm sm:text-base lg:text-lg max-w-xl font-light leading-relaxed mx-auto lg:mx-0">
                 Century-old Awadhi earthenware handis simmered over sal wood embers, 400°C clay tandoors, and whisper-thin wok hei — united under an uncompromising 100% Shuddh Shakahari &amp; Jain decree.
               </p>
 
               {/* Action Buttons */}
-              <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-4">
+              <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4">
                 <a
                   href="#reserve"
-                  className="px-8 py-4 rounded-full border border-[#C5A880]/80 bg-gradient-to-r from-[#183620] via-[#112918] to-[#183620] hover:border-[#C5A880] text-[#FBF9F5] font-medium text-xs tracking-[0.2em] uppercase transition-all duration-500 shadow-[0_4px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(197,168,128,0.3)] hover:-translate-y-0.5 inline-flex items-center gap-2.5"
+                  className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-full border border-[#C5A880]/80 bg-gradient-to-r from-[#183620] via-[#112918] to-[#183620] hover:border-[#C5A880] text-[#FBF9F5] font-medium text-xs tracking-[0.16em] uppercase transition-all duration-500 shadow-[0_4px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(197,168,128,0.3)] hover:-translate-y-0.5 inline-flex items-center gap-2"
                 >
                   <Calendar size={14} className="text-[#C5A880]" />
                   <span>Reserve Table</span>
@@ -541,7 +541,7 @@ export const RasoraaExperience: React.FC = () => {
 
                 <a
                   href="#menu"
-                  className="px-8 py-4 rounded-full border border-white/15 hover:border-[#C5A880] text-neutral-300 hover:text-white font-light text-xs tracking-[0.2em] uppercase transition-all duration-300 hover:bg-white/[0.04] inline-flex items-center gap-2"
+                  className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-full border border-white/15 hover:border-[#C5A880] text-neutral-300 hover:text-white font-light text-xs tracking-[0.16em] uppercase transition-all duration-300 hover:bg-white/[0.04] inline-flex items-center gap-2"
                 >
                   <span>Explore The Carte</span>
                   <ArrowUpRight size={14} className="text-[#C5A880]" />
@@ -549,22 +549,22 @@ export const RasoraaExperience: React.FC = () => {
               </div>
 
               {/* Quiet Architectural Trust Metrics */}
-              <div className="pt-8 border-t border-white/[0.08] grid grid-cols-3 gap-6 text-left">
+              <div className="pt-6 sm:pt-8 border-t border-white/[0.08] grid grid-cols-3 gap-2 sm:gap-6 text-center sm:text-left">
                 <div>
-                  <span className="block font-serif text-2xl text-white font-light">100%</span>
-                  <span className="text-[11px] font-sans uppercase tracking-[0.2em] text-[#22AA00]">
+                  <span className="block font-serif text-xl sm:text-2xl text-white font-light">100%</span>
+                  <span className="text-[9.5px] sm:text-[11px] font-sans uppercase tracking-[0.12em] sm:tracking-[0.2em] text-[#22AA00] block">
                     Pure Shakahari
                   </span>
                 </div>
                 <div>
-                  <span className="block font-serif text-2xl text-white font-light">Strict</span>
-                  <span className="text-[11px] font-sans uppercase tracking-[0.2em] text-[#C5A880]">
+                  <span className="block font-serif text-xl sm:text-2xl text-white font-light">Strict</span>
+                  <span className="text-[9.5px] sm:text-[11px] font-sans uppercase tracking-[0.12em] sm:tracking-[0.2em] text-[#C5A880] block">
                     Jain Certified
                   </span>
                 </div>
                 <div>
-                  <span className="block font-serif text-2xl text-white font-light">Heritage Town</span>
-                  <span className="text-[11px] font-sans uppercase tracking-[0.2em] text-neutral-400">
+                  <span className="block font-serif text-xl sm:text-2xl text-white font-light truncate">Heritage</span>
+                  <span className="text-[9.5px] sm:text-[11px] font-sans uppercase tracking-[0.12em] sm:tracking-[0.2em] text-neutral-400 block truncate">
                     Pondicherry
                   </span>
                 </div>
