@@ -115,6 +115,21 @@ body {
   overflow-x: hidden;
 }
 
+.rasoraa-experience {
+  isolation: isolate;
+}
+
+.rasoraa-experience::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: url("/rr-monogram.jpg") center / min(78vw, 820px) auto no-repeat;
+  opacity: 0.012;
+  mix-blend-mode: screen;
+}
+
 /* ─── TOP ANNOUNCEMENT MICRO-RAIL ─── */
 .esencja-rail {
   height: 38px;

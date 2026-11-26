@@ -112,7 +112,15 @@ const SANCTUARIES = [
     phone: '+91 99420 23456',
     desc: 'Bespoke private dining suite curated by Founder & Managing Partner Rajan R for exclusive family celebrations and executive banquets.',
   },
-];
+] as const;
+
+type SanctuaryId = (typeof SANCTUARIES)[number]['id'];
+
+const BOOKING_FEES_PER_GUEST: Record<SanctuaryId, number> = {
+  heritage: 100,
+  courtyard: 150,
+  salon: 200,
+};
 
 /* ─── Subtle Floating Embers Canvas ─── */
 const EmberCanvas: React.FC = () => {
@@ -200,8 +208,15 @@ export const RasoraaExperience: React.FC = () => {
   const today = new Date();
   const todayISO = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
 
-  const [selectedSanctuary, setSelectedSanctuary] = useState('heritage');
+  const [selectedSanctuary, setSelectedSanctuary] = useState<SanctuaryId>('heritage');
   const [guestCount, setGuestCount] = useState(2);
+  const [guestCountInput, setGuestCountInput] = useState('2');
+  const bookingFeePerGuest = BOOKING_FEES_PER_GUEST[selectedSanctuary];
+  const totalBookingFee = bookingFeePerGuest * guestCount;
+  const updateGuestCount = (count: number) => {
+    setGuestCount(count);
+    setGuestCountInput(String(count));
+  };
   const [selectedDate, setSelectedDate] = useState<string>(todayISO);
   const [calendarViewDate, setCalendarViewDate] = useState<Date>(() => new Date());
   const [selectedTime, setSelectedTime] = useState('8:00 PM');
@@ -305,7 +320,7 @@ export const RasoraaExperience: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#070B08] text-[#FBF9F5] font-sans selection:bg-[#22AA00] selection:text-black overflow-x-hidden">
+    <div className="rasoraa-experience min-h-screen bg-[#070B08] text-[#FBF9F5] font-sans selection:bg-[#22AA00] selection:text-black overflow-x-hidden">
       {/* ─── 0. TOP BENEDICTION BAR ─── */}
       <div className="border-b border-white/[0.06] bg-[#040705] text-[11px] font-sans tracking-[0.2em] uppercase py-2.5 px-4 sm:px-8 text-neutral-400">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
@@ -352,12 +367,12 @@ export const RasoraaExperience: React.FC = () => {
           </a>
 
           {/* Clean 6-Link Editorial Navigation */}
-          <nav className="hidden lg:flex items-center gap-8 xl:gap-10 text-[12px] font-sans tracking-[0.22em] uppercase text-neutral-300 font-light">
-            <a href="#hero" className="hover:text-[#C5A880] transition-colors py-1 relative group">
+          <nav className="hidden lg:flex items-center gap-8 xl:gap-9 text-[12px] font-sans tracking-[0.22em] uppercase text-neutral-300 font-light">
+            <a href="#hero" className="xl:ml-4 hover:text-[#C5A880] transition-colors py-1 relative group">
               <span>Home</span>
               <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#C5A880] transition-all duration-300 group-hover:w-full" />
             </a>
-            <a href="#about" className="hover:text-[#C5A880] transition-colors py-1 relative group">
+            <a href="#about" className="whitespace-nowrap hover:text-[#C5A880] transition-colors py-1 relative group">
               <span>About Us</span>
               <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#C5A880] transition-all duration-300 group-hover:w-full" />
             </a>
@@ -380,7 +395,7 @@ export const RasoraaExperience: React.FC = () => {
           </nav>
 
           {/* Right Action Bar */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 xl:translate-x-3">
             <a
               href="tel:+919484594845"
               className="hidden xl:flex items-center gap-2 text-xs font-mono text-neutral-300 hover:text-white px-4 py-2 rounded-full border border-white/10 hover:border-[#C5A880]/50 transition-colors bg-white/[0.03] whitespace-nowrap"
@@ -976,6 +991,9 @@ export const RasoraaExperience: React.FC = () => {
                     <p className="text-xs text-neutral-400 font-light pt-2 leading-relaxed">
                       {s.desc}
                     </p>
+                    <p className="text-xs font-mono text-[#C5A880] pt-2">
+                      ₹{BOOKING_FEES_PER_GUEST[s.id]} per guest
+                    </p>
                   </div>
                 ))}
               </div>
@@ -1048,21 +1066,48 @@ export const RasoraaExperience: React.FC = () => {
                       <div className="flex items-center gap-4">
                         <button
                           type="button"
-                          onClick={() => setGuestCount(Math.max(1, guestCount - 1))}
+                          onClick={() => updateGuestCount(Math.max(1, guestCount - 1))}
                           className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:border-[#C5A880]"
                         >
                           <Minus size={14} />
                         </button>
-                        <span className="font-serif text-2xl text-white font-light w-16 text-center">
-                          {guestCount} {guestCount === 1 ? 'Guest' : 'Guests'}
-                        </span>
+                        <div className="font-serif text-2xl text-white font-light w-16 text-center">
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            value={guestCountInput}
+                            aria-label="Number of guests"
+                            onChange={(e) => {
+                              const value = e.currentTarget.value;
+                              if (/^\d{0,2}$/.test(value)) {
+                                setGuestCountInput(value);
+                                const count = Number(value);
+                                if (count >= 1 && count <= 16) {
+                                  setGuestCount(count);
+                                }
+                              }
+                            }}
+                            onBlur={() => setGuestCountInput(String(guestCount))}
+                            className="w-full appearance-none border-0 bg-transparent p-0 text-center outline-none ring-0"
+                          />
+                          <span className="block">{guestCount === 1 ? 'Guest' : 'Guests'}</span>
+                        </div>
                         <button
                           type="button"
-                          onClick={() => setGuestCount(Math.min(16, guestCount + 1))}
+                          onClick={() => updateGuestCount(Math.min(16, guestCount + 1))}
                           className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:border-[#C5A880]"
                         >
                           <Plus size={14} />
                         </button>
+                      </div>
+                      <div className="mt-4 flex items-center justify-between border-t border-white/10 pt-3">
+                        <span className="text-xs text-neutral-400">
+                          Booking Amount ({guestCount} × ₹{bookingFeePerGuest})
+                        </span>
+                        <span className="font-mono text-sm text-[#C5A880]" aria-live="polite">
+                          ₹{totalBookingFee}
+                        </span>
                       </div>
                     </div>
 
