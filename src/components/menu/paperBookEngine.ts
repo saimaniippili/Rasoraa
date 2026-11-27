@@ -47,6 +47,7 @@ export class PaperBookEngine {
   onChange?: (page: number, count: number) => void;
   onPageTurnSound?: () => void;
   onManual?: () => void;
+  onZoomChange?: (zoom: number) => void;
 
   count: number;
   page: number;
@@ -54,6 +55,17 @@ export class PaperBookEngine {
   speed: number;
   dirty: boolean;
   visible: boolean;
+
+  private activePointers = new Map<number, { x: number; y: number }>();
+  private pinchStartDist = 0;
+  private pinchStartZoom = 1;
+  private pinchStartPan = { x: 0, y: 0 };
+  private pinchStartMid = { x: 0, y: 0 };
+  targetZoom = 1;
+  currentZoom = 1;
+  targetPan = { x: 0, y: 0 };
+  currentPan = { x: 0, y: 0 };
+  private lastTapTime = 0;
 
   private animations = new Map<number, AnimationState>();
   private abort = new AbortController();
@@ -83,11 +95,13 @@ export class PaperBookEngine {
     stage: HTMLElement,
     textures: THREE.Texture[],
     onChange?: (page: number, count: number) => void,
-    onPageTurnSound?: () => void
+    onPageTurnSound?: () => void,
+    onZoomChange?: (zoom: number) => void
   ) {
     this.stage = stage;
     this.onChange = onChange;
     this.onPageTurnSound = onPageTurnSound;
+    this.onZoomChange = onZoomChange;
     this.count = Math.ceil(textures.length / 2);
     // Start at cover (0)
     this.page = 0;
@@ -270,7 +284,10 @@ export class PaperBookEngine {
     );
     this.ray.setFromCamera(this.pointerNdc, this.camera);
     this.ray.ray.intersectPlane(this.plane, this.hit);
-    return { x: this.hit.x - this.group.position.x, y: this.hit.y };
+    return {
+      x: this.hit.x - this.group.position.x,
+      y: this.hit.y - this.group.position.y,
+    };
   }
 
   curve(sheet: SheetState, point: { x: number; y: number }) {
@@ -278,6 +295,14 @@ export class PaperBookEngine {
     const angle = clamp(-Math.atan2(point.y, Math.abs(point.x) + 0.15) * 0.48, -0.68, 0.68);
     sheet.angleTarget = angle;
     sheet.arcTarget = this.curl * (0.94 + Math.abs(point.y) * 0.08);
+  }
+
+  resetZoom() {
+    this.targetZoom = 1;
+    this.targetPan.x = 0;
+    this.targetPan.y = 0;
+    this.dirty = true;
+    this.onZoomChange?.(1);
   }
 
   bindPointer() {
@@ -288,6 +313,70 @@ export class PaperBookEngine {
     ) => this.canvas.addEventListener(type, handler, { ...options, signal: this.abort.signal });
 
     listen('pointerdown', (event: PointerEvent) => {
+      this.activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+      // Double-tap zoom toggle
+      const now = performance.now();
+      if (this.activePointers.size === 1 && now - this.lastTapTime < 300) {
+        this.lastTapTime = 0;
+        if (this.targetZoom > 1.15) {
+          this.resetZoom();
+        } else {
+          this.targetZoom = 2.2;
+          const rect = this.canvas.getBoundingClientRect();
+          const nx = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+          const ny = -(((event.clientY - rect.top) / rect.height) * 2 - 1);
+          this.targetPan.x = -nx * 0.6;
+          this.targetPan.y = -ny * 0.45;
+          this.dirty = true;
+          this.onZoomChange?.(this.targetZoom);
+        }
+        return;
+      }
+      if (this.activePointers.size === 1) {
+        this.lastTapTime = now;
+      }
+
+      // Two-finger Pinch-to-Zoom initiated
+      if (this.activePointers.size === 2) {
+        if (this.gesture) {
+          this.stopHold();
+          if (this.sheets[this.gesture.index]) {
+            this.animate(this.gesture.index, Number(this.gesture.forward ? this.gesture.base : !this.gesture.forward), 0);
+          }
+          this.gesture = null;
+        }
+        const [p1, p2] = Array.from(this.activePointers.values());
+        this.pinchStartDist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+        this.pinchStartZoom = this.targetZoom;
+        this.pinchStartMid = { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+        this.pinchStartPan = { ...this.targetPan };
+        return;
+      }
+
+      if (this.activePointers.size > 2) return;
+
+      // Single-finger interaction while zoomed in: Pan the book
+      if (this.targetZoom > 1.15) {
+        this.gesture = {
+          index: -1, // Pan mode
+          forward: false,
+          startX: event.clientX,
+          startY: event.clientY,
+          base: 0,
+          target: 0,
+          moved: false,
+          speed: 0,
+          held: false,
+          pointerId: event.pointerId,
+        };
+        try {
+          this.canvas.setPointerCapture(event.pointerId);
+        } catch (_) {}
+        return;
+      }
+
+      // Normal single-finger 3D page curl
       if (event.button !== 0 || this.gesture) return;
       const point = this.point(event);
       if (Math.abs(point.x) > 1.15 || Math.abs(point.y) > 0.8) return;
@@ -325,16 +414,50 @@ export class PaperBookEngine {
     });
 
     listen('pointermove', (event: PointerEvent) => {
+      if (this.activePointers.has(event.pointerId)) {
+        this.activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+      }
+
+      // Handle active two-finger pinch
+      if (this.activePointers.size >= 2) {
+        const [p1, p2] = Array.from(this.activePointers.values());
+        const currentDist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
+        if (this.pinchStartDist > 10) {
+          const scale = currentDist / this.pinchStartDist;
+          this.targetZoom = clamp(this.pinchStartZoom * scale, 1.0, 3.2);
+
+          const midX = (p1.x + p2.x) / 2;
+          const midY = (p1.y + p2.y) / 2;
+          const dMidX = (midX - this.pinchStartMid.x) / 180;
+          const dMidY = (midY - this.pinchStartMid.y) / 180;
+
+          const maxPanX = (this.targetZoom - 1) * 0.9;
+          const maxPanY = (this.targetZoom - 1) * 0.7;
+          this.targetPan.x = clamp(this.pinchStartPan.x + dMidX, -maxPanX, maxPanX);
+          this.targetPan.y = clamp(this.pinchStartPan.y - dMidY, -maxPanY, maxPanY);
+
+          if (this.targetZoom <= 1.03) {
+            this.targetPan.x = 0;
+            this.targetPan.y = 0;
+          }
+          this.dirty = true;
+          this.onZoomChange?.(this.targetZoom);
+        }
+        return;
+      }
+
       const gesture = this.gesture;
       if (!gesture) {
-        const point = this.point(event);
-        const index = point.x >= 0 ? this.page : this.page - 1;
-        this.hover =
-          Math.abs(point.x) < 1.05 && Math.abs(point.y) < 0.72 && !this.animations.has(index)
-            ? index
-            : null;
-        if (this.hover !== null && this.sheets[index]) {
-          this.curve(this.sheets[index], point);
+        if (this.targetZoom <= 1.05) {
+          const point = this.point(event);
+          const index = point.x >= 0 ? this.page : this.page - 1;
+          this.hover =
+            Math.abs(point.x) < 1.05 && Math.abs(point.y) < 0.72 && !this.animations.has(index)
+              ? index
+              : null;
+          if (this.hover !== null && this.sheets[index]) {
+            this.curve(this.sheets[index], point);
+          }
         }
         return;
       }
@@ -347,6 +470,19 @@ export class PaperBookEngine {
         this.stopHold();
       }
 
+      // Single-finger Pan while zoomed
+      if (gesture.index === -1) {
+        const maxPanX = (this.targetZoom - 1) * 0.9;
+        const maxPanY = (this.targetZoom - 1) * 0.7;
+        this.targetPan.x = clamp(this.targetPan.x + dx / 320, -maxPanX, maxPanX);
+        this.targetPan.y = clamp(this.targetPan.y - dy / 320, -maxPanY, maxPanY);
+        gesture.startX = event.clientX;
+        gesture.startY = event.clientY;
+        this.dirty = true;
+        return;
+      }
+
+      // Page curl tracking
       if (gesture.held) return;
       const rect = this.canvas.getBoundingClientRect();
       const sheetPixels = rect.height / this.viewHeight;
@@ -356,6 +492,12 @@ export class PaperBookEngine {
     });
 
     const release = (event: PointerEvent) => {
+      this.activePointers.delete(event.pointerId);
+
+      if (this.targetZoom < 1.05) {
+        this.resetZoom();
+      }
+
       const gesture = this.gesture;
       if (!gesture || gesture.pointerId !== event.pointerId) return;
 
@@ -368,6 +510,9 @@ export class PaperBookEngine {
           this.canvas.releasePointerCapture(event.pointerId);
         }
       } catch (_) {}
+
+      // If finished pan
+      if (gesture.index === -1) return;
 
       if (gesture.held) return;
 
@@ -400,10 +545,27 @@ export class PaperBookEngine {
       const gesture = this.gesture;
       this.gesture = null;
       this.stopHold();
-      if (!gesture.held) {
+      if (!gesture.held && gesture.index !== -1) {
         this.animate(gesture.index, Number(!gesture.forward), 0);
       }
     });
+
+    // Mouse Wheel Zoom
+    listen('wheel', (event: WheelEvent) => {
+      event.preventDefault();
+      const zoomFactor = event.deltaY < 0 ? 1.15 : 0.88;
+      this.targetZoom = clamp(this.targetZoom * zoomFactor, 1.0, 3.2);
+      if (this.targetZoom <= 1.05) {
+        this.resetZoom();
+      } else {
+        const maxPanX = (this.targetZoom - 1) * 0.9;
+        const maxPanY = (this.targetZoom - 1) * 0.7;
+        this.targetPan.x = clamp(this.targetPan.x, -maxPanX, maxPanX);
+        this.targetPan.y = clamp(this.targetPan.y, -maxPanY, maxPanY);
+        this.onZoomChange?.(this.targetZoom);
+      }
+      this.dirty = true;
+    }, { passive: false });
   }
 
   repeatHold() {
@@ -477,7 +639,9 @@ export class PaperBookEngine {
     this.animations.clear();
     this.page = 0;
     this.hover = null;
+    this.resetZoom();
     this.group.position.x = -0.5;
+    this.group.position.y = 0;
     this.sheets.forEach((s) => {
       s.progress = 0;
       s.arc = s.arcTarget = 0;
@@ -602,20 +766,41 @@ export class PaperBookEngine {
       moving = true;
     }
 
-    let targetX = 0;
-    if (this.page === 0) {
-      // Front cover centered
-      targetX = -0.5;
-    } else if (this.page === this.count) {
-      // Back cover centered
-      targetX = 0.5;
-    } else {
-      // Open book: center the spine
-      targetX = 0;
+    // Camera zoom interpolation
+    if (Math.abs(this.currentZoom - this.targetZoom) > 0.001) {
+      this.currentZoom = damp(this.currentZoom, this.targetZoom, dt, 0.22);
+      this.camera.zoom = this.currentZoom;
+      this.camera.updateProjectionMatrix();
+      moving = true;
     }
 
-    if (Math.abs(this.group.position.x - targetX) > 0.0001) {
+    // Pan interpolation
+    if (
+      Math.abs(this.currentPan.x - this.targetPan.x) > 0.0005 ||
+      Math.abs(this.currentPan.y - this.targetPan.y) > 0.0005
+    ) {
+      this.currentPan.x = damp(this.currentPan.x, this.targetPan.x, dt, 0.22);
+      this.currentPan.y = damp(this.currentPan.y, this.targetPan.y, dt, 0.22);
+      moving = true;
+    }
+
+    let targetX = this.currentPan.x;
+    if (this.page === 0) {
+      // Front cover centered
+      targetX += -0.5;
+    } else if (this.page === this.count) {
+      // Back cover centered
+      targetX += 0.5;
+    }
+
+    const targetY = this.currentPan.y;
+
+    if (
+      Math.abs(this.group.position.x - targetX) > 0.0001 ||
+      Math.abs(this.group.position.y - targetY) > 0.0001
+    ) {
       this.group.position.x = damp(this.group.position.x, targetX, dt, 0.25);
+      this.group.position.y = damp(this.group.position.y, targetY, dt, 0.25);
       moving = true;
     }
 

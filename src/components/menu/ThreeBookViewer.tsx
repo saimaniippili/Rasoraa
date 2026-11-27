@@ -14,6 +14,7 @@ export const ThreeBookViewer: React.FC<ThreeBookViewerProps> = () => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [zoomLevel, setZoomLevel] = useState(1);
 
   // 3-Phase Realistic Paper Sound via Web Audio API
   const playPaperTurnSound = () => {
@@ -103,6 +104,9 @@ export const ThreeBookViewer: React.FC<ThreeBookViewerProps> = () => {
           undefined,
           () => {
             playPaperTurnSound();
+          },
+          (zoom) => {
+            setZoomLevel(zoom);
           }
         );
 
@@ -193,7 +197,29 @@ export const ThreeBookViewer: React.FC<ThreeBookViewerProps> = () => {
           ref={stageRef}
           className="relative w-full h-[450px] xs:h-[490px] sm:h-[560px] md:h-[660px] lg:h-[760px] xl:h-[800px] rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-white/[0.06] bg-gradient-to-b from-[#0D1812]/40 via-[#070B08] to-[#0A120D] shadow-[0_30px_90px_rgba(0,0,0,0.9)]"
           style={{ touchAction: 'none' }}
-        />
+        >
+          {/* Subtle Zoom Status Badge & Tap-to-Reset */}
+          <AnimatePresence>
+            {zoomLevel > 1.15 && (
+              <motion.button
+                initial={{ opacity: 0, scale: 0.9, y: -10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: -10 }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  bookRef.current?.resetZoom();
+                }}
+                className="absolute top-4 right-4 z-20 flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#08150D]/90 backdrop-blur-md border border-[#C5A880]/50 text-[#E3C99B] text-xs font-mono tracking-wider shadow-xl hover:bg-[#0D2417] transition-all active:scale-95 cursor-pointer select-none"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880] animate-pulse" />
+                <span>{zoomLevel.toFixed(1)}× Zoom</span>
+                <span className="text-[10px] text-neutral-400 pl-1 border-l border-white/20">
+                  Tap to reset
+                </span>
+              </motion.button>
+            )}
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
