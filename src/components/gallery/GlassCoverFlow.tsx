@@ -86,15 +86,17 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
         const sideProgress = Math.min(abs, 1);
         const centerEase = 1 - sideProgress;
         const breathe = centerEase * centerEase * (3 - 2 * centerEase);
-        const rotateProgress = Math.pow(sideProgress, 1.65);
+        // Hermite smoothstep curve for buttery 120fps rotation without angle kinks
+        const rotateProgress = sideProgress * sideProgress * (3 - 2 * sideProgress);
+        const extraTilt = Math.max(0, abs - 1) * 1.5;
 
         const xBase = abs < 1 ? abs * step1 : step1 + (abs - 1) * step2;
-        const x = side * xBase + pointer.x * (nearCenter ? 16 : 18);
-        const y = abs * 6 + pointer.y * (nearCenter ? 7 : 8);
-        const rotate = side * -62 * rotateProgress + pointer.x * (nearCenter ? -2 : -1.5);
-        const scale = 0.835 + breathe * 0.255 - Math.max(0, abs - 1) * 0.026;
-        const opacity = abs > 5 ? 0 : Math.max(0.26, 1 - abs * 0.085);
-        const blur = abs > 4 ? 'blur(5px)' : abs > 3 ? 'blur(2px)' : 'none';
+        const x = side * xBase + pointer.x * (nearCenter ? 14 : 16);
+        const y = abs * 5 + pointer.y * (nearCenter ? 6 : 7);
+        const rotate = side * (-60 * rotateProgress - extraTilt) + pointer.x * (nearCenter ? -1.8 : -1.2);
+        const scale = 0.86 + breathe * 0.18 - Math.max(0, abs - 1) * 0.024;
+        const opacity = abs > 5 ? 0 : Math.max(0.28, 1 - abs * 0.08);
+        const blur = abs > 4 ? 'blur(4px)' : abs > 3 ? 'blur(2px)' : 'none';
 
         card.style.transform = `translate3d(${x}px, ${y}px, ${zBase - abs * zStep}px) rotateY(${rotate}deg) scale(${scale})`;
         card.style.zIndex = String(60 - Math.round(abs));
@@ -139,7 +141,7 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
         animationFrame.current = null;
         return;
       }
-      const next = wrapPosition(positionRef.current + delta * 0.145);
+      const next = wrapPosition(positionRef.current + delta * 0.11);
       positionRef.current = next;
       styleCards(next);
       animationFrame.current = window.requestAnimationFrame(tick);
