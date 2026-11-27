@@ -10,9 +10,9 @@ import {
   Facebook,
   Instagram,
   MapPin,
-  Menu as MenuIcon,
   MessageCircle,
   Minus,
+  MoreVertical,
   Phone,
   Plus,
   Sparkles,
@@ -333,19 +333,19 @@ export const RasoraaExperience: React.FC = () => {
             : 'bg-transparent border-b border-white/[0.04]'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-2 sm:gap-4">
           {/* Brand Logo & Editorial Wordmark */}
-          <a href="#hero" className="flex items-center gap-3 group shrink-0">
+          <a href="#hero" className="flex items-center gap-2.5 sm:gap-3 group shrink-0 min-w-0">
             <img
               src="/logo.png"
               alt="RASORAA"
-              className="h-9 sm:h-10 w-auto object-contain filter drop-shadow-[0_2px_8px_rgba(34,170,0,0.3)] transition-transform duration-500 group-hover:scale-105"
+              className="h-8 sm:h-10 w-auto object-contain filter drop-shadow-[0_2px_8px_rgba(34,170,0,0.3)] transition-transform duration-500 group-hover:scale-105"
             />
             <div className="flex flex-col">
-              <span className="font-serif text-xl sm:text-2xl font-light tracking-[0.22em] text-white transition-colors leading-none">
+              <span className="font-serif text-lg sm:text-2xl font-light tracking-[0.2em] text-white transition-colors leading-none">
                 RASORAA
               </span>
-              <span className="text-[8.5px] font-sans font-medium tracking-[0.22em] text-[#C5A880] uppercase mt-1 whitespace-nowrap">
+              <span className="text-[7.5px] sm:text-[8.5px] font-sans font-medium tracking-[0.18em] sm:tracking-[0.22em] text-[#C5A880] uppercase mt-0.5 sm:mt-1 whitespace-nowrap">
                 Pure Veg &amp; Jain Haute Cuisine
               </span>
             </div>
@@ -380,7 +380,7 @@ export const RasoraaExperience: React.FC = () => {
           </nav>
 
           {/* Right Action Bar */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <a
               href="tel:+919484594845"
               className="hidden xl:inline-flex items-center gap-1.5 text-xs font-mono text-neutral-300 hover:text-white px-3.5 py-2 rounded-full border border-white/10 hover:border-[#C5A880]/50 transition-colors bg-white/[0.03] whitespace-nowrap shrink-0"
@@ -389,101 +389,150 @@ export const RasoraaExperience: React.FC = () => {
               <span>+91 94845 94845</span>
             </a>
 
+            {/* Book Table Button - visible on tablet and desktop, compact on mobile */}
             <a
               href="#reserve"
-              className="px-5 py-2 rounded-full border border-[#C5A880]/60 bg-gradient-to-r from-[#162E1D] via-[#0D2214] to-[#162E1D] hover:border-[#C5A880] text-[#FBF9F5] hover:text-white text-xs font-medium tracking-[0.16em] uppercase transition-all duration-300 shadow-[0_0_20px_rgba(0,0,0,0.6)] hover:shadow-[0_0_25px_rgba(197,168,128,0.25)] hover:-translate-y-0.5 whitespace-nowrap shrink-0 inline-flex items-center gap-2"
+              className="hidden sm:inline-flex px-4 sm:px-5 py-2 rounded-full border border-[#C5A880]/60 bg-gradient-to-r from-[#162E1D] via-[#0D2214] to-[#162E1D] hover:border-[#C5A880] text-[#FBF9F5] hover:text-white text-xs font-medium tracking-[0.16em] uppercase transition-all duration-300 shadow-[0_0_20px_rgba(0,0,0,0.6)] hover:shadow-[0_0_25px_rgba(197,168,128,0.25)] hover:-translate-y-0.5 whitespace-nowrap shrink-0 items-center gap-2"
             >
               <Calendar size={12} className="text-[#C5A880]" />
               <span>Book Table</span>
             </a>
 
+            {/* Luxury 3-Dots Dropdown Trigger for Mobile & Tablet */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-full border border-white/10 text-neutral-200 hover:text-[#C5A880] transition-colors"
-              aria-label="Toggle Menu"
+              className={`lg:hidden w-9 h-9 sm:w-10 sm:h-10 rounded-full border transition-all duration-300 flex items-center justify-center shrink-0 active:scale-95 ${
+                mobileMenuOpen
+                  ? 'border-[#C5A880] bg-[#162E1D] text-[#C5A880] shadow-[0_0_15px_rgba(197,168,128,0.3)]'
+                  : 'border-[#C5A880]/40 bg-[#0D2214]/90 hover:border-[#C5A880] text-[#C5A880] hover:text-white shadow-[0_2px_10px_rgba(0,0,0,0.5)]'
+              }`}
+              aria-label="Navigation Menu"
+              title="Navigation Menu"
             >
-              {mobileMenuOpen ? <X size={20} /> : <MenuIcon size={20} />}
+              {mobileMenuOpen ? (
+                <X size={18} className="text-[#C5A880]" />
+              ) : (
+                <MoreVertical size={18} className="text-[#C5A880]" />
+              )}
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation Drawer */}
+        {/* Mobile Navigation Dropdown Menu */}
         <AnimatePresence>
           {mobileMenuOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="lg:hidden border-b border-white/10 bg-[#070B08]/98 px-6 py-8 overflow-hidden backdrop-blur-xl"
+              initial={{ opacity: 0, height: 0, y: -10 }}
+              animate={{ opacity: 1, height: 'auto', y: 0 }}
+              exit={{ opacity: 0, height: 0, y: -10 }}
+              transition={{ duration: 0.28, ease: 'easeInOut' }}
+              className="lg:hidden border-b border-[#C5A880]/20 bg-[#070B08]/98 px-5 py-6 overflow-hidden backdrop-blur-2xl shadow-[0_25px_60px_rgba(0,0,0,0.95)]"
             >
-              <div className="flex flex-col space-y-5 text-sm font-sans tracking-[0.2em] uppercase">
+              {/* Header Label inside Dropdown */}
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-white/10">
+                <div className="flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#C5A880]" />
+                  <span className="text-[10px] uppercase tracking-[0.25em] font-sans text-[#C5A880] font-medium">
+                    The Imperial Navigation
+                  </span>
+                </div>
+                <span className="text-[9px] uppercase tracking-[0.2em] font-mono text-neutral-400">
+                  Heritage Town
+                </span>
+              </div>
+
+              {/* Navigation Links Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs font-sans tracking-[0.18em] uppercase">
                 <a
                   href="#hero"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="py-2 border-b border-white/5 flex items-center justify-between text-neutral-300 hover:text-[#C5A880]"
+                  className="py-2.5 px-3 rounded-lg border border-transparent hover:border-[#C5A880]/30 hover:bg-white/[0.03] flex items-center justify-between text-neutral-200 hover:text-[#C5A880] transition-colors group"
                 >
-                  <span>Home</span>
-                  <ArrowUpRight size={14} className="text-[#C5A880]" />
+                  <span className="font-light">Home</span>
+                  <ArrowUpRight size={14} className="text-[#C5A880] opacity-60 group-hover:opacity-100 transition-opacity" />
                 </a>
+
                 <a
                   href="#about"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="py-2 border-b border-white/5 flex items-center justify-between text-neutral-300 hover:text-[#C5A880]"
+                  className="py-2.5 px-3 rounded-lg border border-transparent hover:border-[#C5A880]/30 hover:bg-white/[0.03] flex items-center justify-between text-neutral-200 hover:text-[#C5A880] transition-colors group"
                 >
-                  <span>About Us</span>
-                  <ArrowUpRight size={14} className="text-[#C5A880]" />
+                  <span className="font-light">About Us</span>
+                  <ArrowUpRight size={14} className="text-[#C5A880] opacity-60 group-hover:opacity-100 transition-opacity" />
                 </a>
+
                 <a
                   href="#menu"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="py-2 border-b border-white/5 flex items-center justify-between text-neutral-300 hover:text-[#C5A880]"
+                  className="py-2.5 px-3 rounded-lg border border-transparent hover:border-[#C5A880]/30 hover:bg-white/[0.03] flex items-center justify-between text-neutral-200 hover:text-[#C5A880] transition-colors group"
                 >
-                  <span>Menu</span>
-                  <ArrowUpRight size={14} className="text-[#C5A880]" />
+                  <div className="flex items-center gap-2">
+                    <span className="font-light">Dining Folio (Menu)</span>
+                    <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-[#C5A880]/15 text-[#C5A880] border border-[#C5A880]/30">3D</span>
+                  </div>
+                  <ArrowUpRight size={14} className="text-[#C5A880] opacity-60 group-hover:opacity-100 transition-opacity" />
                 </a>
+
                 <a
                   href="#gallery"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="py-2 border-b border-white/5 flex items-center justify-between text-neutral-300 hover:text-[#C5A880]"
+                  className="py-2.5 px-3 rounded-lg border border-transparent hover:border-[#C5A880]/30 hover:bg-white/[0.03] flex items-center justify-between text-neutral-200 hover:text-[#C5A880] transition-colors group"
                 >
-                  <span>Gallery</span>
-                  <ArrowUpRight size={14} className="text-[#C5A880]" />
+                  <span className="font-light">Visual Chronicles (Gallery)</span>
+                  <ArrowUpRight size={14} className="text-[#C5A880] opacity-60 group-hover:opacity-100 transition-opacity" />
                 </a>
+
                 <a
                   href="#events"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="py-2 border-b border-white/5 flex items-center justify-between text-neutral-300 hover:text-[#C5A880]"
+                  className="py-2.5 px-3 rounded-lg border border-transparent hover:border-[#C5A880]/30 hover:bg-white/[0.03] flex items-center justify-between text-neutral-200 hover:text-[#C5A880] transition-colors group"
                 >
-                  <span>Events</span>
-                  <ArrowUpRight size={14} className="text-[#C5A880]" />
+                  <span className="font-light">Private Events &amp; Salons</span>
+                  <ArrowUpRight size={14} className="text-[#C5A880] opacity-60 group-hover:opacity-100 transition-opacity" />
                 </a>
+
                 <a
                   href="#contact"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="py-2 border-b border-white/5 flex items-center justify-between text-neutral-300 hover:text-[#C5A880]"
+                  className="py-2.5 px-3 rounded-lg border border-transparent hover:border-[#C5A880]/30 hover:bg-white/[0.03] flex items-center justify-between text-neutral-200 hover:text-[#C5A880] transition-colors group"
                 >
-                  <span>Contact</span>
-                  <ArrowUpRight size={14} className="text-[#C5A880]" />
+                  <span className="font-light">Contact &amp; Location</span>
+                  <ArrowUpRight size={14} className="text-[#C5A880] opacity-60 group-hover:opacity-100 transition-opacity" />
+                </a>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-4 mt-3 border-t border-white/10 flex flex-col gap-3">
+                <a
+                  href="#reserve"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full py-3 rounded-full border border-[#C5A880]/60 bg-gradient-to-r from-[#162E1D] via-[#0D2214] to-[#162E1D] text-[#FBF9F5] text-center text-xs tracking-[0.2em] uppercase font-medium flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(0,0,0,0.6)]"
+                >
+                  <Calendar size={13} className="text-[#C5A880]" />
+                  <span>Reserve Table</span>
                 </a>
 
-                <div className="pt-4 flex flex-col gap-4">
+                <div className="flex items-center justify-between pt-1 text-xs">
                   <a
-                    href="#reserve"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="w-full py-3.5 rounded-full border border-[#C5A880]/50 bg-[#162E1D] text-[#FBF9F5] text-center text-xs tracking-[0.2em] uppercase font-medium"
+                    href="tel:+919484594845"
+                    className="inline-flex items-center gap-1.5 text-neutral-300 hover:text-[#C5A880] font-mono text-[11px]"
                   >
-                    Reserve Table
+                    <Phone size={12} className="text-[#C5A880]" />
+                    <span>+91 94845 94845</span>
                   </a>
-                  <div className="flex items-center justify-center gap-6 pt-2 text-neutral-400">
-                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-                      <Facebook size={18} />
+
+                  <div className="flex items-center gap-4 text-neutral-400">
+                    <a
+                      href="https://wa.me/919484594845"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-[11px] text-[#25D366] hover:underline"
+                    >
+                      <MessageCircle size={14} />
+                      <span>WhatsApp</span>
                     </a>
-                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-                      <Instagram size={18} />
-                    </a>
-                    <a href="https://wa.me/919484594845" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
-                      <MessageCircle size={18} className="text-[#25D366]" />
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-white">
+                      <Instagram size={15} />
                     </a>
                   </div>
                 </div>
