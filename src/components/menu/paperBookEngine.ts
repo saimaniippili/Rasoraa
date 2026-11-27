@@ -74,6 +74,7 @@ export class PaperBookEngine {
   private holdTimer?: ReturnType<typeof setTimeout>;
   private previousTime = 0;
   private viewHeight = 2.0;
+  private framingWidth = 2.08;
 
   private resizeObserver: ResizeObserver;
   private intersectionObserver: IntersectionObserver;
@@ -122,10 +123,10 @@ export class PaperBookEngine {
     this.scene.add(this.group);
 
     // 2. High-Contrast Balanced Lighting (prevents washing out parchment ink)
-    this.scene.add(new THREE.HemisphereLight(0xffffff, 0x223322, 1.1));
+    this.scene.add(new THREE.HemisphereLight(0xffffff, 0x223322, 0.95));
 
-    const light = new THREE.DirectionalLight(0xfffbeb, 1.45);
-    light.position.set(-3.2, 1.6, 3.8);
+    const light = new THREE.DirectionalLight(0xfffbeb, 1.15);
+    light.position.set(-3.0, 1.6, 3.8);
     light.castShadow = true;
     light.shadow.mapSize.set(2048, 2048);
     Object.assign(light.shadow.camera, {
@@ -142,7 +143,7 @@ export class PaperBookEngine {
     this.scene.add(light);
 
     // Warm gentle fill light
-    const fillLight = new THREE.DirectionalLight(0xe8d5b5, 0.45);
+    const fillLight = new THREE.DirectionalLight(0xe8d5b5, 0.35);
     fillLight.position.set(3.0, -1.0, 3.0);
     this.scene.add(fillLight);
 
@@ -236,11 +237,15 @@ export class PaperBookEngine {
 
     this.camera.aspect = width / height;
 
-    // Responsive Framing: Guarantees the book never cuts off at any screen width/aspect ratio
-    // The open book is 2.0 units wide, 1.377 units tall.
-    // Setting visible width >= 2.38 ensures comfortable breathing margin on all sides.
-    this.viewHeight = Math.max(1.377 / 0.84, 2.38 / this.camera.aspect);
+    // Responsive Dynamic Framing:
+    // When closed (page 0 / page count), single page framing so cover fills screen nicely.
+    // When open (pages 1 to count-1), two-page framing spanning 96% of viewport.
+    const isClosed = this.page === 0 || this.page === this.count;
+    const isMobile = this.camera.aspect < 1.05;
+    const targetWidth = isMobile && isClosed ? 1.15 : (isClosed ? 1.55 : 2.08);
+    this.framingWidth = targetWidth;
 
+    this.viewHeight = Math.max(1.377 / 0.88, this.framingWidth / this.camera.aspect);
     this.camera.fov = (2 * Math.atan(this.viewHeight / 2 / 3.1) * 180) / Math.PI;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height, false);
@@ -583,9 +588,19 @@ export class PaperBookEngine {
       sheet.mesh.renderOrder = depth;
     }
 
-    // 4. Centering book based on position and mobile/desktop mode
-    const { width } = this.stage.getBoundingClientRect();
-    const isMobile = width < 768 || this.camera.aspect < 1.15;
+    // 4. Centering book & smooth dynamic camera framing between closed and open states
+    const isClosed = this.page === 0 || this.page === this.count;
+    const isMobile = this.camera.aspect < 1.05;
+    const targetFraming = isMobile && isClosed ? 1.15 : (isClosed ? 1.55 : 2.08);
+
+    if (Math.abs(this.framingWidth - targetFraming) > 0.001) {
+      this.framingWidth = damp(this.framingWidth, targetFraming, dt, 0.3);
+      const targetViewHeight = Math.max(1.377 / 0.88, this.framingWidth / this.camera.aspect);
+      this.viewHeight = damp(this.viewHeight, targetViewHeight, dt, 0.3);
+      this.camera.fov = (2 * Math.atan(this.viewHeight / 2 / 3.1) * 180) / Math.PI;
+      this.camera.updateProjectionMatrix();
+      moving = true;
+    }
 
     let targetX = 0;
     if (this.page === 0) {
@@ -595,8 +610,8 @@ export class PaperBookEngine {
       // Back cover centered
       targetX = 0.5;
     } else {
-      // Open book: on desktop center the spine; on mobile subtle centering
-      targetX = isMobile ? 0 : 0;
+      // Open book: center the spine
+      targetX = 0;
     }
 
     if (Math.abs(this.group.position.x - targetX) > 0.0001) {

@@ -191,7 +191,7 @@ export const ThreeBookViewer: React.FC<ThreeBookViewerProps> = () => {
         {/* 3D Book Stage - Zero clutter, perfectly framed */}
         <div
           ref={stageRef}
-          className="relative w-full h-[520px] xs:h-[580px] sm:h-[650px] md:h-[720px] lg:h-[780px] xl:h-[820px] rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-white/[0.06] bg-gradient-to-b from-[#0D1812]/40 via-[#070B08] to-[#0A120D] shadow-[0_30px_90px_rgba(0,0,0,0.9)]"
+          className="relative w-full h-[450px] xs:h-[490px] sm:h-[560px] md:h-[660px] lg:h-[760px] xl:h-[800px] rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-white/[0.06] bg-gradient-to-b from-[#0D1812]/40 via-[#070B08] to-[#0A120D] shadow-[0_30px_90px_rgba(0,0,0,0.9)]"
           style={{ touchAction: 'none' }}
         />
       </div>

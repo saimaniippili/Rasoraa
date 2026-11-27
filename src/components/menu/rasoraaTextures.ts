@@ -263,7 +263,9 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
 
     const tex = new THREE.CanvasTexture(canvas);
     tex.colorSpace = THREE.SRGBColorSpace;
-    tex.anisotropy = 8;
+    tex.anisotropy = 16;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    tex.generateMipmaps = true;
     textures.push(tex);
   }
 
@@ -330,14 +332,14 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
       ctx.letterSpacing = '2px';
       ctx.fillText(c.num, 110, cY);
 
-      ctx.fillStyle = '#030C06';
-      ctx.font = '700 18px "Playfair Display", serif';
+      ctx.fillStyle = '#000000';
+      ctx.font = '800 22px "Playfair Display", serif';
       ctx.letterSpacing = '0.5px';
       ctx.fillText(c.name, 235, cY);
 
       ctx.textAlign = 'right';
-      ctx.fillStyle = '#8C682E';
-      ctx.font = '700 16px "DM Sans", monospace';
+      ctx.fillStyle = '#7A521E';
+      ctx.font = '800 19px "DM Sans", monospace';
       ctx.fillText(c.p, WIDTH - 110, cY);
 
       // dotted line
@@ -360,7 +362,9 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
 
     const tex = new THREE.CanvasTexture(canvas);
     tex.colorSpace = THREE.SRGBColorSpace;
-    tex.anisotropy = 8;
+    tex.anisotropy = 16;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    tex.generateMipmaps = true;
     textures.push(tex);
   }
 
@@ -717,8 +721,8 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
     items.forEach((item) => {
       // Dish Name - Bold & Clear
       ctx.textAlign = 'left';
-      ctx.fillStyle = '#030C06';
-      ctx.font = '700 24px "Playfair Display", "Times New Roman", serif';
+      ctx.fillStyle = '#000000';
+      ctx.font = '800 28px "Playfair Display", "Times New Roman", serif';
       ctx.letterSpacing = '0.5px';
       ctx.fillText(item.name, 95, itemY);
 
@@ -737,21 +741,21 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
 
       // Price in INR - Bold Gold
       ctx.textAlign = 'right';
-      ctx.fillStyle = '#8C682E';
-      ctx.font = '700 23px "DM Sans", monospace';
+      ctx.fillStyle = '#7A521E';
+      ctx.font = '800 27px "DM Sans", monospace';
       ctx.letterSpacing = '1px';
       ctx.fillText(`₹${item.price}`, WIDTH - 95, itemY);
 
       // Description (wrapped) - Crisp High Contrast
       ctx.textAlign = 'left';
-      ctx.fillStyle = '#0B1710';
-      ctx.font = '500 16px "DM Sans", -apple-system, sans-serif';
+      ctx.fillStyle = '#050E07';
+      ctx.font = '600 18.5px "DM Sans", -apple-system, sans-serif';
       ctx.letterSpacing = '0.3px';
 
       const maxDescWidth = WIDTH - 200;
       const words = item.desc.split(' ');
       let line = '';
-      let descY = itemY + 24;
+      let descY = itemY + 28;
 
       words.forEach((word) => {
         const testLine = line + word + ' ';
@@ -759,7 +763,7 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
         if (metrics.width > maxDescWidth && line !== '') {
           ctx.fillText(line, 95, descY);
           line = word + ' ';
-          descY += 22;
+          descY += 25;
         } else {
           line = testLine;
         }
@@ -777,7 +781,9 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
 
     const tex = new THREE.CanvasTexture(canvas);
     tex.colorSpace = THREE.SRGBColorSpace;
-    tex.anisotropy = 8;
+    tex.anisotropy = 16;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    tex.generateMipmaps = true;
     textures.push(tex);
   });
 
@@ -832,13 +838,13 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
       ctx.font = '18px serif';
       ctx.fillText('❖', centerX, pY);
 
-      ctx.fillStyle = '#030C06';
-      ctx.font = '700 22px "Playfair Display", serif';
+      ctx.fillStyle = '#000000';
+      ctx.font = '800 24px "Playfair Display", serif';
       ctx.letterSpacing = '0.5px';
       ctx.fillText(p.title, centerX, pY + 32);
 
-      ctx.fillStyle = '#0A170F';
-      ctx.font = '500 16px "DM Sans", sans-serif';
+      ctx.fillStyle = '#050D07';
+      ctx.font = '600 18px "DM Sans", sans-serif';
       ctx.fillText(p.desc, centerX, pY + 58);
 
       pY += 128;
@@ -854,12 +860,12 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
     ctx.letterSpacing = '3px';
     ctx.fillText('HERITAGE TOWN SANCTUARY', centerX, HEIGHT - 245);
 
-    ctx.fillStyle = '#030C06';
-    ctx.font = '600 14px "DM Sans", sans-serif';
+    ctx.fillStyle = '#000000';
+    ctx.font = '700 15px "DM Sans", sans-serif';
     ctx.fillText('39, Ambalathadayar Madam St, Pondicherry — 605 001', centerX, HEIGHT - 220);
 
     ctx.fillStyle = '#8C682E';
-    ctx.font = '700 17px "DM Sans", monospace';
+    ctx.font = '800 19px "DM Sans", monospace';
     ctx.fillText('+91 94845 94845', centerX, HEIGHT - 192);
 
     ctx.fillStyle = '#6E552D';
@@ -868,7 +874,9 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
 
     const tex = new THREE.CanvasTexture(canvas);
     tex.colorSpace = THREE.SRGBColorSpace;
-    tex.anisotropy = 8;
+    tex.anisotropy = 16;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    tex.generateMipmaps = true;
     textures.push(tex);
   }
 
@@ -916,7 +924,9 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
 
     const tex = new THREE.CanvasTexture(canvas);
     tex.colorSpace = THREE.SRGBColorSpace;
-    tex.anisotropy = 8;
+    tex.anisotropy = 16;
+    tex.minFilter = THREE.LinearMipmapLinearFilter;
+    tex.generateMipmaps = true;
     textures.push(tex);
   }
 
