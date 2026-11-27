@@ -20,41 +20,90 @@ import {
   X,
 } from 'lucide-react';
 import { RasoraaBook } from './menu/RasoraaBook';
-import { MenuItem } from '../data/menuData';
+import { GlassCoverFlow, CoverFlowItem } from './gallery/GlassCoverFlow';
+import { MenuItem, OFFICIAL_DISHES } from '../data/menuData';
 
 /* ─── Visual Chronicles (Gallery) ─── */
-const GALLERY_ITEMS = [
+const GALLERY_ITEMS: CoverFlowItem[] = [
   {
     id: 'g1',
     title: 'The Sealed Awadhi Dum Handi',
-    subtitle: '16-Hour Wood Charcoal Simmer',
-    category: 'Culinary Craft',
+    category: 'Awadhi Metallurgy',
+    subtitle: '16-hour wood charcoal simmer in earthenware handi sealed with whole-wheat dough.',
     image: '/dish-awadhi.jpg',
-    aspect: 'aspect-[4/5] md:aspect-[3/4]',
+    palette: ['#1c3826', '#06130b'],
+    isJain: true,
+    isSignature: true,
   },
   {
     id: 'g2',
     title: 'Angari Malai Paneer over Embers',
-    subtitle: '400°C Clay Pit Metallurgy',
-    category: 'Live Fire',
+    category: 'Live Fire Hearth',
+    subtitle: '400°C clay pit metallurgy with Kashmiri deggi mirch & Vedic A2 cow ghee.',
     image: '/dish-tandoor.jpg',
-    aspect: 'aspect-[4/5] md:aspect-[3/4]',
+    palette: ['#3b220d', '#0c0703'],
+    isJain: true,
+    isSignature: true,
   },
   {
     id: 'g3',
     title: 'Pan-Asian Wok Hei & Black Truffle',
-    subtitle: 'High-Flame Botanical Searing',
-    category: 'Oriental Alchemy',
+    category: 'High-Flame Wok',
+    subtitle: 'Botanical high-heat searing with crystal wild mushroom & truffle oil drizzle.',
     image: '/dish-oriental.jpg',
-    aspect: 'aspect-[4/5] md:aspect-[3/4]',
+    palette: ['#162a33', '#050c10'],
+    isJain: false,
+    isSignature: true,
   },
   {
     id: 'g4',
     title: 'Stone Hearth Sourdough & Morel',
-    subtitle: 'Wild Himalayan Foraged Gucchi',
     category: 'Artisanal Hearth',
+    subtitle: 'Double zero flour hand-stretched crust with wild foraged Himalayan morels.',
     image: '/dish-continental.jpg',
-    aspect: 'aspect-[4/5] md:aspect-[3/4]',
+    palette: ['#36281a', '#0d0905'],
+    isJain: true,
+    isSignature: false,
+  },
+  {
+    id: 'g5',
+    title: 'Royal Bilona Ghee Crisp Dosa',
+    category: 'Vedic Heritage',
+    subtitle: 'Golden roasted on heavy cast-iron hearths with Vedic churned butter & coconut chutney.',
+    image: '/haven-clean-bg-2x.jpg',
+    palette: ['#2e2a14', '#0a0904'],
+    isJain: true,
+    isSignature: true,
+  },
+  {
+    id: 'g6',
+    title: 'Kashmiri Deggi Mirch Dal Makhani',
+    category: 'Charcoal Simmer',
+    subtitle: 'Black urad lentils slow-simmered overnight over smoldering sal embers with white butter.',
+    image: '/dish-awadhi.jpg',
+    palette: ['#281814', '#0a0504'],
+    isJain: true,
+    isSignature: false,
+  },
+  {
+    id: 'g7',
+    title: 'Smoked Peshawari Mushroom Tikka',
+    category: 'Tandoor Char',
+    subtitle: 'Plump button mushrooms marinated in stone-ground ajwain & mustard oil smoke.',
+    image: '/dish-tandoor.jpg',
+    palette: ['#332415', '#0c0804'],
+    isJain: false,
+    isSignature: false,
+  },
+  {
+    id: 'g8',
+    title: 'Imperial Sizzling Rice Platter',
+    category: 'Botanical Searing',
+    subtitle: 'Smoked jasmine rice with baby corn, water chestnuts, and imperial five-spice gravy.',
+    image: '/dish-oriental.jpg',
+    palette: ['#142a20', '#040b08'],
+    isJain: true,
+    isSignature: true,
   },
 ];
 
@@ -871,13 +920,16 @@ export const RasoraaExperience: React.FC = () => {
       </section>
 
       {/* ─── 6. ACT IV: VISUAL CHRONICLES (#gallery) ─── */}
-      <section id="gallery" className="py-28 relative bg-[#070B08] border-b border-white/[0.06]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
-            <span className="text-[#C5A880] text-xs font-sans tracking-[0.28em] uppercase">
+      <section id="gallery" className="py-24 sm:py-28 relative bg-[#070C09] border-b border-white/[0.06] overflow-hidden">
+        {/* Subtle Ambient Radial Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[550px] bg-[#12361E]/20 blur-[150px] pointer-events-none rounded-full" />
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16 space-y-4">
+            <span className="text-[#C8A962] text-xs font-sans tracking-[0.28em] uppercase">
               03 / Visual Chronicles
             </span>
-            <h2 className="font-serif text-4xl sm:text-6xl font-light text-white">
+            <h2 className="font-serif text-4xl sm:text-6xl font-light text-[#F4F0E6]">
               The Alchemy of Living Fire
             </h2>
             <p className="text-neutral-400 text-sm sm:text-base font-light leading-relaxed">
@@ -885,33 +937,33 @@ export const RasoraaExperience: React.FC = () => {
             </p>
           </div>
 
-          {/* Asymmetric Magazine Gallery Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {GALLERY_ITEMS.map((item) => (
-              <div
-                key={item.id}
-                className="group relative rounded-3xl overflow-hidden border border-white/10 aspect-[3/4] bg-[#0A120D] shadow-2xl"
-              >
-                <img
-                  src={item.image}
-                  alt={item.title}
-                  className="w-full h-full object-cover filter contrast-[1.06] group-hover:scale-108 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#040805] via-transparent to-transparent opacity-80 group-hover:opacity-90 transition-opacity" />
-                <div className="absolute bottom-6 left-6 right-6 text-left">
-                  <span className="text-[10px] font-sans text-[#C5A880] tracking-[0.22em] uppercase block">
-                    {item.category}
-                  </span>
-                  <h4 className="font-serif text-lg text-white font-light pt-1 leading-snug">
-                    {item.title}
-                  </h4>
-                  <p className="text-[11px] text-neutral-400 font-light pt-1">
-                    {item.subtitle}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+          {/* Liquid Glass 3D Cover Flow Showcase */}
+          <GlassCoverFlow
+            items={GALLERY_ITEMS}
+            initialIndex={1}
+            onSelect={(item) => {
+              const found = OFFICIAL_DISHES.find(
+                (d) =>
+                  d.name.toLowerCase().includes(item.title.toLowerCase()) ||
+                  item.title.toLowerCase().includes(d.name.toLowerCase())
+              );
+              if (found) {
+                setPreviewDish(found);
+              } else {
+                setPreviewDish({
+                  id: item.id,
+                  name: item.title,
+                  category: item.category as any,
+                  price: 495,
+                  description: item.subtitle,
+                  origin: 'Heritage Town, Pondicherry',
+                  isJain: Boolean(item.isJain),
+                  isSignature: Boolean(item.isSignature),
+                  image: item.image,
+                });
+              }
+            }}
+          />
         </div>
       </section>
 
