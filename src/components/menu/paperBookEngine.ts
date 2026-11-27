@@ -65,7 +65,6 @@ export class PaperBookEngine {
   currentZoom = 1;
   targetPan = { x: 0, y: 0 };
   currentPan = { x: 0, y: 0 };
-  private lastTapTime = 0;
 
   private animations = new Map<number, AnimationState>();
   private abort = new AbortController();
@@ -129,7 +128,7 @@ export class PaperBookEngine {
     this.canvas.style.display = 'block';
     this.canvas.style.width = '100%';
     this.canvas.style.height = '100%';
-    this.canvas.style.touchAction = 'none';
+    this.canvas.style.touchAction = 'pan-y';
     this.canvas.setAttribute('aria-label', '3D Rasoraa Dining Folio. Drag left or right to turn a page.');
     stage.replaceChildren(this.canvas);
 
@@ -253,13 +252,13 @@ export class PaperBookEngine {
 
     // Responsive Dynamic Framing:
     // When closed (page 0 / page count), single page framing so cover fills screen nicely.
-    // When open (pages 1 to count-1), two-page framing spanning 96% of viewport.
+    // When open (pages 1 to count-1), two-page framing spanning viewport with comfortable margins.
     const isClosed = this.page === 0 || this.page === this.count;
     const isMobile = this.camera.aspect < 1.05;
-    const targetWidth = isMobile && isClosed ? 1.15 : (isClosed ? 1.55 : 2.08);
+    const targetWidth = isMobile && isClosed ? 1.25 : (isClosed ? 1.75 : 2.30);
     this.framingWidth = targetWidth;
 
-    this.viewHeight = Math.max(1.377 / 0.88, this.framingWidth / this.camera.aspect);
+    this.viewHeight = Math.max(1.377 / 0.80, this.framingWidth / this.camera.aspect);
     this.camera.fov = (2 * Math.atan(this.viewHeight / 2 / 3.1) * 180) / Math.PI;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height, false);
@@ -315,29 +314,7 @@ export class PaperBookEngine {
     listen('pointerdown', (event: PointerEvent) => {
       this.activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
 
-      // Double-tap zoom toggle
-      const now = performance.now();
-      if (this.activePointers.size === 1 && now - this.lastTapTime < 300) {
-        this.lastTapTime = 0;
-        if (this.targetZoom > 1.15) {
-          this.resetZoom();
-        } else {
-          this.targetZoom = 2.2;
-          const rect = this.canvas.getBoundingClientRect();
-          const nx = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-          const ny = -(((event.clientY - rect.top) / rect.height) * 2 - 1);
-          this.targetPan.x = -nx * 0.6;
-          this.targetPan.y = -ny * 0.45;
-          this.dirty = true;
-          this.onZoomChange?.(this.targetZoom);
-        }
-        return;
-      }
-      if (this.activePointers.size === 1) {
-        this.lastTapTime = now;
-      }
-
-      // Two-finger Pinch-to-Zoom initiated
+      // Two-finger Pinch-to-Zoom initiated (mobile only)
       if (this.activePointers.size === 2) {
         if (this.gesture) {
           this.stopHold();
@@ -379,7 +356,8 @@ export class PaperBookEngine {
       // Normal single-finger 3D page curl
       if (event.button !== 0 || this.gesture) return;
       const point = this.point(event);
-      if (Math.abs(point.x) > 1.15 || Math.abs(point.y) > 0.8) return;
+      // If pointer is in the margin / border space outside the book, let native page scroll proceed!
+      if (Math.abs(point.x) > 1.02 || Math.abs(point.y) > 0.72) return;
 
       const forward = point.x >= 0;
       const index = forward ? this.page : this.page - 1;
@@ -405,11 +383,14 @@ export class PaperBookEngine {
         pointerId: event.pointerId,
       };
 
-      try {
-        this.canvas.setPointerCapture(event.pointerId);
-      } catch (_) {}
+      // Only mouse click captures immediately; touch gestures wait for horizontal displacement detection
+      if (event.pointerType !== 'touch') {
+        try {
+          this.canvas.setPointerCapture(event.pointerId);
+        } catch (_) {}
+      }
 
-      this.holdTimer = setTimeout(() => this.repeatHold(), 230);
+      this.holdTimer = setTimeout(() => this.repeatHold(), 250);
       this.dirty = true;
     });
 
@@ -418,25 +399,26 @@ export class PaperBookEngine {
         this.activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
       }
 
-      // Handle active two-finger pinch
+      // Handle active two-finger pinch (requires deliberate gesture of > 45px delta to prevent accidental zooms)
       if (this.activePointers.size >= 2) {
         const [p1, p2] = Array.from(this.activePointers.values());
         const currentDist = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-        if (this.pinchStartDist > 10) {
+        const distDelta = Math.abs(currentDist - this.pinchStartDist);
+        if (this.pinchStartDist > 20 && (distDelta > 45 || this.targetZoom > 1.15)) {
           const scale = currentDist / this.pinchStartDist;
-          this.targetZoom = clamp(this.pinchStartZoom * scale, 1.0, 3.2);
+          this.targetZoom = clamp(this.pinchStartZoom * scale, 1.0, 2.5);
 
           const midX = (p1.x + p2.x) / 2;
           const midY = (p1.y + p2.y) / 2;
-          const dMidX = (midX - this.pinchStartMid.x) / 180;
-          const dMidY = (midY - this.pinchStartMid.y) / 180;
+          const dMidX = (midX - this.pinchStartMid.x) / 220;
+          const dMidY = (midY - this.pinchStartMid.y) / 220;
 
           const maxPanX = (this.targetZoom - 1) * 0.9;
           const maxPanY = (this.targetZoom - 1) * 0.7;
           this.targetPan.x = clamp(this.pinchStartPan.x + dMidX, -maxPanX, maxPanX);
           this.targetPan.y = clamp(this.pinchStartPan.y - dMidY, -maxPanY, maxPanY);
 
-          if (this.targetZoom <= 1.03) {
+          if (this.targetZoom <= 1.05) {
             this.targetPan.x = 0;
             this.targetPan.y = 0;
           }
@@ -452,7 +434,7 @@ export class PaperBookEngine {
           const point = this.point(event);
           const index = point.x >= 0 ? this.page : this.page - 1;
           this.hover =
-            Math.abs(point.x) < 1.05 && Math.abs(point.y) < 0.72 && !this.animations.has(index)
+            Math.abs(point.x) < 1.02 && Math.abs(point.y) < 0.70 && !this.animations.has(index)
               ? index
               : null;
           if (this.hover !== null && this.sheets[index]) {
@@ -465,9 +447,27 @@ export class PaperBookEngine {
       if (gesture.pointerId !== event.pointerId) return;
       const dx = event.clientX - gesture.startX;
       const dy = event.clientY - gesture.startY;
-      if (Math.hypot(dx, dy) > 5) {
-        gesture.moved = true;
-        this.stopHold();
+      const dist = Math.hypot(dx, dy);
+
+      // On touch devices, disambiguate vertical page scrolling vs horizontal page turning:
+      if (!gesture.moved) {
+        if (dist > 8) {
+          if (Math.abs(dy) > Math.abs(dx) * 1.2) {
+            // User is scrolling the page vertically! Cancel book gesture and let native scroll proceed!
+            this.stopHold();
+            this.gesture = null;
+            return;
+          } else {
+            // User is turning page horizontally!
+            gesture.moved = true;
+            this.stopHold();
+            try {
+              this.canvas.setPointerCapture(event.pointerId);
+            } catch (_) {}
+          }
+        } else {
+          return;
+        }
       }
 
       // Single-finger Pan while zoomed
@@ -494,7 +494,7 @@ export class PaperBookEngine {
     const release = (event: PointerEvent) => {
       this.activePointers.delete(event.pointerId);
 
-      if (this.targetZoom < 1.05) {
+      if (this.targetZoom < 1.15) {
         this.resetZoom();
       }
 
@@ -549,23 +549,6 @@ export class PaperBookEngine {
         this.animate(gesture.index, Number(!gesture.forward), 0);
       }
     });
-
-    // Mouse Wheel Zoom
-    listen('wheel', (event: WheelEvent) => {
-      event.preventDefault();
-      const zoomFactor = event.deltaY < 0 ? 1.15 : 0.88;
-      this.targetZoom = clamp(this.targetZoom * zoomFactor, 1.0, 3.2);
-      if (this.targetZoom <= 1.05) {
-        this.resetZoom();
-      } else {
-        const maxPanX = (this.targetZoom - 1) * 0.9;
-        const maxPanY = (this.targetZoom - 1) * 0.7;
-        this.targetPan.x = clamp(this.targetPan.x, -maxPanX, maxPanX);
-        this.targetPan.y = clamp(this.targetPan.y, -maxPanY, maxPanY);
-        this.onZoomChange?.(this.targetZoom);
-      }
-      this.dirty = true;
-    }, { passive: false });
   }
 
   repeatHold() {
