@@ -1,16 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import {
-  ChevronLeft,
-  ChevronRight,
-  Play,
-  Pause,
-  RotateCcw,
-  Volume2,
-  VolumeX,
-  Sparkles,
-  BookOpen,
-} from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import { PaperBookEngine } from './paperBookEngine';
 import { generateRasoraaTextures } from './rasoraaTextures';
 
@@ -18,34 +8,16 @@ interface ThreeBookViewerProps {
   onSelectDish?: (dishName: string) => void;
 }
 
-const CHAPTER_PAGES = [
-  { label: 'Cover', sheet: 0, desc: 'The Imperial Insignia' },
-  { label: 'Index', sheet: 1, desc: 'Freshness Decree & Tandoor' },
-  { label: 'Wok & Sizzlers', sheet: 2, desc: 'Oriental Alchemy' },
-  { label: 'Awadhi Handis', sheet: 3, desc: '16-Hour Simmer' },
-  { label: 'South Heritage', sheet: 4, desc: 'Bilona Ghee Roast' },
-  { label: 'Biryani & Breads', sheet: 5, desc: 'Parda Earthenware' },
-  { label: 'Italian Stone', sheet: 5, desc: 'Neapolitan Pizzas' },
-  { label: 'Coolers & Shakes', sheet: 6, desc: 'Botanical Elixirs' },
-  { label: 'Desserts & Epilogue', sheet: 6, desc: 'Royal Confections' },
-];
-
 export const ThreeBookViewer: React.FC<ThreeBookViewerProps> = () => {
   const stageRef = useRef<HTMLDivElement>(null);
   const bookRef = useRef<PaperBookEngine | null>(null);
 
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(6);
-  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
-  const [isMuted, setIsMuted] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
-
-  const autoPlayTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // 3-Phase Realistic Paper Sound via Web Audio API
   const playPaperTurnSound = () => {
-    if (isMuted || typeof window === 'undefined') return;
+    if (typeof window === 'undefined') return;
     try {
       const AudioCtx =
         window.AudioContext ||
@@ -106,30 +78,6 @@ export const ThreeBookViewer: React.FC<ThreeBookViewerProps> = () => {
     } catch (_) {}
   };
 
-  // Autoplay handler
-  useEffect(() => {
-    if (!isAutoPlaying || !bookRef.current) {
-      if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
-      return;
-    }
-
-    const runAuto = () => {
-      if (!bookRef.current) return;
-      if (bookRef.current.page >= bookRef.current.count) {
-        bookRef.current.reset();
-      } else {
-        bookRef.current.turn(1);
-      }
-      autoPlayTimerRef.current = setTimeout(runAuto, 2800);
-    };
-
-    autoPlayTimerRef.current = setTimeout(runAuto, 2800);
-
-    return () => {
-      if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
-    };
-  }, [isAutoPlaying]);
-
   // Initialize Three.js Book Engine
   useEffect(() => {
     let isMounted = true;
@@ -141,7 +89,7 @@ export const ThreeBookViewer: React.FC<ThreeBookViewerProps> = () => {
         setIsLoading(true);
         setLoadError(null);
 
-        // Generate 12 high-resolution canvas textures
+        // Generate 12 high-resolution, high-contrast canvas textures
         const textures = await generateRasoraaTextures();
 
         if (!isMounted || !stageRef.current) {
@@ -152,24 +100,13 @@ export const ThreeBookViewer: React.FC<ThreeBookViewerProps> = () => {
         engine = new PaperBookEngine(
           stageRef.current,
           textures,
-          (page, count) => {
-            if (isMounted) {
-              setCurrentPage(page);
-              setTotalPages(count);
-            }
-          },
+          undefined,
           () => {
             playPaperTurnSound();
           }
         );
 
-        engine.onManual = () => {
-          setIsAutoPlaying(false);
-        };
-
         bookRef.current = engine;
-        setCurrentPage(engine.page);
-        setTotalPages(engine.count);
         setIsLoading(false);
       } catch (err: any) {
         console.error('Failed to initialize Three.js Book Engine:', err);
@@ -184,7 +121,6 @@ export const ThreeBookViewer: React.FC<ThreeBookViewerProps> = () => {
 
     return () => {
       isMounted = false;
-      if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
       if (engine) {
         engine.dispose();
       }
@@ -192,7 +128,7 @@ export const ThreeBookViewer: React.FC<ThreeBookViewerProps> = () => {
     };
   }, []);
 
-  // Keyboard navigation
+  // Keyboard arrow navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
@@ -200,15 +136,12 @@ export const ThreeBookViewer: React.FC<ThreeBookViewerProps> = () => {
 
       if (e.key === 'ArrowRight' || e.key === ' ') {
         e.preventDefault();
-        setIsAutoPlaying(false);
         bookRef.current.turn(1);
       } else if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        setIsAutoPlaying(false);
         bookRef.current.turn(-1);
       } else if (e.key === 'Home') {
         e.preventDefault();
-        setIsAutoPlaying(false);
         bookRef.current.reset();
       }
     };
@@ -217,100 +150,14 @@ export const ThreeBookViewer: React.FC<ThreeBookViewerProps> = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Format Page Label
-  const getPageLabel = () => {
-    if (currentPage === 0) return 'Front Cover · Royal Insignia';
-    if (currentPage === totalPages) return 'Back Cover · Epilogue';
-    const leftP = currentPage * 2;
-    const rightP = currentPage * 2 + 1;
-    return `Pages 0${leftP} — 0${rightP}`;
-  };
-
-  const getChapterTitle = () => {
-    switch (currentPage) {
-      case 0:
-        return 'The Imperial Dining Folio';
-      case 1:
-        return 'Culinary Decree & Tandoori Hearth';
-      case 2:
-        return 'Indo-Chinese Wok & Awadhi Handis';
-      case 3:
-        return 'South Heritage & Dum Biryani';
-      case 4:
-        return 'Stone Hearth Pizzas & Coolers';
-      case 5:
-        return 'Royal Confections & Privileges';
-      case 6:
-        return 'Patron Guild & Epilogue';
-      default:
-        return 'Rasoraa Haute Dining';
-    }
-  };
-
   return (
     <div className="relative w-full select-none">
       {/* ─── Ambient Glow Backdrop ─── */}
       <div className="absolute inset-0 bg-radial from-[#123121]/30 via-transparent to-transparent pointer-events-none blur-3xl -z-10" />
 
-      {/* ─── Top Master Control Bar ─── */}
-      <div className="max-w-5xl mx-auto px-4 mb-4 sm:mb-6 flex flex-wrap items-center justify-between gap-3 text-xs">
-        {/* Left Chapter Indicator */}
-        <div className="flex items-center gap-2.5">
-          <div className="w-2 h-2 rounded-full bg-[#C5A880] animate-pulse" />
-          <span className="font-serif text-sm sm:text-base text-neutral-200 tracking-wider">
-            {getChapterTitle()}
-          </span>
-          <span className="text-[11px] font-mono text-[#C5A880] px-2 py-0.5 rounded-full border border-[#C5A880]/30 bg-[#C5A880]/10">
-            {getPageLabel()}
-          </span>
-        </div>
-
-        {/* Right Action Buttons */}
-        <div className="flex items-center gap-2 shrink-0">
-          {/* Autoplay Toggle */}
-          <button
-            onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-            className={`px-3 py-1.5 rounded-full border transition-all flex items-center gap-1.5 text-[11px] font-sans tracking-wider uppercase ${
-              isAutoPlaying
-                ? 'border-[#C5A880] bg-[#162E1D] text-[#C5A880] shadow-[0_0_12px_rgba(197,168,128,0.3)]'
-                : 'border-white/10 hover:border-[#C5A880]/60 bg-white/[0.03] text-neutral-300 hover:text-white'
-            }`}
-            title="Autoplay Folio"
-          >
-            {isAutoPlaying ? <Pause size={12} /> : <Play size={12} />}
-            <span className="hidden sm:inline">{isAutoPlaying ? 'Pause' : 'Autoplay'}</span>
-          </button>
-
-          {/* Sound Toggle */}
-          <button
-            onClick={() => setIsMuted(!isMuted)}
-            className={`p-2 rounded-full border transition-all ${
-              !isMuted
-                ? 'border-[#C5A880]/40 text-[#C5A880] bg-[#162E1D]/80'
-                : 'border-white/10 text-neutral-400 bg-white/[0.03]'
-            }`}
-            title={isMuted ? 'Unmute Acoustics' : 'Mute Acoustics'}
-          >
-            {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-          </button>
-
-          {/* Reset to Cover */}
-          <button
-            onClick={() => {
-              setIsAutoPlaying(false);
-              bookRef.current?.reset();
-            }}
-            className="p-2 rounded-full border border-white/10 hover:border-[#C5A880]/60 bg-white/[0.03] text-neutral-300 hover:text-white transition-all"
-            title="Reset to Cover"
-          >
-            <RotateCcw size={14} />
-          </button>
-        </div>
-      </div>
-
-      {/* ─── 3D Folio Stage (Three.js WebGL) ─── */}
-      <div className="relative max-w-6xl mx-auto px-2 sm:px-4">
-        {/* Loading Spinner */}
+      {/* ─── Pure 3D Folio Stage (Three.js WebGL) ─── */}
+      <div className="relative max-w-6xl mx-auto px-1 sm:px-4">
+        {/* Loading Overlay */}
         <AnimatePresence>
           {isLoading && (
             <motion.div
@@ -341,123 +188,12 @@ export const ThreeBookViewer: React.FC<ThreeBookViewerProps> = () => {
           </div>
         )}
 
-        {/* Canvas Host Stage */}
+        {/* 3D Book Stage - Zero clutter, perfectly framed */}
         <div
           ref={stageRef}
-          className="relative w-full h-[480px] xs:h-[540px] sm:h-[620px] md:h-[680px] lg:h-[740px] xl:h-[780px] rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-white/[0.06] bg-gradient-to-b from-[#0D1812]/50 via-[#070B08] to-[#0A120D] shadow-[0_30px_90px_rgba(0,0,0,0.9)]"
+          className="relative w-full h-[520px] xs:h-[580px] sm:h-[650px] md:h-[720px] lg:h-[780px] xl:h-[820px] rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-white/[0.06] bg-gradient-to-b from-[#0D1812]/40 via-[#070B08] to-[#0A120D] shadow-[0_30px_90px_rgba(0,0,0,0.9)]"
           style={{ touchAction: 'none' }}
         />
-
-        {/* Floating Desktop Navigation Arrows on Sides */}
-        <button
-          onClick={() => {
-            setIsAutoPlaying(false);
-            bookRef.current?.turn(-1);
-          }}
-          disabled={currentPage === 0}
-          className={`hidden md:flex absolute left-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full border items-center justify-center transition-all z-20 ${
-            currentPage === 0
-              ? 'opacity-20 border-white/5 cursor-not-allowed text-neutral-500'
-              : 'border-[#C5A880]/40 bg-[#0D2214]/80 hover:bg-[#162E1D] hover:border-[#C5A880] text-[#C5A880] hover:text-white shadow-[0_4px_20px_rgba(0,0,0,0.7)]'
-          }`}
-          aria-label="Previous Page"
-        >
-          <ChevronLeft size={24} />
-        </button>
-
-        <button
-          onClick={() => {
-            setIsAutoPlaying(false);
-            bookRef.current?.turn(1);
-          }}
-          disabled={currentPage === totalPages}
-          className={`hidden md:flex absolute right-6 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full border items-center justify-center transition-all z-20 ${
-            currentPage === totalPages
-              ? 'opacity-20 border-white/5 cursor-not-allowed text-neutral-500'
-              : 'border-[#C5A880]/40 bg-[#0D2214]/80 hover:bg-[#162E1D] hover:border-[#C5A880] text-[#C5A880] hover:text-white shadow-[0_4px_20px_rgba(0,0,0,0.7)]'
-          }`}
-          aria-label="Next Page"
-        >
-          <ChevronRight size={24} />
-        </button>
-      </div>
-
-      {/* ─── Mobile-Optimized Bottom Controls Bar ─── */}
-      <div className="max-w-5xl mx-auto px-4 mt-4 sm:mt-6">
-        {/* Interaction Hint Pill */}
-        <div className="text-center mb-3">
-          <span className="inline-flex items-center gap-1.5 text-[10.5px] font-sans tracking-[0.2em] uppercase text-neutral-400 bg-white/[0.02] border border-white/5 px-3.5 py-1 rounded-full">
-            <Sparkles size={11} className="text-[#C5A880]" />
-            <span>Drag page corners or swipe to flip realistically</span>
-          </span>
-        </div>
-
-        {/* Mobile Navigation Thumb Bar */}
-        <div className="flex md:hidden items-center justify-between gap-3 bg-[#0D1812]/80 border border-[#C5A880]/20 rounded-full px-3 py-2 backdrop-blur-xl">
-          <button
-            onClick={() => {
-              setIsAutoPlaying(false);
-              bookRef.current?.turn(-1);
-            }}
-            disabled={currentPage === 0}
-            className={`flex-1 py-2.5 px-4 rounded-full border flex items-center justify-center gap-2 text-xs font-sans tracking-widest uppercase transition-all ${
-              currentPage === 0
-                ? 'opacity-30 border-white/5 text-neutral-600'
-                : 'border-[#C5A880]/40 bg-[#162E1D] text-[#C5A880] active:scale-95 shadow-[0_2px_10px_rgba(0,0,0,0.5)]'
-            }`}
-          >
-            <ChevronLeft size={16} />
-            <span>Previous</span>
-          </button>
-
-          <span className="font-mono text-xs text-[#C5A880] shrink-0 px-2 font-medium">
-            {currentPage === 0 ? 'Cover' : `${currentPage} / ${totalPages}`}
-          </span>
-
-          <button
-            onClick={() => {
-              setIsAutoPlaying(false);
-              bookRef.current?.turn(1);
-            }}
-            disabled={currentPage === totalPages}
-            className={`flex-1 py-2.5 px-4 rounded-full border flex items-center justify-center gap-2 text-xs font-sans tracking-widest uppercase transition-all ${
-              currentPage === totalPages
-                ? 'opacity-30 border-white/5 text-neutral-600'
-                : 'border-[#C5A880]/60 bg-gradient-to-r from-[#162E1D] to-[#0D2214] text-white active:scale-95 shadow-[0_2px_10px_rgba(0,0,0,0.5)]'
-            }`}
-          >
-            <span>Next</span>
-            <ChevronRight size={16} />
-          </button>
-        </div>
-
-        {/* Horizontal Quick-Jump Chapter Strip */}
-        <div className="mt-3 sm:mt-4 overflow-x-auto no-scrollbar pb-2">
-          <div className="flex items-center justify-start sm:justify-center gap-2 min-w-max px-2">
-            {CHAPTER_PAGES.map((ch, idx) => {
-              const isActive =
-                (idx === 0 && currentPage === 0) ||
-                (idx > 0 && Math.floor((currentPage * 9) / totalPages) === idx);
-              return (
-                <button
-                  key={idx}
-                  onClick={() => {
-                    setIsAutoPlaying(false);
-                    const target = Math.round((idx / (CHAPTER_PAGES.length - 1)) * totalPages);
-                    bookRef.current?.goToPage(target);
-                  }}
-                  className={`px-3 py-1.5 rounded-full border text-[11px] font-sans tracking-wider uppercase transition-all shrink-0 ${
-                    isActive
-                      ? 'border-[#C5A880] bg-[#162E1D] text-[#C5A880] shadow-[0_0_12px_rgba(197,168,128,0.25)]'
-                      : 'border-white/10 hover:border-[#C5A880]/40 bg-white/[0.02] text-neutral-400 hover:text-neutral-200'
-                  }`}
-                >
-                  {ch.label}
-                </button>
-              );
-            })}
-          </div>
-        </div>
       </div>
     </div>
   );

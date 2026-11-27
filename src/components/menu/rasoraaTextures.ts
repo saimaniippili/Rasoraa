@@ -275,41 +275,41 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
     ctx.textAlign = 'center';
     const centerX = WIDTH * 0.5;
 
-    ctx.fillStyle = '#C5A880';
-    ctx.font = '400 12px "DM Sans", sans-serif';
+    ctx.fillStyle = '#8C682E';
+    ctx.font = '700 14px "DM Sans", sans-serif';
     ctx.letterSpacing = '5px';
     ctx.fillText('THE CULINARY DECREE', centerX, 130);
 
-    ctx.fillStyle = '#0B1F14';
-    ctx.font = '300 34px "Playfair Display", "Cinzel", serif';
-    ctx.letterSpacing = '4px';
-    ctx.fillText('Freshness & Devotion', centerX, 175);
+    ctx.fillStyle = '#030C06';
+    ctx.font = '700 42px "Playfair Display", "Cinzel", serif';
+    ctx.letterSpacing = '3px';
+    ctx.fillText('Freshness & Devotion', centerX, 180);
 
-    ctx.strokeStyle = '#C5A880';
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#8C682E';
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(centerX - 80, 205);
-    ctx.lineTo(centerX + 80, 205);
+    ctx.moveTo(centerX - 90, 210);
+    ctx.lineTo(centerX + 90, 210);
     ctx.stroke();
 
-    // Freshness Decree Quote
-    ctx.font = 'italic 300 19px "Playfair Display", "Georgia", serif';
-    ctx.fillStyle = '#2A3C31';
+    // Freshness Decree Quote - Bold & High Contrast
+    ctx.font = 'italic 600 23px "Playfair Display", "Georgia", serif';
+    ctx.fillStyle = '#040C06';
     ctx.letterSpacing = '1px';
-    ctx.fillText('“Every ingredient chosen with care.', centerX, 260);
-    ctx.fillText('Every preparation guided by tradition.', centerX, 295);
-    ctx.fillText('Every meal served with devotion.”', centerX, 330);
+    ctx.fillText('“Every ingredient chosen with care.', centerX, 265);
+    ctx.fillText('Every preparation guided by tradition.', centerX, 302);
+    ctx.fillText('Every meal served with devotion.”', centerX, 340);
 
-    ctx.font = '400 13px "DM Sans", sans-serif';
-    ctx.fillStyle = '#7A6B56';
+    ctx.font = '700 14px "DM Sans", sans-serif';
+    ctx.fillStyle = '#6E552D';
     ctx.letterSpacing = '3px';
-    ctx.fillText('— MASTER CHEF RAJAN · HERITAGE TOWN', centerX, 375);
+    ctx.fillText('— MASTER CHEF RAJAN · HERITAGE TOWN', centerX, 385);
 
     // Table of Chapters
-    ctx.fillStyle = '#C5A880';
-    ctx.font = '500 12px "DM Sans", sans-serif';
+    ctx.fillStyle = '#8C682E';
+    ctx.font = '700 13px "DM Sans", sans-serif';
     ctx.letterSpacing = '5px';
-    ctx.fillText('TABLE OF CHAPTERS', centerX, 460);
+    ctx.fillText('TABLE OF CHAPTERS', centerX, 465);
 
     const chapters = [
       { num: 'CHAPTER I', name: 'Tandoori Hearth & Charcoal Kebabs', p: '03' },
@@ -322,26 +322,26 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
       { num: 'CHAPTER VIII', name: 'Royal Confections & Epilogue', p: '10' },
     ];
 
-    let cY = 510;
+    let cY = 515;
     chapters.forEach((c) => {
       ctx.textAlign = 'left';
-      ctx.fillStyle = '#7A6B56';
-      ctx.font = '500 11px "DM Sans", monospace';
+      ctx.fillStyle = '#6E552D';
+      ctx.font = '700 13px "DM Sans", monospace';
       ctx.letterSpacing = '2px';
       ctx.fillText(c.num, 110, cY);
 
-      ctx.fillStyle = '#0B1F14';
-      ctx.font = '400 15px "Playfair Display", serif';
-      ctx.letterSpacing = '1px';
-      ctx.fillText(c.name, 230, cY);
+      ctx.fillStyle = '#030C06';
+      ctx.font = '700 18px "Playfair Display", serif';
+      ctx.letterSpacing = '0.5px';
+      ctx.fillText(c.name, 235, cY);
 
       ctx.textAlign = 'right';
-      ctx.fillStyle = '#A38965';
-      ctx.font = '500 13px "DM Sans", monospace';
+      ctx.fillStyle = '#8C682E';
+      ctx.font = '700 16px "DM Sans", monospace';
       ctx.fillText(c.p, WIDTH - 110, cY);
 
       // dotted line
-      ctx.strokeStyle = 'rgba(197, 168, 128, 0.3)';
+      ctx.strokeStyle = 'rgba(140, 104, 46, 0.4)';
       ctx.setLineDash([2, 4]);
       ctx.beginPath();
       ctx.moveTo(560, cY - 4);
@@ -354,8 +354,8 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
 
     // Page Number
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#7A6B56';
-    ctx.font = '300 12px "DM Sans", serif';
+    ctx.fillStyle = '#6E552D';
+    ctx.font = '600 14px "DM Sans", serif';
     ctx.fillText('— 02 —', centerX, HEIGHT - 75);
 
     const tex = new THREE.CanvasTexture(canvas);
@@ -686,24 +686,24 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
     const centerX = WIDTH * 0.5;
 
     // Chapter Header
-    ctx.fillStyle = '#C5A880';
-    ctx.font = '500 11px "DM Sans", monospace';
+    ctx.fillStyle = '#8C682E';
+    ctx.font = '700 14px "DM Sans", monospace';
     ctx.letterSpacing = '5px';
     ctx.fillText(pageData.chapterNumber || '', centerX, 115);
 
-    ctx.fillStyle = '#0B1F14';
-    ctx.font = '300 36px "Playfair Display", "Cinzel", serif';
+    ctx.fillStyle = '#030C06';
+    ctx.font = '700 42px "Playfair Display", "Cinzel", serif';
     ctx.letterSpacing = '3px';
     ctx.fillText(pageData.title, centerX, 160);
 
-    ctx.fillStyle = '#7A6B56';
-    ctx.font = 'italic 300 14px "Playfair Display", "Georgia", serif';
+    ctx.fillStyle = '#5A452C';
+    ctx.font = 'italic 600 17px "Playfair Display", "Georgia", serif';
     ctx.letterSpacing = '1px';
     ctx.fillText(pageData.subtitle, centerX, 190);
 
     // Decorative rule
-    ctx.strokeStyle = '#C5A880';
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#8C682E';
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(centerX - 100, 215);
     ctx.lineTo(centerX + 100, 215);
@@ -715,43 +715,43 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
     const itemSpacing = items.length > 5 ? 175 : 195;
 
     items.forEach((item) => {
-      // Dish Name
+      // Dish Name - Bold & Clear
       ctx.textAlign = 'left';
-      ctx.fillStyle = '#0B1F14';
-      ctx.font = '500 19px "Playfair Display", "Times New Roman", serif';
+      ctx.fillStyle = '#030C06';
+      ctx.font = '700 24px "Playfair Display", "Times New Roman", serif';
       ctx.letterSpacing = '0.5px';
       ctx.fillText(item.name, 95, itemY);
 
       // Signature / Jain indicators
       let badgeX = 95 + ctx.measureText(item.name).width + 12;
       if (item.isSignature) {
-        ctx.fillStyle = '#C5A880';
-        ctx.font = '500 9px "DM Sans", sans-serif';
+        ctx.fillStyle = '#8C682E';
+        ctx.font = '700 11px "DM Sans", sans-serif';
         ctx.letterSpacing = '1.5px';
         ctx.fillText('SIGNATURE', badgeX, itemY - 2);
-        badgeX += 75;
+        badgeX += 85;
       }
       if (item.isJain) {
         drawJainLeaf(ctx, badgeX + 8, itemY - 5);
       }
 
-      // Price in INR
+      // Price in INR - Bold Gold
       ctx.textAlign = 'right';
-      ctx.fillStyle = '#C5A880';
-      ctx.font = '500 18px "DM Sans", monospace';
+      ctx.fillStyle = '#8C682E';
+      ctx.font = '700 23px "DM Sans", monospace';
       ctx.letterSpacing = '1px';
       ctx.fillText(`₹${item.price}`, WIDTH - 95, itemY);
 
-      // Description (wrapped)
+      // Description (wrapped) - Crisp High Contrast
       ctx.textAlign = 'left';
-      ctx.fillStyle = '#4D584F';
-      ctx.font = '300 13px "DM Sans", "Helvetica Neue", sans-serif';
-      ctx.letterSpacing = '0.4px';
+      ctx.fillStyle = '#0B1710';
+      ctx.font = '500 16px "DM Sans", -apple-system, sans-serif';
+      ctx.letterSpacing = '0.3px';
 
       const maxDescWidth = WIDTH - 200;
       const words = item.desc.split(' ');
       let line = '';
-      let descY = itemY + 22;
+      let descY = itemY + 24;
 
       words.forEach((word) => {
         const testLine = line + word + ' ';
@@ -759,7 +759,7 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
         if (metrics.width > maxDescWidth && line !== '') {
           ctx.fillText(line, 95, descY);
           line = word + ' ';
-          descY += 18;
+          descY += 22;
         } else {
           line = testLine;
         }
@@ -771,8 +771,8 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
 
     // Page Number
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#7A6B56';
-    ctx.font = '300 12px "DM Sans", serif';
+    ctx.fillStyle = '#6E552D';
+    ctx.font = '600 14px "DM Sans", serif';
     ctx.fillText(`— 0${pageNum} —`, centerX, HEIGHT - 75);
 
     const tex = new THREE.CanvasTexture(canvas);
@@ -789,21 +789,21 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
     ctx.textAlign = 'center';
     const centerX = WIDTH * 0.5;
 
-    ctx.fillStyle = '#C5A880';
-    ctx.font = '400 12px "DM Sans", sans-serif';
+    ctx.fillStyle = '#8C682E';
+    ctx.font = '700 14px "DM Sans", sans-serif';
     ctx.letterSpacing = '5px';
-    ctx.fillText('THE PATRON GUILD', centerX, 150);
+    ctx.fillText('THE PATRON GUILD', centerX, 145);
 
-    ctx.fillStyle = '#0B1F14';
-    ctx.font = '300 34px "Playfair Display", "Cinzel", serif';
+    ctx.fillStyle = '#030C06';
+    ctx.font = '700 42px "Playfair Display", "Cinzel", serif';
     ctx.letterSpacing = '3px';
     ctx.fillText('Privileges & Protocol', centerX, 195);
 
-    ctx.strokeStyle = '#C5A880';
-    ctx.lineWidth = 1;
+    ctx.strokeStyle = '#8C682E';
+    ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.moveTo(centerX - 80, 225);
-    ctx.lineTo(centerX + 80, 225);
+    ctx.moveTo(centerX - 90, 225);
+    ctx.lineTo(centerX + 90, 225);
     ctx.stroke();
 
     // Features
@@ -826,44 +826,44 @@ export async function generateRasoraaTextures(): Promise<THREE.Texture[]> {
       },
     ];
 
-    let pY = 310;
+    let pY = 300;
     privileges.forEach((p) => {
-      ctx.fillStyle = '#C5A880';
-      ctx.font = '16px serif';
+      ctx.fillStyle = '#8C682E';
+      ctx.font = '18px serif';
       ctx.fillText('❖', centerX, pY);
 
-      ctx.fillStyle = '#0B1F14';
-      ctx.font = '500 18px "Playfair Display", serif';
-      ctx.letterSpacing = '1px';
-      ctx.fillText(p.title, centerX, pY + 30);
+      ctx.fillStyle = '#030C06';
+      ctx.font = '700 22px "Playfair Display", serif';
+      ctx.letterSpacing = '0.5px';
+      ctx.fillText(p.title, centerX, pY + 32);
 
-      ctx.fillStyle = '#4D584F';
-      ctx.font = '300 13px "DM Sans", sans-serif';
-      ctx.fillText(p.desc, centerX, pY + 54);
+      ctx.fillStyle = '#0A170F';
+      ctx.font = '500 16px "DM Sans", sans-serif';
+      ctx.fillText(p.desc, centerX, pY + 58);
 
-      pY += 125;
+      pY += 128;
     });
 
     // Address & Contact
-    ctx.strokeStyle = 'rgba(197, 168, 128, 0.4)';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(centerX - 180, HEIGHT - 270, 360, 100);
+    ctx.strokeStyle = 'rgba(140, 104, 46, 0.45)';
+    ctx.lineWidth = 1.5;
+    ctx.strokeRect(centerX - 190, HEIGHT - 275, 380, 105);
 
-    ctx.fillStyle = '#C5A880';
-    ctx.font = '500 11px "DM Sans", monospace';
+    ctx.fillStyle = '#8C682E';
+    ctx.font = '700 12px "DM Sans", monospace';
     ctx.letterSpacing = '3px';
-    ctx.fillText('HERITAGE TOWN SANCTUARY', centerX, HEIGHT - 240);
+    ctx.fillText('HERITAGE TOWN SANCTUARY', centerX, HEIGHT - 245);
 
-    ctx.fillStyle = '#0B1F14';
-    ctx.font = '400 13px "DM Sans", sans-serif';
-    ctx.fillText('39, Ambalathadayar Madam St, Pondicherry — 605 001', centerX, HEIGHT - 215);
+    ctx.fillStyle = '#030C06';
+    ctx.font = '600 14px "DM Sans", sans-serif';
+    ctx.fillText('39, Ambalathadayar Madam St, Pondicherry — 605 001', centerX, HEIGHT - 220);
 
-    ctx.fillStyle = '#C5A880';
-    ctx.font = '500 14px "DM Sans", monospace';
-    ctx.fillText('+91 94845 94845', centerX, HEIGHT - 190);
+    ctx.fillStyle = '#8C682E';
+    ctx.font = '700 17px "DM Sans", monospace';
+    ctx.fillText('+91 94845 94845', centerX, HEIGHT - 192);
 
-    ctx.fillStyle = '#7A6B56';
-    ctx.font = '300 12px "DM Sans", serif';
+    ctx.fillStyle = '#6E552D';
+    ctx.font = '600 14px "DM Sans", serif';
     ctx.fillText('— 11 —', centerX, HEIGHT - 75);
 
     const tex = new THREE.CanvasTexture(canvas);

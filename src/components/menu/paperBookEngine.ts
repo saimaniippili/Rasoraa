@@ -107,7 +107,7 @@ export class PaperBookEngine {
     this.renderer.shadowMap.autoUpdate = false;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.1;
+    this.renderer.toneMappingExposure = 1.0;
 
     this.canvas = this.renderer.domElement;
     this.canvas.tabIndex = 0;
@@ -121,11 +121,11 @@ export class PaperBookEngine {
     this.group = new THREE.Group();
     this.scene.add(this.group);
 
-    // 2. Lighting setup
-    this.scene.add(new THREE.HemisphereLight(0xfff7ed, 0x1a2e22, 2.1));
+    // 2. High-Contrast Balanced Lighting (prevents washing out parchment ink)
+    this.scene.add(new THREE.HemisphereLight(0xffffff, 0x223322, 1.1));
 
-    const light = new THREE.DirectionalLight(0xfff8ee, 2.6);
-    light.position.set(-3.5, 1.4, 4.1);
+    const light = new THREE.DirectionalLight(0xfffbeb, 1.45);
+    light.position.set(-3.2, 1.6, 3.8);
     light.castShadow = true;
     light.shadow.mapSize.set(2048, 2048);
     Object.assign(light.shadow.camera, {
@@ -141,8 +141,8 @@ export class PaperBookEngine {
     light.shadow.radius = 3;
     this.scene.add(light);
 
-    // Warm ambient fill light
-    const fillLight = new THREE.DirectionalLight(0xe8d5b5, 1.2);
+    // Warm gentle fill light
+    const fillLight = new THREE.DirectionalLight(0xe8d5b5, 0.45);
     fillLight.position.set(3.0, -1.0, 3.0);
     this.scene.add(fillLight);
 
@@ -236,16 +236,10 @@ export class PaperBookEngine {
 
     this.camera.aspect = width / height;
 
-    // Mobile Portrait Smart Framing Optimization:
-    // On mobile portrait (< 768px or aspect < 1.15), zoom the book so pages are crisp & readable
-    const isMobile = width < 768 || this.camera.aspect < 1.15;
-    if (isMobile) {
-      // Comfortably frame a single page spread without tiny borders
-      this.viewHeight = Math.max(1.377 / 0.88, 1.48 / this.camera.aspect);
-    } else {
-      // Landscape 2-page desktop view
-      this.viewHeight = Math.max(1.377 / 0.8, 2.25 / this.camera.aspect);
-    }
+    // Responsive Framing: Guarantees the book never cuts off at any screen width/aspect ratio
+    // The open book is 2.0 units wide, 1.377 units tall.
+    // Setting visible width >= 2.38 ensures comfortable breathing margin on all sides.
+    this.viewHeight = Math.max(1.377 / 0.84, 2.38 / this.camera.aspect);
 
     this.camera.fov = (2 * Math.atan(this.viewHeight / 2 / 3.1) * 180) / Math.PI;
     this.camera.updateProjectionMatrix();
