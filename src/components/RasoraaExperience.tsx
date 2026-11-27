@@ -355,25 +355,6 @@ export const RasoraaExperience: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#070B08] text-[#FBF9F5] font-sans selection:bg-[#22AA00] selection:text-black overflow-x-hidden">
-      {/* ─── 0. TOP BENEDICTION BAR ─── */}
-      <div className="border-b border-white/[0.06] bg-[#040705] text-[10.5px] font-sans tracking-[0.12em] uppercase py-2 px-4 sm:px-8 text-neutral-400">
-        <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
-          <div className="flex items-center space-x-3 shrink-0 whitespace-nowrap">
-            <span className="inline-flex items-center gap-1.5 text-[#22AA00] font-medium">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#22AA00] shadow-[0_0_8px_#22AA00]" />
-              100% Shuddh Shakahari
-            </span>
-            <span className="text-neutral-700">|</span>
-            <span className="text-[#C5A880]">Strict Jain Hearth on Decree</span>
-          </div>
-          <div className="hidden md:flex items-center space-x-4 text-neutral-400 text-[10px] shrink-0 whitespace-nowrap">
-            <span>39, Ambalathadayar Madam St · Heritage Town, Pondicherry</span>
-            <span className="text-neutral-700">|</span>
-            <span className="text-neutral-300 font-mono">Pondicherry — 605 001</span>
-          </div>
-        </div>
-      </div>
-
       {/* ─── 1. FIXED HAUTE GASTRONOMY NAVBAR ─── */}
       <header
         className={`sticky top-0 z-50 transition-all duration-500 ${
@@ -382,7 +363,7 @@ export const RasoraaExperience: React.FC = () => {
             : 'bg-transparent border-b border-white/[0.04]'
         }`}
       >
-        <div className="max-w-6xl mx-auto px-3 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-2 sm:gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-2 sm:gap-4">
           {/* Brand Logo & Editorial Wordmark */}
           <a href="#hero" className="flex items-center gap-2.5 sm:gap-3 group shrink-0 min-w-0">
             <img
@@ -594,27 +575,27 @@ export const RasoraaExperience: React.FC = () => {
       {/* ─── 2. ACT I: CINEMATIC EDITORIAL HERO ─── */}
       <section
         id="hero"
-        className="relative min-h-[88vh] flex items-center justify-center pt-8 pb-16 overflow-hidden"
+        className="relative min-h-[92vh] flex items-center justify-center pt-10 pb-20 overflow-hidden"
       >
         <EmberCanvas />
 
         {/* Soft Warm Candlelight & Forest Vignette */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[750px] h-[550px] rounded-full blur-[180px] bg-gradient-to-tr from-[#1B3B24]/20 via-[#C5A880]/10 to-transparent pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full blur-[200px] bg-gradient-to-tr from-[#1B3B24]/20 via-[#C5A880]/10 to-transparent pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
             {/* Left Column: Breathtaking Editorial Typography */}
-            <div className="lg:col-span-6 space-y-7 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full border border-[#C5A880]/30 bg-[#C5A880]/5 text-[#C5A880] text-[10.5px] font-sans tracking-[0.24em] uppercase">
+            <div className="lg:col-span-6 space-y-8 text-center lg:text-left">
+              <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full border border-[#C5A880]/30 bg-[#C5A880]/5 text-[#C5A880] text-[11px] font-sans tracking-[0.26em] uppercase">
                 <Sparkles size={11} className="text-[#C5A880]" />
                 <span>The Imperial Court · Est. 2012</span>
               </div>
 
-              <div className="space-y-3.5">
-                <p className="font-serif italic text-xl sm:text-2xl text-[#E8E4DA] font-light tracking-wide">
+              <div className="space-y-4">
+                <p className="font-serif italic text-2xl sm:text-3xl text-[#E8E4DA] font-light tracking-wide">
                   Where Ancient Living Fire Meets
                 </p>
-                <h1 className="font-serif text-3.5xl sm:text-5xl xl:text-6xl font-light tracking-tight text-white leading-[1.1] break-words">
+                <h1 className="font-serif text-3.5xl sm:text-6xl xl:text-7xl font-light tracking-tight text-white leading-[1.08] break-words">
                   Vegetarian Craft,{' '}
                   <br className="hidden sm:block" />
                   <span className="italic font-serif font-light text-transparent bg-clip-text bg-gradient-to-r from-[#FAF8F5] via-[#E8E4DA] to-[#C5A880]">
@@ -623,46 +604,46 @@ export const RasoraaExperience: React.FC = () => {
                 </h1>
               </div>
 
-              <p className="text-neutral-300 text-sm sm:text-base max-w-lg font-light leading-relaxed mx-auto lg:mx-0">
+              <p className="text-neutral-300 text-sm sm:text-base lg:text-lg max-w-xl font-light leading-relaxed mx-auto lg:mx-0">
                 Century-old Awadhi earthenware handis simmered over sal wood embers, 400°C clay tandoors, and whisper-thin wok hei — united under an uncompromising 100% Shuddh Shakahari &amp; Jain decree.
               </p>
 
               {/* Action Buttons */}
-              <div className="pt-1 flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4">
+              <div className="pt-2 flex flex-wrap items-center justify-center lg:justify-start gap-3 sm:gap-4">
                 <a
                   href="#reserve"
-                  className="px-6 sm:px-7 py-3 rounded-full border border-[#C5A880]/80 bg-gradient-to-r from-[#183620] via-[#112918] to-[#183620] hover:border-[#C5A880] text-[#FBF9F5] font-medium text-xs tracking-[0.16em] uppercase transition-all duration-500 shadow-[0_4px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(197,168,128,0.3)] hover:-translate-y-0.5 inline-flex items-center gap-2"
+                  className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-full border border-[#C5A880]/80 bg-gradient-to-r from-[#183620] via-[#112918] to-[#183620] hover:border-[#C5A880] text-[#FBF9F5] font-medium text-xs tracking-[0.16em] uppercase transition-all duration-500 shadow-[0_4px_30px_rgba(0,0,0,0.8)] hover:shadow-[0_0_35px_rgba(197,168,128,0.3)] hover:-translate-y-0.5 inline-flex items-center gap-2"
                 >
-                  <Calendar size={13} className="text-[#C5A880]" />
+                  <Calendar size={14} className="text-[#C5A880]" />
                   <span>Reserve Table</span>
                 </a>
 
                 <a
                   href="#menu"
-                  className="px-6 sm:px-7 py-3 rounded-full border border-white/15 hover:border-[#C5A880] text-neutral-300 hover:text-white font-light text-xs tracking-[0.16em] uppercase transition-all duration-300 hover:bg-white/[0.04] inline-flex items-center gap-2"
+                  className="px-6 sm:px-8 py-3.5 sm:py-4 rounded-full border border-white/15 hover:border-[#C5A880] text-neutral-300 hover:text-white font-light text-xs tracking-[0.16em] uppercase transition-all duration-300 hover:bg-white/[0.04] inline-flex items-center gap-2"
                 >
                   <span>Explore The Carte</span>
-                  <ArrowUpRight size={13} className="text-[#C5A880]" />
+                  <ArrowUpRight size={14} className="text-[#C5A880]" />
                 </a>
               </div>
 
               {/* Quiet Architectural Trust Metrics */}
-              <div className="pt-5 sm:pt-6 border-t border-white/[0.08] grid grid-cols-3 gap-2 sm:gap-6 text-center sm:text-left">
+              <div className="pt-6 sm:pt-8 border-t border-white/[0.08] grid grid-cols-3 gap-2 sm:gap-6 text-center sm:text-left">
                 <div>
-                  <span className="block font-serif text-lg sm:text-xl text-white font-light">100%</span>
-                  <span className="text-[9.5px] sm:text-[10.5px] font-sans uppercase tracking-[0.12em] sm:tracking-[0.18em] text-[#22AA00] block">
+                  <span className="block font-serif text-xl sm:text-2xl text-white font-light">100%</span>
+                  <span className="text-[9.5px] sm:text-[11px] font-sans uppercase tracking-[0.12em] sm:tracking-[0.2em] text-[#22AA00] block">
                     Pure Shakahari
                   </span>
                 </div>
                 <div>
-                  <span className="block font-serif text-lg sm:text-xl text-white font-light">Strict</span>
-                  <span className="text-[9.5px] sm:text-[10.5px] font-sans uppercase tracking-[0.12em] sm:tracking-[0.18em] text-[#C5A880] block">
+                  <span className="block font-serif text-xl sm:text-2xl text-white font-light">Strict</span>
+                  <span className="text-[9.5px] sm:text-[11px] font-sans uppercase tracking-[0.12em] sm:tracking-[0.2em] text-[#C5A880] block">
                     Jain Certified
                   </span>
                 </div>
                 <div>
-                  <span className="block font-serif text-lg sm:text-xl text-white font-light truncate">Heritage</span>
-                  <span className="text-[9.5px] sm:text-[10.5px] font-sans uppercase tracking-[0.12em] sm:tracking-[0.18em] text-neutral-400 block truncate">
+                  <span className="block font-serif text-xl sm:text-2xl text-white font-light truncate">Heritage</span>
+                  <span className="text-[9.5px] sm:text-[11px] font-sans uppercase tracking-[0.12em] sm:tracking-[0.2em] text-neutral-400 block truncate">
                     Pondicherry
                   </span>
                 </div>
@@ -671,8 +652,8 @@ export const RasoraaExperience: React.FC = () => {
 
             {/* Right Column: Architectural Arched Masterpiece Frame */}
             <div className="lg:col-span-6 flex flex-col items-center justify-center">
-              <div className="relative w-full max-w-[400px] select-none mx-auto">
-                <div className="relative rounded-[32px] p-3 sm:p-3.5 bg-gradient-to-b from-[#14261A] via-[#0B150F] to-[#040805] border border-[#C5A880]/30 shadow-[0_30px_90px_rgba(0,0,0,0.95)]">
+              <div className="relative w-full max-w-[460px] select-none mx-auto">
+                <div className="relative rounded-[36px] p-3 sm:p-4 bg-gradient-to-b from-[#14261A] via-[#0B150F] to-[#040805] border border-[#C5A880]/30 shadow-[0_30px_90px_rgba(0,0,0,0.95)]">
                   {/* Inside Portrait Frame with Soft Arched Crown */}
                   <div className="relative aspect-[4/4.8] rounded-[26px] overflow-hidden border border-white/10 group">
                     <AnimatePresence mode="wait">
@@ -798,8 +779,8 @@ export const RasoraaExperience: React.FC = () => {
       </div>
 
       {/* ─── 4. ACT II: THE PHILOSOPHY & HERITAGE (#about) ─── */}
-      <section id="about" className="py-20 sm:py-24 relative bg-[#070C09] border-b border-white/[0.06]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="about" className="py-28 relative bg-[#070C09] border-b border-white/[0.06]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-12 gap-16 items-center">
             {/* Story & Manifesto */}
             <div className="lg:col-span-6 space-y-8">
@@ -874,18 +855,18 @@ export const RasoraaExperience: React.FC = () => {
       </section>
 
       {/* ─── 5. ACT III: THE IMPERIAL CARTE & INTERACTIVE MENU BOOK (#menu) ─── */}
-      <section id="menu" className="py-20 sm:py-24 relative bg-[#060D08] border-b border-white/[0.06] overflow-hidden">
+      <section id="menu" className="py-24 sm:py-32 relative bg-[#060D08] border-b border-white/[0.06] overflow-hidden">
         {/* Subtle Ambient Glow */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-[#12361E]/20 blur-[140px] pointer-events-none rounded-full" />
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Section Header */}
-          <div className="text-center max-w-2xl mx-auto mb-10 space-y-3.5">
+          <div className="text-center max-w-3xl mx-auto mb-12 space-y-4">
             <span className="text-[#C5A880] text-xs font-sans tracking-[0.28em] uppercase inline-flex items-center gap-2">
               <BookOpen size={14} className="text-[#C5A880]" />
               <span>02 / The Imperial Folio</span>
             </span>
-            <h2 className="font-serif text-3.5xl sm:text-5xl font-light text-white tracking-tight">
+            <h2 className="font-serif text-4xl sm:text-6xl font-light text-white tracking-tight">
               Interactive Restaurant Book
             </h2>
             <p className="text-neutral-400 text-sm sm:text-base font-light leading-relaxed">
@@ -893,8 +874,8 @@ export const RasoraaExperience: React.FC = () => {
             </p>
 
             {/* Chef's Fresh Preparation Pledge from Official Menu */}
-            <div className="max-w-xl mx-auto p-4 rounded-2xl bg-[#0D1812] border border-[#C5A880]/30 text-xs text-[#E8E4DA] font-light leading-relaxed text-center shadow-xl">
-              <span className="font-serif italic text-sm sm:text-base text-[#C5A880] block pb-0.5">
+            <div className="max-w-2xl mx-auto p-4 sm:p-5 rounded-2xl bg-[#0D1812] border border-[#C5A880]/30 text-xs text-[#E8E4DA] font-light leading-relaxed text-center shadow-xl">
+              <span className="font-serif italic text-base text-[#C5A880] block pb-1">
                 “Fresh • Elegant • Authentic Dining Experience”
               </span>
               <p className="text-neutral-300">
@@ -907,7 +888,7 @@ export const RasoraaExperience: React.FC = () => {
           <RasoraaBook onSelectDish={(dish) => setPreviewDish(dish)} />
 
           {/* Reserve CTA Footer */}
-          <div className="mt-12 text-center">
+          <div className="mt-16 text-center">
             <a
               href="#reserve"
               className="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full border border-[#C5A880]/50 hover:border-[#C5A880] bg-[#122818] hover:bg-[#183620] text-[#FBF9F5] text-xs font-sans tracking-[0.2em] uppercase transition-all shadow-xl"
@@ -920,16 +901,16 @@ export const RasoraaExperience: React.FC = () => {
       </section>
 
       {/* ─── 6. ACT IV: VISUAL CHRONICLES (#gallery) ─── */}
-      <section id="gallery" className="py-20 sm:py-24 relative bg-[#070C09] border-b border-white/[0.06] overflow-hidden">
+      <section id="gallery" className="py-24 sm:py-28 relative bg-[#070C09] border-b border-white/[0.06] overflow-hidden">
         {/* Subtle Ambient Radial Glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[550px] bg-[#12361E]/20 blur-[150px] pointer-events-none rounded-full" />
 
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12 space-y-3.5">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16 space-y-4">
             <span className="text-[#C8A962] text-xs font-sans tracking-[0.28em] uppercase">
               03 / Visual Chronicles
             </span>
-            <h2 className="font-serif text-3.5xl sm:text-5xl font-light text-[#F4F0E6]">
+            <h2 className="font-serif text-4xl sm:text-6xl font-light text-[#F4F0E6]">
               The Alchemy of Living Fire
             </h2>
             <p className="text-neutral-400 text-sm sm:text-base font-light leading-relaxed">
@@ -968,13 +949,13 @@ export const RasoraaExperience: React.FC = () => {
       </section>
 
       {/* ─── 7. ACT V: ROYAL BANQUETS & PRIVATE EVENTS (#events) ─── */}
-      <section id="events" className="py-20 sm:py-24 relative bg-[#060A08] border-b border-white/[0.06]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-14 space-y-3.5">
+      <section id="events" className="py-28 relative bg-[#060A08] border-b border-white/[0.06]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
             <span className="text-[#C5A880] text-xs font-sans tracking-[0.28em] uppercase">
               04 / Royal Banquets &amp; Gatherings
             </span>
-            <h2 className="font-serif text-3.5xl sm:text-5xl font-light text-white">
+            <h2 className="font-serif text-4xl sm:text-6xl font-light text-white">
               Private Dining Salons
             </h2>
             <p className="text-neutral-400 text-sm sm:text-base font-light leading-relaxed">
@@ -1032,13 +1013,13 @@ export const RasoraaExperience: React.FC = () => {
       </section>
 
       {/* ─── 8. ACT VI: SANCTUARIES & RESERVATION SUITE (#contact & #reserve) ─── */}
-      <section id="contact" className="py-20 sm:py-24 relative bg-[#070B08] border-b border-white/[0.06]">
-        <div id="reserve" className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-14 space-y-3.5">
+      <section id="contact" className="py-28 relative bg-[#070B08] border-b border-white/[0.06]">
+        <div id="reserve" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
             <span className="text-[#C5A880] text-xs font-sans tracking-[0.28em] uppercase">
               05 / Sanctuaries &amp; Concierge
             </span>
-            <h2 className="font-serif text-3.5xl sm:text-5xl font-light text-white">
+            <h2 className="font-serif text-4xl sm:text-6xl font-light text-white">
               Reserve Your Table
             </h2>
             <p className="text-neutral-400 text-sm sm:text-base font-light leading-relaxed">
@@ -1376,8 +1357,8 @@ export const RasoraaExperience: React.FC = () => {
       </section>
 
       {/* ─── 9. LUXURY EDITORIAL FOOTER ─── */}
-      <footer className="border-t border-white/[0.08] bg-[#040705] pt-16 pb-12 text-neutral-400">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <footer className="border-t border-white/[0.08] bg-[#040705] pt-20 pb-14 text-neutral-400">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-12 gap-12 pb-14 border-b border-white/[0.08]">
             {/* Brand Manifesto */}
             <div className="lg:col-span-5 space-y-5 text-left">
