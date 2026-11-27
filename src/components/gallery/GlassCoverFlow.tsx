@@ -390,25 +390,6 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
         >
           <ChevronRight size={22} />
         </button>
-
-        {/* Liquid Gold Pagination Dots */}
-        <div className="rasoraa-cover-flow__dots" aria-label="Pagination">
-          {safeItems.map((item, index) => (
-            <button
-              key={`${item.id}-dot`}
-              className={`rasoraa-cover-flow__dot ${
-                index === activeIndex ? 'rasoraa-cover-flow__dot--active' : ''
-              }`}
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                targetRef.current = index;
-                animateToTarget();
-              }}
-              aria-label={`Go to ${item.title}`}
-            />
-          ))}
-        </div>
       </div>
     </section>
   );
