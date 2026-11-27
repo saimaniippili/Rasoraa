@@ -70,11 +70,11 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
       const isMobile = stageW < 640;
       const isTablet = stageW >= 640 && stageW < 1024;
 
-      // Responsive spacing parameters
-      const step1 = isMobile ? 180 : isTablet ? 245 : 306;
-      const step2 = isMobile ? 68 : isTablet ? 108 : 136;
-      const zBase = isMobile ? 140 : 190;
-      const zStep = isMobile ? 44 : 54;
+      // Responsive spacing parameters proportional to 270px card width
+      const step1 = isMobile ? 140 : isTablet ? 190 : 240;
+      const step2 = isMobile ? 50 : isTablet ? 74 : 96;
+      const zBase = isMobile ? 90 : 130;
+      const zStep = isMobile ? 28 : 36;
 
       cardRefs.current.forEach((card, index) => {
         if (!card) return;
@@ -91,10 +91,10 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
         const extraTilt = Math.max(0, abs - 1) * 1.5;
 
         const xBase = abs < 1 ? abs * step1 : step1 + (abs - 1) * step2;
-        const x = side * xBase + pointer.x * (nearCenter ? 14 : 16);
-        const y = abs * 5 + pointer.y * (nearCenter ? 6 : 7);
-        const rotate = side * (-60 * rotateProgress - extraTilt) + pointer.x * (nearCenter ? -1.8 : -1.2);
-        const scale = 0.86 + breathe * 0.18 - Math.max(0, abs - 1) * 0.024;
+        const x = side * xBase + pointer.x * (nearCenter ? 12 : 14);
+        const y = abs * 4 + pointer.y * (nearCenter ? 5 : 6);
+        const rotate = side * (-58 * rotateProgress - extraTilt) + pointer.x * (nearCenter ? -1.5 : -1.0);
+        const scale = 0.90 + breathe * 0.12 - Math.max(0, abs - 1) * 0.02;
         const opacity = abs > 5 ? 0 : Math.max(0.28, 1 - abs * 0.08);
         const blur = abs > 4 ? 'blur(4px)' : abs > 3 ? 'blur(2px)' : 'none';
 
