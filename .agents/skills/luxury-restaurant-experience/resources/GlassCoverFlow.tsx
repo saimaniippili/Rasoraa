@@ -362,10 +362,6 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
           }
         }}
       >
-        {/* Ambient Glow & Liquid Floor */}
-        <div className="rasoraa-cover-flow__ambience" />
-        <div className="rasoraa-cover-flow__horizon" />
-
         {/* 3D Perspective Card Stage */}
         <div className="rasoraa-cover-flow__cards" style={{ perspective: 1800 }}>
           {safeItems.map((item, index) => {

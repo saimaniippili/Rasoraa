@@ -1,38 +1,38 @@
 /* ═════════════════════════════════════════════════════════════════════════════
    RASORAA — LIQUID GLASS COVER FLOW SHOWCASE
-   Ultra-smooth, 60/120fps physics-driven 3D cover flow for all screen sizes
-   Palettes: Background #070C09, Antique Gold #C8A962, Ivory #F4F0E6, Regal Forest #1B512D
+   Seamless full-canvas 3D cover flow with zero outer container or box boundaries
+   Palettes: Seamless background #070B08, Antique Gold #C8A962, Ivory #F4F0E6
    ═════════════════════════════════════════════════════════════════════════════ */
 
 .rasoraa-cover-flow {
   width: 100%;
-  max-width: 1440px;
-  margin: 0 auto;
   position: relative;
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
   overflow: visible;
   touch-action: pan-y;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  margin: 0 auto;
 }
 
-/* Liquid Glass Stage Container - Full gesture capture */
+/* Liquid Glass Stage Container - 100% transparent directly on page background */
 .rasoraa-cover-flow__stage {
   position: relative;
   height: clamp(460px, 58vh, 560px);
+  width: 100%;
   overflow: visible;
   cursor: grab;
   border: none !important;
   border-radius: 0 !important;
   box-shadow: none !important;
+  background: transparent !important;
+  outline: none !important;
   perspective: 1600px;
   perspective-origin: 50% 48%;
-  background:
-    radial-gradient(circle at 50% 15%, rgba(200, 169, 98, 0.08) 0%, transparent 45%),
-    radial-gradient(circle at 20% 85%, rgba(14, 53, 36, 0.22) 0%, transparent 45%),
-    radial-gradient(circle at 80% 85%, rgba(14, 53, 36, 0.22) 0%, transparent 45%),
-    transparent;
-  outline: none;
   touch-action: pan-y;
 }
 
@@ -40,25 +40,10 @@
   cursor: grabbing;
 }
 
-/* Atmospheric Ambient Floor & Reflection Field */
-.rasoraa-cover-flow__ambience {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse at 50% 90%, rgba(200, 169, 98, 0.06) 0%, transparent 55%),
-    radial-gradient(circle at 50% 50%, transparent 60%, rgba(3, 6, 4, 0.6) 100%);
-}
-
-/* Floor Grid Horizon Line */
+/* Outer box ambience & horizon elements completely eliminated */
+.rasoraa-cover-flow__ambience,
 .rasoraa-cover-flow__horizon {
-  position: absolute;
-  left: 5%;
-  right: 5%;
-  bottom: 68px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent 0%, rgba(200, 169, 98, 0.15) 30%, rgba(200, 169, 98, 0.3) 50%, rgba(200, 169, 98, 0.15) 70%, transparent 100%);
-  pointer-events: none;
+  display: none !important;
 }
 
 /* 3D Perspective Card Stage */
@@ -98,7 +83,7 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Inner Card Container - Avoid transform transition to prevent fighting RAF updates */
+/* Inner Card Container */
 .rasoraa-cover-card__inner {
   position: relative;
   width: 100%;
@@ -115,7 +100,7 @@
   width: 88%;
   height: 62px;
   border-radius: 16px;
-  opacity: 0.22;
+  opacity: 0.20;
   filter: blur(1.5px);
   transform: scaleY(-1);
   overflow: hidden;
@@ -202,7 +187,7 @@
   pointer-events: none;
 }
 
-/* High-Z Navigation Arrow Buttons - Always accessible above cards */
+/* High-Z Navigation Arrow Buttons */
 .rasoraa-cover-flow__arrow {
   position: absolute;
   top: 50%;
@@ -303,7 +288,6 @@
     padding: 14px 12px;
   }
 
-  /* Compact touch arrows on mobile */
   .rasoraa-cover-flow__arrow {
     width: 38px;
     height: 38px;
@@ -316,10 +300,6 @@
 
   .rasoraa-cover-flow__arrow--next {
     right: 8px;
-  }
-
-  .rasoraa-cover-flow__horizon {
-    bottom: 54px;
   }
 }
 

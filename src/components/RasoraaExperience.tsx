@@ -793,12 +793,12 @@ export const RasoraaExperience: React.FC = () => {
       </section>
 
       {/* ─── 6. ACT IV: VISUAL CHRONICLES (#gallery) ─── */}
-      <section id="gallery" className="py-24 sm:py-28 relative bg-[#070C09] border-b border-white/[0.06] overflow-hidden">
-        {/* Subtle Ambient Radial Glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[550px] bg-[#12361E]/20 blur-[150px] pointer-events-none rounded-full" />
+      <section id="gallery" className="py-24 sm:py-28 relative bg-[#070B08] overflow-hidden">
+        {/* Soft atmospheric radial vignette matching the page */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[550px] bg-[#12361E]/15 blur-[160px] pointer-events-none rounded-full" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16 space-y-4">
+        <div className="relative z-10">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 text-center mb-10 sm:mb-14 space-y-4">
             <span className="text-[#C8A962] text-xs font-sans tracking-[0.28em] uppercase">
               03 / Visual Chronicles
             </span>
@@ -810,33 +810,35 @@ export const RasoraaExperience: React.FC = () => {
             </p>
           </div>
 
-          {/* Liquid Glass 3D Cover Flow Showcase */}
-          <GlassCoverFlow
-            items={GALLERY_ITEMS}
-            initialIndex={1}
-            onSelect={(item) => {
-              const found = OFFICIAL_DISHES.find(
-                (d) =>
-                  d.name.toLowerCase().includes(item.title.toLowerCase()) ||
-                  item.title.toLowerCase().includes(d.name.toLowerCase())
-              );
-              if (found) {
-                setPreviewDish(found);
-              } else {
-                setPreviewDish({
-                  id: item.id,
-                  name: item.title,
-                  category: item.category as any,
-                  price: 495,
-                  description: item.subtitle,
-                  origin: 'Heritage Town, Pondicherry',
-                  isJain: Boolean(item.isJain),
-                  isSignature: Boolean(item.isSignature),
-                  image: item.image,
-                });
-              }
-            }}
-          />
+          {/* Liquid Glass 3D Cover Flow Showcase - Naturally floating directly on the page */}
+          <div className="w-full">
+            <GlassCoverFlow
+              items={GALLERY_ITEMS}
+              initialIndex={1}
+              onSelect={(item) => {
+                const found = OFFICIAL_DISHES.find(
+                  (d) =>
+                    d.name.toLowerCase().includes(item.title.toLowerCase()) ||
+                    item.title.toLowerCase().includes(d.name.toLowerCase())
+                );
+                if (found) {
+                  setPreviewDish(found);
+                } else {
+                  setPreviewDish({
+                    id: item.id,
+                    name: item.title,
+                    category: item.category as any,
+                    price: 495,
+                    description: item.subtitle,
+                    origin: 'Heritage Town, Pondicherry',
+                    isJain: Boolean(item.isJain),
+                    isSignature: Boolean(item.isSignature),
+                    image: item.image,
+                  });
+                }
+              }}
+            />
+          </div>
         </div>
       </section>
 
