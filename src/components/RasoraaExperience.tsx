@@ -888,49 +888,49 @@ export const RasoraaExperience: React.FC = () => {
       </section>
 
       {/* ─── 8. ACT VI: SANCTUARIES & RESERVATION SUITE (#contact & #reserve) ─── */}
-      <section id="contact" className="py-28 relative bg-[#070B08] border-b border-white/[0.06]">
+      <section id="contact" className="py-20 sm:py-24 relative bg-[#070B08] border-b border-white/[0.06]">
         <div id="reserve" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-16 space-y-4">
+          <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-12 space-y-3">
             <span className="text-[#C5A880] text-xs font-sans tracking-[0.28em] uppercase">
               05 / Sanctuaries &amp; Concierge
             </span>
-            <h2 className="font-serif text-4xl sm:text-6xl font-light text-white">
+            <h2 className="font-serif text-3xl sm:text-5xl font-light text-white">
               Reserve Your Table
             </h2>
-            <p className="text-neutral-400 text-sm sm:text-base font-light leading-relaxed">
+            <p className="text-neutral-400 text-xs sm:text-sm font-light leading-relaxed">
               Tables are released thirty days in advance. Dedicated Jain root-free stations prepared upon request.
             </p>
           </div>
 
-          <div className="grid lg:grid-cols-12 gap-12 items-start">
+          <div className="grid lg:grid-cols-12 gap-8 lg:gap-10 items-start">
             {/* Left: Sanctuary Details */}
-            <div className="lg:col-span-5 space-y-6">
-              <h3 className="font-serif text-2xl text-white font-light pb-2 border-b border-white/10">
+            <div className="lg:col-span-5 space-y-5">
+              <h3 className="font-serif text-xl sm:text-2xl text-white font-light pb-2 border-b border-white/10">
                 Pondicherry Sanctuaries &amp; Salons
               </h3>
 
-              <div className="space-y-4">
+              <div className="space-y-3.5">
                 {SANCTUARIES.map((s) => (
                   <div
                     key={s.id}
                     onClick={() => setSelectedSanctuary(s.id)}
-                    className={`p-5 rounded-2xl border text-left cursor-pointer transition-all duration-300 ${
+                    className={`p-4 sm:p-4.5 rounded-xl border text-left cursor-pointer transition-all duration-300 ${
                       selectedSanctuary === s.id
                         ? 'bg-[#14281A] border-[#C5A880] shadow-[0_0_20px_rgba(197,168,128,0.2)]'
                         : 'bg-white/[0.02] border-white/10 hover:border-white/20'
                     }`}
                   >
                     <div className="flex items-center justify-between pb-1">
-                      <span className="font-serif text-lg text-white font-light">
+                      <span className="font-serif text-base sm:text-lg text-white font-light">
                         {s.name}
                       </span>
                       <span className="text-xs font-mono text-[#C5A880]">{s.phone}</span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs font-sans text-neutral-400 pt-1">
+                    <div className="flex items-center gap-1.5 text-xs font-sans text-neutral-400 pt-0.5">
                       <MapPin size={12} className="text-[#C5A880] shrink-0" />
                       <span>{s.location}</span>
                     </div>
-                    <p className="text-xs text-neutral-400 font-light pt-2 leading-relaxed">
+                    <p className="text-xs text-neutral-400 font-light pt-1.5 leading-relaxed">
                       {s.desc}
                     </p>
                   </div>
@@ -938,12 +938,12 @@ export const RasoraaExperience: React.FC = () => {
               </div>
 
               {/* Instant WhatsApp Concierge Banner */}
-              <div className="p-5 rounded-2xl bg-[#09150E] border border-[#25D366]/40 flex items-center justify-between gap-4">
+              <div className="p-4 rounded-xl bg-[#09150E] border border-[#25D366]/40 flex items-center justify-between gap-4">
                 <div>
                   <span className="block text-xs font-sans text-[#25D366] font-medium tracking-wider uppercase">
                     Direct VIP Concierge
                   </span>
-                  <span className="text-xs text-neutral-300 font-light">
+                  <span className="text-[11px] sm:text-xs text-neutral-300 font-light">
                     Private salon bookings &amp; special Jain dietary inquiries
                   </span>
                 </div>
@@ -951,9 +951,9 @@ export const RasoraaExperience: React.FC = () => {
                   href="https://wa.me/919484594845"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 rounded-full bg-[#25D366] hover:bg-[#1EBE5D] text-black font-semibold text-xs tracking-wider uppercase transition-colors shrink-0 inline-flex items-center gap-1.5"
+                  className="px-3.5 py-1.5 rounded-full bg-[#25D366] hover:bg-[#1EBE5D] text-black font-semibold text-xs tracking-wider uppercase transition-colors shrink-0 inline-flex items-center gap-1.5"
                 >
-                  <MessageCircle size={14} />
+                  <MessageCircle size={13} />
                   <span>Chat</span>
                 </a>
               </div>
@@ -961,20 +961,20 @@ export const RasoraaExperience: React.FC = () => {
 
             {/* Right: Bespoke Reservation Form */}
             <div className="lg:col-span-7">
-              <div className="p-8 sm:p-10 rounded-3xl bg-gradient-to-b from-[#0D1C13] to-[#060D08] border border-[#C5A880]/40 shadow-2xl text-left">
+              <div className="p-5 sm:p-7 rounded-2xl bg-gradient-to-b from-[#0D1C13] to-[#060D08] border border-[#C5A880]/40 shadow-2xl text-left">
                 {isBookingSuccess ? (
                   <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="py-12 text-center space-y-5"
+                    className="py-10 text-center space-y-4"
                   >
-                    <div className="w-16 h-16 rounded-full bg-[#183B22] border border-[#C5A880] mx-auto flex items-center justify-center text-[#C5A880]">
-                      <Sparkles size={28} />
+                    <div className="w-14 h-14 rounded-full bg-[#183B22] border border-[#C5A880] mx-auto flex items-center justify-center text-[#C5A880]">
+                      <Sparkles size={24} />
                     </div>
-                    <h3 className="font-serif text-3xl text-white font-light">
+                    <h3 className="font-serif text-2xl text-white font-light">
                       Reservation Confirmed
                     </h3>
-                    <p className="text-neutral-300 text-sm max-w-md mx-auto font-light leading-relaxed">
+                    <p className="text-neutral-300 text-xs sm:text-sm max-w-md mx-auto font-light leading-relaxed">
                       Honored Patron <strong className="text-white">{guestName}</strong>, your sanctuary table for <strong className="text-white">{guestCount} Guests</strong> on <strong className="text-white">{formatSelectedDateHuman(selectedDate)} ({selectedTime})</strong> has been registered.
                     </p>
                     <div className="text-xs font-mono text-[#C5A880]">
@@ -986,47 +986,47 @@ export const RasoraaExperience: React.FC = () => {
                         setGuestName('');
                         setGuestPhone('');
                       }}
-                      className="px-6 py-2.5 rounded-full border border-white/20 text-xs font-sans tracking-widest uppercase hover:bg-white/5"
+                      className="px-5 py-2 rounded-full border border-white/20 text-xs font-sans tracking-widest uppercase hover:bg-white/5"
                     >
                       Book Another Table
                     </button>
                   </motion.div>
                 ) : (
-                  <form onSubmit={handleBookingSubmit} className="space-y-6">
-                    <h3 className="font-serif text-2xl text-white font-light pb-2 border-b border-white/10">
+                  <form onSubmit={handleBookingSubmit} className="space-y-4 sm:space-y-4.5">
+                    <h3 className="font-serif text-xl sm:text-2xl text-white font-light pb-2 border-b border-white/10">
                       Sanctuary Table Suite
                     </h3>
 
                     {/* Guest Count Selector */}
                     <div>
-                      <label className="block text-xs font-sans text-neutral-400 uppercase tracking-widest mb-2">
+                      <label className="block text-[10.5px] font-sans text-neutral-400 uppercase tracking-widest mb-1.5">
                         Party Size
                       </label>
-                      <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-3">
                         <button
                           type="button"
                           onClick={() => setGuestCount(Math.max(1, guestCount - 1))}
-                          className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:border-[#C5A880]"
+                          className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:border-[#C5A880] transition-colors"
                         >
-                          <Minus size={14} />
+                          <Minus size={13} />
                         </button>
-                        <span className="font-serif text-2xl text-white font-light w-16 text-center">
+                        <span className="font-serif text-xl text-white font-light w-16 text-center">
                           {guestCount} {guestCount === 1 ? 'Guest' : 'Guests'}
                         </span>
                         <button
                           type="button"
                           onClick={() => setGuestCount(Math.min(16, guestCount + 1))}
-                          className="w-10 h-10 rounded-full border border-white/20 flex items-center justify-center text-white hover:border-[#C5A880]"
+                          className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-white hover:border-[#C5A880] transition-colors"
                         >
-                          <Plus size={14} />
+                          <Plus size={13} />
                         </button>
                       </div>
                     </div>
 
                     {/* Interactive Bespoke Luxury Calendar Picker */}
                     <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="block text-xs font-sans text-neutral-400 uppercase tracking-widest">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="block text-[10.5px] font-sans text-neutral-400 uppercase tracking-widest">
                           Dining Calendar Date
                         </label>
                         <span className="text-xs font-serif text-[#C5A880] italic">
@@ -1034,35 +1034,35 @@ export const RasoraaExperience: React.FC = () => {
                         </span>
                       </div>
 
-                      <div className="p-4 sm:p-5 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3">
+                      <div className="p-3 sm:p-3.5 rounded-xl bg-white/[0.02] border border-white/10 space-y-2">
                         {/* Month & Year Navigator */}
-                        <div className="flex items-center justify-between pb-2 border-b border-white/10">
-                          <span className="font-serif text-lg text-white font-light tracking-wide">
+                        <div className="flex items-center justify-between pb-1.5 border-b border-white/10">
+                          <span className="font-serif text-base text-white font-light tracking-wide">
                             {monthName}
                           </span>
-                          <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-1">
                             <button
                               type="button"
                               onClick={handlePrevMonth}
                               disabled={isCurrentMonth}
-                              className="w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-neutral-300 hover:text-white hover:border-[#C5A880] disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
+                              className="w-7 h-7 rounded-full border border-white/15 flex items-center justify-center text-neutral-300 hover:text-white hover:border-[#C5A880] disabled:opacity-20 disabled:cursor-not-allowed transition-colors"
                               aria-label="Previous Month"
                             >
-                              <ChevronLeft size={15} />
+                              <ChevronLeft size={14} />
                             </button>
                             <button
                               type="button"
                               onClick={handleNextMonth}
-                              className="w-8 h-8 rounded-full border border-white/15 flex items-center justify-center text-neutral-300 hover:text-white hover:border-[#C5A880] transition-colors"
+                              className="w-7 h-7 rounded-full border border-white/15 flex items-center justify-center text-neutral-300 hover:text-white hover:border-[#C5A880] transition-colors"
                               aria-label="Next Month"
                             >
-                              <ChevronRight size={15} />
+                              <ChevronRight size={14} />
                             </button>
                           </div>
                         </div>
 
                         {/* Weekday Labels */}
-                        <div className="grid grid-cols-7 gap-1 text-center text-[10.5px] font-sans text-neutral-500 uppercase tracking-wider py-1">
+                        <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-sans text-neutral-500 uppercase tracking-wider py-0.5">
                           <span>Su</span>
                           <span>Mo</span>
                           <span>Tu</span>
@@ -1076,7 +1076,7 @@ export const RasoraaExperience: React.FC = () => {
                         <div className="grid grid-cols-7 gap-1 text-center">
                           {/* Empty offset days before 1st of month */}
                           {Array.from({ length: firstDayOfWeek }).map((_, i) => (
-                            <div key={`offset-${i}`} className="h-8 sm:h-9" />
+                            <div key={`offset-${i}`} className="h-7 sm:h-7.5" />
                           ))}
 
                           {/* Days of current month */}
@@ -1095,9 +1095,9 @@ export const RasoraaExperience: React.FC = () => {
                                 type="button"
                                 disabled={disabled}
                                 onClick={() => handleSelectDay(day)}
-                                className={`h-8 sm:h-9 rounded-xl text-xs font-mono transition-all duration-200 flex items-center justify-center ${
+                                className={`h-7 sm:h-7.5 rounded-lg text-xs font-mono transition-all duration-200 flex items-center justify-center ${
                                   selected
-                                    ? 'bg-[#183620] text-white font-bold border border-[#C5A880] shadow-[0_0_15px_rgba(197,168,128,0.3)] scale-[1.05]'
+                                    ? 'bg-[#183620] text-white font-bold border border-[#C5A880] shadow-[0_0_12px_rgba(197,168,128,0.3)] scale-[1.05]'
                                     : disabled
                                     ? 'text-neutral-600 opacity-25 cursor-not-allowed'
                                     : isToday
@@ -1112,9 +1112,9 @@ export const RasoraaExperience: React.FC = () => {
                         </div>
 
                         {/* Quick Selection Footer */}
-                        <div className="pt-2 border-t border-white/5 flex items-center justify-between text-[11px] text-neutral-400">
+                        <div className="pt-1.5 border-t border-white/5 flex items-center justify-between text-[10.5px] text-neutral-400">
                           <span className="flex items-center gap-1.5 text-neutral-400">
-                            <Calendar size={12} className="text-[#C5A880]" />
+                            <Calendar size={11} className="text-[#C5A880]" />
                             <span>Reserved For: <strong className="text-white">{formatSelectedDateHuman(selectedDate)}</strong></span>
                           </span>
                           <label className="cursor-pointer text-[#C5A880] hover:underline flex items-center gap-1">
@@ -1139,16 +1139,16 @@ export const RasoraaExperience: React.FC = () => {
 
                     {/* Twilight Session */}
                     <div>
-                      <label className="block text-xs font-sans text-neutral-400 uppercase tracking-widest mb-2">
+                      <label className="block text-[10.5px] font-sans text-neutral-400 uppercase tracking-widest mb-1.5">
                         Twilight Session
                       </label>
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
                         {['12:30 PM', '4:00 PM', '8:00 PM', '10:00 PM'].map((t) => (
                           <button
                             key={t}
                             type="button"
                             onClick={() => setSelectedTime(t)}
-                            className={`py-2 px-2 rounded-xl text-xs font-mono border transition-colors ${
+                            className={`py-1.5 px-2 rounded-lg text-xs font-mono border transition-colors ${
                               selectedTime === t
                                 ? 'bg-[#183620] text-[#C5A880] border-[#C5A880]'
                                 : 'bg-white/[0.02] text-neutral-400 border-white/10 hover:border-white/30'
@@ -1161,25 +1161,25 @@ export const RasoraaExperience: React.FC = () => {
                     </div>
 
                     {/* Strict Jain Dietary Toggle */}
-                    <div className="pt-2">
+                    <div className="pt-0.5">
                       <label
                         onClick={() => setIsJainDiet(!isJainDiet)}
-                        className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 cursor-pointer hover:border-[#C5A880]/50 transition-colors"
+                        className="flex items-center gap-2.5 p-2.5 sm:p-3 rounded-xl bg-white/[0.03] border border-white/10 cursor-pointer hover:border-[#C5A880]/50 transition-colors"
                       >
                         <div
-                          className={`w-5 h-5 rounded-md border flex items-center justify-center transition-colors ${
+                          className={`w-4 h-4 rounded border flex items-center justify-center transition-colors shrink-0 ${
                             isJainDiet
                               ? 'bg-[#22AA00] border-[#22AA00] text-black'
                               : 'border-white/30'
                           }`}
                         >
-                          {isJainDiet && <Check size={13} strokeWidth={3} />}
+                          {isJainDiet && <Check size={11} strokeWidth={3} />}
                         </div>
                         <div className="text-left">
-                          <span className="block text-xs font-sans font-medium text-white tracking-wider uppercase">
+                          <span className="block text-[11px] font-sans font-medium text-white tracking-wider uppercase">
                             Strict Jain Preparation (Root-Free)
                           </span>
-                          <span className="text-[11px] text-neutral-400 font-light">
+                          <span className="text-[10px] text-neutral-400 font-light">
                             Dedicated root-free station without onion, garlic, or underground tubers.
                           </span>
                         </div>
@@ -1187,9 +1187,9 @@ export const RasoraaExperience: React.FC = () => {
                     </div>
 
                     {/* Name & Phone Inputs */}
-                    <div className="grid sm:grid-cols-2 gap-4 pt-2">
+                    <div className="grid sm:grid-cols-2 gap-3 pt-0.5">
                       <div>
-                        <label className="block text-[11px] font-sans text-neutral-400 uppercase tracking-widest mb-1.5">
+                        <label className="block text-[10.5px] font-sans text-neutral-400 uppercase tracking-widest mb-1">
                           Patron Name *
                         </label>
                         <input
@@ -1198,11 +1198,11 @@ export const RasoraaExperience: React.FC = () => {
                           value={guestName}
                           onChange={(e) => setGuestName(e.target.value)}
                           placeholder="Lord / Lady Sharma"
-                          className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/15 text-white placeholder-neutral-500 text-sm focus:outline-none focus:border-[#C5A880]"
+                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/[0.04] border border-white/15 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-[#C5A880]"
                         />
                       </div>
                       <div>
-                        <label className="block text-[11px] font-sans text-neutral-400 uppercase tracking-widest mb-1.5">
+                        <label className="block text-[10.5px] font-sans text-neutral-400 uppercase tracking-widest mb-1">
                           Mobile Telephone *
                         </label>
                         <input
@@ -1211,7 +1211,7 @@ export const RasoraaExperience: React.FC = () => {
                           value={guestPhone}
                           onChange={(e) => setGuestPhone(e.target.value)}
                           placeholder="+91 98100 XXXXX"
-                          className="w-full px-4 py-3 rounded-xl bg-white/[0.04] border border-white/15 text-white placeholder-neutral-500 text-sm focus:outline-none focus:border-[#C5A880]"
+                          className="w-full px-3.5 py-2.5 rounded-lg bg-white/[0.04] border border-white/15 text-white placeholder-neutral-500 text-xs sm:text-sm focus:outline-none focus:border-[#C5A880]"
                         />
                       </div>
                     </div>
@@ -1219,7 +1219,7 @@ export const RasoraaExperience: React.FC = () => {
                     {/* Submit Button */}
                     <button
                       type="submit"
-                      className="w-full py-4 rounded-full border border-[#C5A880] bg-gradient-to-r from-[#183620] via-[#112918] to-[#183620] hover:from-[#22AA00] hover:to-[#178500] hover:text-black text-[#FBF9F5] font-medium text-xs tracking-[0.22em] uppercase transition-all duration-500 shadow-2xl hover:shadow-[0_0_35px_rgba(34,170,0,0.4)]"
+                      className="w-full py-3 sm:py-3.5 rounded-full border border-[#C5A880] bg-gradient-to-r from-[#183620] via-[#112918] to-[#183620] hover:from-[#22AA00] hover:to-[#178500] hover:text-black text-[#FBF9F5] font-medium text-xs tracking-[0.2em] uppercase transition-all duration-500 shadow-2xl hover:shadow-[0_0_35px_rgba(34,170,0,0.4)]"
                     >
                       Confirm Sanctuary Reservation
                     </button>
