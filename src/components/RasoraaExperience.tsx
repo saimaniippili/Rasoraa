@@ -328,7 +328,24 @@ export const RasoraaExperience: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#070B08] text-[#FBF9F5] font-sans selection:bg-[#1B512D] selection:text-white overflow-x-hidden">
+    <div className="min-h-screen bg-[#070B08] text-[#FBF9F5] font-sans selection:bg-[#1B512D] selection:text-white overflow-x-hidden relative">
+      {/* ─── Ambient Heritage Crest Watermark (Whole-Page Fixed Background Layer) ─── */}
+      <div
+        className="fixed inset-0 pointer-events-none z-[1] flex items-center justify-center overflow-hidden"
+        aria-hidden="true"
+      >
+        <div className="w-[500px] sm:w-[700px] lg:w-[920px] max-w-[85vw] aspect-[4/3] opacity-[0.035] filter blur-[0.2px] select-none mix-blend-screen transform-gpu">
+          <picture>
+            <source srcSet="/rr-watermark-2x.webp" type="image/webp" />
+            <img
+              src="/rr-watermark-2x.png"
+              alt=""
+              className="w-full h-full object-contain pointer-events-none"
+            />
+          </picture>
+        </div>
+      </div>
+
       {/* ─── 1. FIXED HAUTE GASTRONOMY NAVBAR ─── */}
       <header
         className={`sticky top-0 z-50 transition-all duration-500 ${
@@ -556,6 +573,21 @@ export const RasoraaExperience: React.FC = () => {
         {/* Soft Warm Candlelight & Forest Vignette */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] rounded-full blur-[200px] bg-gradient-to-tr from-[#1B3B24]/20 via-[#C5A880]/10 to-transparent pointer-events-none" />
 
+        {/* Ambient Subtle RR Crest Watermark in Hero Center */}
+        <div
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[480px] sm:w-[620px] lg:w-[780px] max-w-[90vw] aspect-[4/3] opacity-[0.045] pointer-events-none select-none mix-blend-screen -z-0"
+          aria-hidden="true"
+        >
+          <picture>
+            <source srcSet="/rr-watermark-2x.webp" type="image/webp" />
+            <img
+              src="/rr-watermark-2x.png"
+              alt=""
+              className="w-full h-full object-contain pointer-events-none filter blur-[0.2px]"
+            />
+          </picture>
+        </div>
+
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
           <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
             {/* Left Column: Breathtaking Editorial Typography */}
@@ -672,8 +704,22 @@ export const RasoraaExperience: React.FC = () => {
       </div>
 
       {/* ─── 4. ACT II: THE PHILOSOPHY & HERITAGE (#about) ─── */}
-      <section id="about" className="py-28 relative bg-[#070C09] border-b border-white/[0.06]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="about" className="py-28 relative bg-[#070C09] border-b border-white/[0.06] overflow-hidden">
+        {/* Subtle Watermark in Philosophy */}
+        <div
+          className="absolute -right-16 top-1/2 -translate-y-1/2 w-[440px] sm:w-[600px] aspect-[4/3] opacity-[0.035] pointer-events-none select-none mix-blend-screen"
+          aria-hidden="true"
+        >
+          <picture>
+            <source srcSet="/rr-watermark-2x.webp" type="image/webp" />
+            <img
+              src="/rr-watermark-2x.png"
+              alt=""
+              className="w-full h-full object-contain pointer-events-none"
+            />
+          </picture>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-12 gap-16 items-center">
             {/* Story & Manifesto */}
             <div className="lg:col-span-6 space-y-6 sm:space-y-7">
@@ -1232,8 +1278,22 @@ export const RasoraaExperience: React.FC = () => {
       </section>
 
       {/* ─── 9. LUXURY EDITORIAL FOOTER ─── */}
-      <footer className="border-t border-white/[0.08] bg-[#040705] pt-20 pb-14 text-neutral-400">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <footer className="border-t border-white/[0.08] bg-[#040705] pt-20 pb-14 text-neutral-400 relative overflow-hidden">
+        {/* Subtle Crest Watermark in Footer */}
+        <div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[460px] sm:w-[640px] aspect-[4/3] opacity-[0.03] pointer-events-none select-none mix-blend-screen"
+          aria-hidden="true"
+        >
+          <picture>
+            <source srcSet="/rr-watermark-2x.webp" type="image/webp" />
+            <img
+              src="/rr-watermark-2x.png"
+              alt=""
+              className="w-full h-full object-contain pointer-events-none"
+            />
+          </picture>
+        </div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid lg:grid-cols-12 gap-12 pb-14 border-b border-white/[0.08]">
             {/* Brand Manifesto */}
             <div className="lg:col-span-5 space-y-5 text-left">
