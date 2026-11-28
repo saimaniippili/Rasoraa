@@ -625,14 +625,7 @@ export const RasoraaExperience: React.FC = () => {
 
             {/* Right Column: Floating Culinary Showcase with Pure Transparent Imagery */}
             <div className="lg:col-span-6 flex flex-col items-center justify-center relative">
-              <FloatingHeroShowcase
-                onSelectDish={(dish) => {
-                  const found = OFFICIAL_DISHES.find((d) =>
-                    d.name.toLowerCase().includes(dish.title.toLowerCase())
-                  );
-                  if (found) setPreviewDish(found);
-                }}
-              />
+              <FloatingHeroShowcase />
             </div>
           </div>
         </div>

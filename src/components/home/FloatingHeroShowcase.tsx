@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { X, Maximize2 } from 'lucide-react';
 
 export interface FloatingHeroDish {
   id: string;
@@ -60,6 +61,10 @@ interface FloatingHeroShowcaseProps {
 export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSelectDish }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+
+  // Drag tracking to prevent opening lightbox on swipe gestures
+  const isDraggingRef = useRef(false);
 
   const total = HERO_FLOATING_DISHES.length;
   const currentDish = HERO_FLOATING_DISHES[currentIndex];
@@ -83,27 +88,44 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
     changeDish(prevIdx, -1);
   }, [changeDish, currentIndex, total]);
 
-  // Keyboard navigation
+  // Keyboard navigation & Esc listener
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
-      if (e.key === 'ArrowRight') {
-        handleNext();
-      } else if (e.key === 'ArrowLeft') {
-        handlePrev();
+
+      if (e.key === 'Escape') {
+        setIsLightboxOpen(false);
+      } else if (!isLightboxOpen) {
+        if (e.key === 'ArrowRight') {
+          handleNext();
+        } else if (e.key === 'ArrowLeft') {
+          handlePrev();
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleNext, handlePrev]);
+  }, [handleNext, handlePrev, isLightboxOpen]);
 
-  // Animation variants for smooth directional slide & scale
+  // Lock body scroll when lightbox is active
+  useEffect(() => {
+    if (isLightboxOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isLightboxOpen]);
+
+  // Animation variants for smooth in-place directional slide & scale
   const slideVariants = {
     enter: (dir: number) => ({
-      x: dir > 0 ? 90 : -90,
+      x: dir > 0 ? 80 : -80,
       opacity: 0,
       scale: 0.94,
-      rotate: dir > 0 ? 3 : -3,
+      rotate: dir > 0 ? 2 : -2,
     }),
     center: {
       x: 0,
@@ -111,21 +133,21 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
       scale: 1,
       rotate: 0,
       transition: {
-        x: { type: 'spring', stiffness: 280, damping: 28 },
-        opacity: { duration: 0.45 },
-        scale: { duration: 0.45, ease: 'easeOut' },
-        rotate: { duration: 0.5, ease: 'easeOut' },
+        x: { type: 'spring', stiffness: 290, damping: 28 },
+        opacity: { duration: 0.4 },
+        scale: { duration: 0.4, ease: 'easeOut' },
+        rotate: { duration: 0.45, ease: 'easeOut' },
       },
     },
     exit: (dir: number) => ({
-      x: dir > 0 ? -90 : 90,
+      x: dir > 0 ? -80 : 80,
       opacity: 0,
-      scale: 0.92,
-      rotate: dir > 0 ? -3 : 3,
+      scale: 0.94,
+      rotate: dir > 0 ? -2 : 2,
       transition: {
-        x: { duration: 0.35, ease: 'easeInOut' },
-        opacity: { duration: 0.3 },
-        scale: { duration: 0.3 },
+        x: { duration: 0.32, ease: 'easeInOut' },
+        opacity: { duration: 0.28 },
+        scale: { duration: 0.28 },
       },
     }),
   };
@@ -156,7 +178,7 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
 
       {/* ─── Main Floating Culinary Object (Interactive Touch & Drag Area) ─── */}
       <div
-        className="relative w-full aspect-[4/3.2] sm:aspect-[4/3] flex items-center justify-center cursor-grab active:cursor-grabbing px-2"
+        className="relative w-full aspect-[4/3.2] sm:aspect-[4/3] flex items-center justify-center cursor-grab active:cursor-grabbing px-2 group"
         style={{ touchAction: 'pan-y' }}
       >
         {/* Soft Contact Shadow beneath the Plate */}
@@ -174,10 +196,17 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
             dragElastic={0.22}
+            onDragStart={() => {
+              isDraggingRef.current = true;
+            }}
             onDragEnd={(_, { offset, velocity }) => {
-              if (offset.x < -35 || velocity.x < -400) {
+              setTimeout(() => {
+                isDraggingRef.current = false;
+              }, 60);
+
+              if (offset.x < -35 || velocity.x < -350) {
                 handleNext();
-              } else if (offset.x > 35 || velocity.x > 400) {
+              } else if (offset.x > 35 || velocity.x > 350) {
                 handlePrev();
               }
             }}
@@ -194,14 +223,26 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
                 duration: 6,
                 ease: 'easeInOut',
               }}
-              className="w-full h-full flex items-center justify-center"
+              onClick={() => {
+                if (!isDraggingRef.current) {
+                  setIsLightboxOpen(true);
+                }
+              }}
+              className="w-full h-full flex items-center justify-center cursor-zoom-in"
+              title="Click to view dish in high resolution"
             >
               <img
                 src={currentDish.image}
                 alt={currentDish.title}
                 draggable={false}
-                className="max-w-[92%] max-h-[92%] sm:max-w-[95%] sm:max-h-[95%] object-contain filter drop-shadow-[0_20px_45px_rgba(0,0,0,0.7)] pointer-events-none transition-transform duration-500 hover:scale-105"
+                className="max-w-[92%] max-h-[92%] sm:max-w-[95%] sm:max-h-[95%] object-contain filter drop-shadow-[0_22px_48px_rgba(0,0,0,0.75)] pointer-events-none transition-transform duration-500 group-hover:scale-[1.03]"
               />
+
+              {/* Discreet Zoom Affordance Pill on Hover */}
+              <div className="absolute bottom-2 right-4 hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 border border-white/10 text-[10px] text-neutral-300 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                <Maximize2 size={10} className="text-[#C5A880]" />
+                <span className="font-mono tracking-wider">VIEW</span>
+              </div>
             </motion.div>
           </motion.div>
         </AnimatePresence>
@@ -215,7 +256,7 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 0.35 }}
             className="space-y-1.5 sm:space-y-2"
           >
             {/* Category Eyebrow */}
@@ -296,6 +337,80 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
           );
         })}
       </div>
+
+      {/* ─── Premium High-Resolution Food Lightbox (Deliberate Click Only) ─── */}
+      <AnimatePresence>
+        {isLightboxOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={() => setIsLightboxOpen(false)}
+            className="fixed inset-0 z-[120] bg-[#070C09]/94 backdrop-blur-xl flex flex-col items-center justify-between p-4 sm:p-8 cursor-zoom-out select-none"
+          >
+            {/* Top Bar with Badge & Close Button */}
+            <div
+              className="w-full max-w-5xl flex items-center justify-between z-10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-3">
+                <span className="text-[11px] font-mono tracking-[0.25em] text-[#C5A880] uppercase">
+                  {currentDish.badge} · {currentDish.discipline}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsLightboxOpen(false)}
+                className="w-10 h-10 rounded-full border border-white/20 bg-black/50 hover:bg-white/10 hover:border-[#C5A880] text-neutral-300 hover:text-white flex items-center justify-center transition-all duration-200 cursor-pointer"
+                title="Close Lightbox (Esc)"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Center: High-Resolution Food Image */}
+            <motion.div
+              initial={{ scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 260 }}
+              onClick={(e) => e.stopPropagation()}
+              className="relative max-w-4xl w-full flex-1 flex items-center justify-center my-4 pointer-events-auto"
+            >
+              {/* Soft warm glow behind dish in lightbox */}
+              <div className="absolute w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] rounded-full bg-gradient-to-tr from-[#143d22]/40 via-[#C5A880]/20 to-transparent blur-[120px] pointer-events-none -z-10" />
+
+              <img
+                src={currentDish.image}
+                alt={currentDish.title}
+                className="max-h-[62vh] sm:max-h-[70vh] max-w-full object-contain filter drop-shadow-[0_30px_70px_rgba(0,0,0,0.95)]"
+              />
+            </motion.div>
+
+            {/* Bottom Bar: Dish Details & Dismiss Hint */}
+            <div
+              className="w-full max-w-xl text-center space-y-1.5 z-10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 className="font-serif text-2xl sm:text-3xl text-white font-light tracking-wide">
+                {currentDish.title}
+              </h2>
+              <p className="text-xs sm:text-sm text-neutral-300 font-light">
+                {currentDish.subtitle}
+              </p>
+              <div className="pt-2 flex items-center justify-center gap-3 text-xs">
+                <span className="font-mono text-lg text-[#22AA00] font-medium">{currentDish.price}</span>
+                <span className="text-neutral-500">·</span>
+                <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-widest">
+                  Press ESC or click anywhere to return
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
