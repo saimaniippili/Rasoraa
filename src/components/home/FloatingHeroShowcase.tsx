@@ -153,12 +153,12 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
   };
 
   return (
-    <div className="relative w-full max-w-[540px] select-none mx-auto flex flex-col items-center">
+    <div className="relative w-full max-w-[460px] select-none mx-auto flex flex-col items-center">
       {/* ─── Ambient Emerald & Warm Amber Volumetric Lighting ─── */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[420px] sm:w-[520px] h-[360px] sm:h-[440px] bg-gradient-to-tr from-[#143d22]/35 via-[#C5A880]/12 to-transparent blur-[90px] sm:blur-[120px] pointer-events-none -z-20 rounded-full" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[420px] h-[280px] sm:h-[340px] bg-gradient-to-tr from-[#143d22]/30 via-[#C5A880]/10 to-transparent blur-[80px] sm:blur-[100px] pointer-events-none -z-20 rounded-full" />
 
       {/* ─── Top Eyebrow: Imperial Signature with gold line ─── */}
-      <div className="w-full flex flex-col items-start px-2 sm:px-4 mb-2 sm:mb-4">
+      <div className="w-full flex flex-col items-start px-2 sm:px-4 mb-1.5 sm:mb-3">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentDish.badge}
@@ -168,21 +168,21 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
             transition={{ duration: 0.35 }}
             className="flex flex-col items-start"
           >
-            <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.28em] text-[#C5A880] uppercase">
+            <span className="text-[9.5px] sm:text-[10.5px] font-mono tracking-[0.28em] text-[#C5A880] uppercase">
               {currentDish.badge}
             </span>
-            <div className="w-12 sm:w-14 h-[1px] bg-[#C5A880]/70 mt-1.5" />
+            <div className="w-10 sm:w-12 h-[1px] bg-[#C5A880]/70 mt-1" />
           </motion.div>
         </AnimatePresence>
       </div>
 
       {/* ─── Main Floating Culinary Object (Interactive Touch & Drag Area) ─── */}
       <div
-        className="relative w-full aspect-[4/3.2] sm:aspect-[4/3] flex items-center justify-center cursor-grab active:cursor-grabbing px-2 group"
+        className="relative w-full aspect-[4/3] sm:aspect-[4/2.85] max-h-[310px] sm:max-h-[360px] flex items-center justify-center cursor-grab active:cursor-grabbing px-2 group"
         style={{ touchAction: 'pan-y' }}
       >
         {/* Soft Contact Shadow beneath the Plate */}
-        <div className="absolute bottom-2 sm:bottom-4 left-1/2 -translate-x-1/2 w-[72%] sm:w-[78%] h-10 sm:h-14 rounded-[50%] bg-[radial-gradient(ellipse_at_center,_rgba(0,0,0,0.92)_0%,_rgba(197,168,128,0.24)_40%,_transparent_75%)] blur-xl pointer-events-none -z-10" />
+        <div className="absolute bottom-1 sm:bottom-3 left-1/2 -translate-x-1/2 w-[60%] sm:w-[66%] h-8 sm:h-11 rounded-[50%] bg-[radial-gradient(ellipse_at_center,_rgba(0,0,0,0.92)_0%,_rgba(197,168,128,0.22)_40%,_transparent_75%)] blur-lg pointer-events-none -z-10" />
 
         {/* Floating Dish Image with Idle Floating Motion & Swipe Support */}
         <AnimatePresence mode="wait" custom={direction}>
@@ -215,8 +215,8 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
             {/* Idle Levitation Animation */}
             <motion.div
               animate={{
-                y: [-6, 6, -6],
-                rotate: [-0.6, 0.6, -0.6],
+                y: [-5, 5, -5],
+                rotate: [-0.5, 0.5, -0.5],
               }}
               transition={{
                 repeat: Infinity,
@@ -235,7 +235,7 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
                 src={currentDish.image}
                 alt={currentDish.title}
                 draggable={false}
-                className="max-w-[92%] max-h-[92%] sm:max-w-[95%] sm:max-h-[95%] object-contain filter drop-shadow-[0_22px_48px_rgba(0,0,0,0.75)] pointer-events-none transition-transform duration-500 group-hover:scale-[1.03]"
+                className="max-w-[80%] max-h-[80%] sm:max-w-[84%] sm:max-h-[84%] object-contain filter drop-shadow-[0_18px_40px_rgba(0,0,0,0.75)] pointer-events-none transition-transform duration-500 group-hover:scale-[1.03]"
               />
 
               {/* Discreet Zoom Affordance Pill on Hover */}
@@ -249,7 +249,7 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
       </div>
 
       {/* ─── Food Information Layout (Below the Food Image) ─── */}
-      <div className="w-full px-2 sm:px-4 mt-2 sm:mt-4 text-left">
+      <div className="w-full px-2 sm:px-4 mt-1.5 sm:mt-3 text-left">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentDish.id}
@@ -257,28 +257,28 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.35 }}
-            className="space-y-1.5 sm:space-y-2"
+            className="space-y-1 sm:space-y-1.5"
           >
             {/* Category Eyebrow */}
-            <span className="text-[10px] sm:text-[11px] font-mono tracking-[0.24em] text-[#C5A880] uppercase block">
+            <span className="text-[9.5px] sm:text-[10px] font-mono tracking-[0.24em] text-[#C5A880] uppercase block">
               {currentDish.discipline}
             </span>
 
             {/* Dish Name & Price with Elegant Divider */}
             <div className="flex items-baseline justify-between gap-3">
-              <h3 className="font-serif text-2xl sm:text-3xl lg:text-[38px] font-light text-white leading-tight tracking-wide drop-shadow-sm">
+              <h3 className="font-serif text-xl sm:text-2xl lg:text-[30px] font-light text-white leading-tight tracking-wide drop-shadow-sm">
                 {currentDish.title}
               </h3>
-              <div className="flex items-center gap-3 shrink-0">
-                <span className="w-8 sm:w-12 h-[1px] bg-white/20 hidden sm:block" />
-                <span className="font-mono text-xl sm:text-2xl lg:text-3xl font-medium text-[#22AA00] tracking-tight">
+              <div className="flex items-center gap-2.5 shrink-0">
+                <span className="w-6 sm:w-10 h-[1px] bg-white/20 hidden sm:block" />
+                <span className="font-mono text-lg sm:text-xl lg:text-2xl font-medium text-[#22AA00] tracking-tight">
                   {currentDish.price}
                 </span>
               </div>
             </div>
 
             {/* Preparation Subtitle */}
-            <p className="text-xs sm:text-sm text-neutral-400 font-light leading-relaxed">
+            <p className="text-[11.5px] sm:text-[13px] text-neutral-400 font-light leading-relaxed">
               {currentDish.subtitle}
             </p>
           </motion.div>
@@ -286,7 +286,7 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
       </div>
 
       {/* ─── Swipe Selector Capsule Row ─── */}
-      <div className="w-full px-2 sm:px-4 mt-6 sm:mt-8 flex items-center justify-center gap-3">
+      <div className="w-full px-2 sm:px-4 mt-4 sm:mt-6 flex items-center justify-center gap-2.5 sm:gap-3">
         {HERO_FLOATING_DISHES.map((dish, idx) => {
           const isActive = currentIndex === idx;
           return (
