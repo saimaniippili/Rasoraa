@@ -155,10 +155,7 @@ export const ThreeBookViewer: React.FC<ThreeBookViewerProps> = () => {
   }, []);
 
   return (
-    <div className="relative w-full select-none">
-      {/* ─── Ambient Glow Backdrop ─── */}
-      <div className="absolute inset-0 bg-radial from-[#123121]/30 via-transparent to-transparent pointer-events-none blur-3xl -z-10" />
-
+    <div className="relative w-full select-none bg-transparent">
       {/* ─── Pure 3D Folio Stage (Three.js WebGL) ─── */}
       <div className="relative max-w-4xl lg:max-w-5xl mx-auto px-2 sm:px-4">
         {/* Loading Overlay */}
@@ -192,10 +189,10 @@ export const ThreeBookViewer: React.FC<ThreeBookViewerProps> = () => {
           </div>
         )}
 
-        {/* 3D Book Stage - Proportionately sized, permits natural page scrolling */}
+        {/* 3D Book Stage - Pure transparent canvas sitting directly on the page */}
         <div
           ref={stageRef}
-          className="relative w-full h-[400px] xs:h-[440px] sm:h-[480px] md:h-[520px] lg:h-[560px] xl:h-[600px] rounded-2xl overflow-hidden cursor-grab active:cursor-grabbing border border-white/[0.06] bg-gradient-to-b from-[#0D1812]/40 via-[#070B08] to-[#0A120D] shadow-[0_30px_90px_rgba(0,0,0,0.9)]"
+          className="relative w-full h-[400px] xs:h-[440px] sm:h-[480px] md:h-[520px] lg:h-[560px] xl:h-[600px] overflow-visible cursor-grab active:cursor-grabbing bg-transparent border-0 shadow-none"
           style={{ touchAction: 'pan-y' }}
         >
           {/* Subtle Zoom Status Badge & Tap-to-Reset */}

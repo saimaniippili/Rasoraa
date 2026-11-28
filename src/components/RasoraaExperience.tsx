@@ -747,9 +747,9 @@ export const RasoraaExperience: React.FC = () => {
       </section>
 
       {/* ─── 5. ACT III: THE IMPERIAL CARTE & INTERACTIVE MENU BOOK (#menu) ─── */}
-      <section id="menu" className="py-24 sm:py-32 relative bg-[#060D08] border-b border-white/[0.06] overflow-hidden">
+      <section id="menu" className="py-24 sm:py-32 relative bg-[#070B08] overflow-hidden">
         {/* Subtle Ambient Glow */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-[#12361E]/20 blur-[140px] pointer-events-none rounded-full" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-[#12361E]/15 blur-[150px] pointer-events-none rounded-full" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Section Header */}
