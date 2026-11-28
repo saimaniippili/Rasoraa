@@ -34,22 +34,21 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
 
   const stageRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  
-  // Continuous position and target — avoid wrapping these directly to prevent sign flips
+
+  // Continuous position and target — smooth unidirectional flow, zero spring bounce
   const currentPos = useRef<number>(boundedInitial);
   const targetPos = useRef<number>(boundedInitial);
-  const velocity = useRef<number>(0);
   const isAnimating = useRef<boolean>(false);
   const animFrameId = useRef<number | null>(null);
 
   // Pointer & Touch tracking
   const pointerCoord = useRef({ x: 0, y: 0 });
-  const touchStart = useRef<{ x: number; y: number; time: number } | null>(null);
-  const touchPrev = useRef<{ x: number; time: number } | null>(null);
+  const dragStart = useRef<{ x: number; y: number; time: number } | null>(null);
+  const dragPrev = useRef<{ x: number; time: number } | null>(null);
   const isDragging = useRef<boolean>(false);
   const hasMovedSignificant = useRef<boolean>(false);
 
-  // Shortest modular difference from a to b in a circular array of size N
+  // Shortest circular difference from a to b
   const getShortestDelta = useCallback((from: number, to: number, n: number) => {
     let diff = (to - from) % n;
     if (diff > n / 2) diff -= n;
@@ -57,21 +56,20 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
     return diff;
   }, []);
 
-  // Normalizes an index to [0, total - 1]
+  // Normalize index to [0, total - 1]
   const normalizeIndex = useCallback((idx: number, n: number) => {
     return ((Math.round(idx) % n) + n) % n;
   }, []);
 
-  // Update card 3D transforms based on continuous position
+  // 3D Card transforms
   const renderCards = useCallback(
     (pos: number, pointer = pointerCoord.current) => {
       const stageEl = stageRef.current;
       const stageW = stageEl ? stageEl.clientWidth : (typeof window !== 'undefined' ? window.innerWidth : 1000);
-      
+
       const isMobile = stageW < 640;
       const isTablet = stageW >= 640 && stageW < 1024;
 
-      // Proportional spacing tuned for tablet and mobile
       const step1 = isMobile ? 125 : isTablet ? 175 : 230;
       const step2 = isMobile ? 45 : isTablet ? 65 : 90;
       const zBase = isMobile ? 70 : isTablet ? 100 : 130;
@@ -80,7 +78,6 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
       cardRefs.current.forEach((card, index) => {
         if (!card) return;
 
-        // Calculate offset of this card relative to pos in circular range [-total/2, total/2]
         const raw = index - pos;
         let offset = ((raw % total) + total) % total;
         if (offset > total / 2) offset -= total;
@@ -89,7 +86,7 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
         const abs = Math.abs(offset);
         const nearCenter = abs < 0.5;
 
-        // Smooth Hermite interpolation curves
+        // Smooth Hermite curves without angle kinks
         const sideProgress = Math.min(abs, 1);
         const centerEase = 1 - sideProgress;
         const breathe = centerEase * centerEase * (3 - 2 * centerEase);
@@ -97,9 +94,9 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
         const extraTilt = Math.max(0, abs - 1) * 1.5;
 
         const xBase = abs < 1 ? abs * step1 : step1 + (abs - 1) * step2;
-        const x = side * xBase + pointer.x * (nearCenter ? 10 : 12);
-        const y = abs * 3.5 + pointer.y * (nearCenter ? 4 : 5);
-        const rotate = side * (-56 * rotateProgress - extraTilt) + pointer.x * (nearCenter ? -1.2 : -0.8);
+        const x = side * xBase + pointer.x * (nearCenter ? 8 : 10);
+        const y = abs * 3.5 + pointer.y * (nearCenter ? 3 : 4);
+        const rotate = side * (-56 * rotateProgress - extraTilt) + pointer.x * (nearCenter ? -1.0 : -0.6);
         const scale = 0.90 + breathe * 0.12 - Math.max(0, abs - 1) * 0.02;
         const opacity = abs > 4.5 ? 0 : Math.max(0.28, 1 - abs * 0.11);
         const blur = abs > 3.5 ? 'blur(3px)' : abs > 2.5 ? 'blur(1.5px)' : 'none';
@@ -114,17 +111,16 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
     [total]
   );
 
-  // Smooth RAF animation engine with spring physics
-  const startAnimation = useCallback(() => {
+  // Pure critically-damped smooth glide — ZERO oscillation, ZERO bounce
+  const startGlide = useCallback(() => {
     if (isAnimating.current) return;
     isAnimating.current = true;
 
     const tick = () => {
-      // Find delta from currentPos to targetPos
       const delta = targetPos.current - currentPos.current;
 
-      // Friction / spring interpolation
-      if (Math.abs(delta) < 0.0015 && Math.abs(velocity.current) < 0.001) {
+      // When within sub-pixel threshold, snap to target and finish
+      if (Math.abs(delta) < 0.001) {
         currentPos.current = targetPos.current;
         renderCards(currentPos.current);
         const newActive = normalizeIndex(currentPos.current, total);
@@ -134,12 +130,8 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
         return;
       }
 
-      // Spring acceleration
-      const springK = 0.14;
-      const friction = 0.82;
-      velocity.current = velocity.current * friction + delta * springK;
-      currentPos.current += velocity.current;
-
+      // Smooth exponential ease-out: direct unidirectional glide with 0 bounce
+      currentPos.current += delta * 0.125;
       renderCards(currentPos.current);
 
       const activeCandidate = normalizeIndex(currentPos.current, total);
@@ -151,40 +143,37 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
     animFrameId.current = window.requestAnimationFrame(tick);
   }, [normalizeIndex, renderCards, total]);
 
-  // Navigate directly to an absolute target index
+  // Navigate directly to a specific card index
   const goToIndex = useCallback(
     (index: number) => {
       const shortestDelta = getShortestDelta(currentPos.current, index, total);
       targetPos.current = currentPos.current + shortestDelta;
-      velocity.current = 0;
-      startAnimation();
+      startGlide();
     },
-    [getShortestDelta, startAnimation, total]
+    [getShortestDelta, startGlide, total]
   );
 
+  // Single smooth glide forward (from left to right)
   const handleNext = useCallback(() => {
     targetPos.current = Math.round(currentPos.current) + 1;
-    velocity.current = 0;
-    startAnimation();
-  }, [startAnimation]);
+    startGlide();
+  }, [startGlide]);
 
+  // Single smooth glide backward (from right to left)
   const handlePrev = useCallback(() => {
     targetPos.current = Math.round(currentPos.current) - 1;
-    velocity.current = 0;
-    startAnimation();
-  }, [startAnimation]);
+    startGlide();
+  }, [startGlide]);
 
-  // Immediate positional drag update (1:1 finger tracking)
-  const applyDragOffset = useCallback(
+  // Direct 1:1 cursor drag update — flows immediately in cursor direction
+  const applyDrag = useCallback(
     (deltaX: number) => {
       const stageW = stageRef.current?.clientWidth || 800;
-      // Sensitivity tuned so a natural swipe advances 1 card easily
-      const sensitivity = stageW < 640 ? 170 : stageW < 1024 ? 220 : 260;
+      const sensitivity = stageW < 640 ? 180 : stageW < 1024 ? 230 : 270;
       const posDelta = -deltaX / sensitivity;
 
       currentPos.current += posDelta;
       targetPos.current = currentPos.current;
-      velocity.current = posDelta;
       renderCards(currentPos.current);
 
       const activeCandidate = normalizeIndex(currentPos.current, total);
@@ -193,16 +182,34 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
     [normalizeIndex, renderCards, total]
   );
 
-  // Settle on nearest card with release momentum
-  const settleWithMomentum = useCallback(
-    (releaseVelocity = 0) => {
-      // Predict target based on release flick velocity
-      let target = currentPos.current + releaseVelocity * 3.5;
-      target = Math.round(target);
+  // Smoothly glide to the card in the direction of the cursor movement (no bouncing)
+  const settleInDirection = useCallback(
+    (totalDx: number) => {
+      let target: number;
+
+      // If dragged significantly left (cursor moved left), flow to next card
+      if (totalDx < -24) {
+        target = Math.ceil(currentPos.current);
+        if (target === Math.round(currentPos.current) && currentPos.current > target - 0.2) {
+          target = Math.round(currentPos.current) + 1;
+        }
+      }
+      // If dragged significantly right (cursor moved right), flow to previous card
+      else if (totalDx > 24) {
+        target = Math.floor(currentPos.current);
+        if (target === Math.round(currentPos.current) && currentPos.current < target + 0.2) {
+          target = Math.round(currentPos.current) - 1;
+        }
+      }
+      // Minimal drag, snap to nearest
+      else {
+        target = Math.round(currentPos.current);
+      }
+
       targetPos.current = target;
-      startAnimation();
+      startGlide();
     },
-    [startAnimation]
+    [startGlide]
   );
 
   // Handle Resize
@@ -235,7 +242,7 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
         className="rasoraa-cover-flow__stage"
         role="region"
         tabIndex={0}
-        // Wheel & Trackpad
+        // Wheel & Horizontal Trackpad Swipe
         onWheel={(event) => {
           const absX = Math.abs(event.deltaX);
           const absY = Math.abs(event.deltaY);
@@ -243,25 +250,24 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
           if (absX > absY || event.shiftKey) {
             event.preventDefault();
             const wheelDelta = event.deltaX || event.deltaY;
-            const delta = clamp(wheelDelta, -180, 180) / 200;
+            const delta = clamp(wheelDelta, -160, 160) / 200;
             currentPos.current += delta;
             targetPos.current = Math.round(currentPos.current);
-            startAnimation();
+            startGlide();
           }
         }}
-        // Pointer down
+        // Pointer / Cursor Down
         onPointerDown={(event) => {
-          // If clicked on an arrow button, don't initiate stage drag
           if ((event.target as HTMLElement).closest('.rasoraa-cover-flow__arrow')) {
             return;
           }
 
-          touchStart.current = {
+          dragStart.current = {
             x: event.clientX,
             y: event.clientY,
             time: performance.now(),
           };
-          touchPrev.current = {
+          dragPrev.current = {
             x: event.clientX,
             time: performance.now(),
           };
@@ -278,7 +284,7 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
             (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
           } catch (_) {}
         }}
-        // Pointer move
+        // Pointer / Cursor Move
         onPointerMove={(event) => {
           const rect = event.currentTarget.getBoundingClientRect();
           pointerCoord.current = {
@@ -286,35 +292,30 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
             y: clamp(((event.clientY - rect.top) / rect.height - 0.5) * 2, -1, 1),
           };
 
-          if (!isDragging.current || !touchStart.current) {
-            // Still update subtle tilt on desktop hover
+          if (!isDragging.current || !dragStart.current) {
+            // Update delicate tilt as cursor moves across the stage
             renderCards(currentPos.current, pointerCoord.current);
             return;
           }
 
-          const dxTotal = event.clientX - touchStart.current.x;
-          const dyTotal = event.clientY - touchStart.current.y;
+          const dxTotal = event.clientX - dragStart.current.x;
+          const dyTotal = event.clientY - dragStart.current.y;
 
-          // Detect intentional swipe
-          if (!hasMovedSignificant.current) {
-            if (Math.hypot(dxTotal, dyTotal) > 6) {
-              hasMovedSignificant.current = true;
-            }
+          if (!hasMovedSignificant.current && Math.hypot(dxTotal, dyTotal) > 6) {
+            hasMovedSignificant.current = true;
           }
 
-          if (touchPrev.current) {
-            const dx = event.clientX - touchPrev.current.x;
-            const dt = Math.max(1, performance.now() - touchPrev.current.time);
-            velocity.current = -dx / dt; // pixels per ms
-            applyDragOffset(dx);
+          if (dragPrev.current) {
+            const dx = event.clientX - dragPrev.current.x;
+            applyDrag(dx);
           }
 
-          touchPrev.current = {
+          dragPrev.current = {
             x: event.clientX,
             time: performance.now(),
           };
         }}
-        // Pointer up
+        // Pointer / Cursor Up
         onPointerUp={(event) => {
           if (!isDragging.current) return;
           isDragging.current = false;
@@ -325,21 +326,16 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
             }
           } catch (_) {}
 
-          let flickVelocity = 0;
-          if (touchPrev.current && touchStart.current) {
-            const elapsed = performance.now() - touchStart.current.time;
-            const dist = event.clientX - touchStart.current.x;
-            if (elapsed < 350 && Math.abs(dist) > 25) {
-              // Valid flick gesture
-              flickVelocity = -Math.sign(dist) * Math.min(1.2, Math.abs(dist) / 120);
-            }
+          let totalDx = 0;
+          if (dragStart.current) {
+            totalDx = event.clientX - dragStart.current.x;
           }
 
-          settleWithMomentum(flickVelocity);
-          touchStart.current = null;
-          touchPrev.current = null;
+          settleInDirection(totalDx);
+          dragStart.current = null;
+          dragPrev.current = null;
         }}
-        // Pointer cancel
+        // Pointer Cancel
         onPointerCancel={(event) => {
           isDragging.current = false;
           try {
@@ -347,11 +343,12 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
               (event.currentTarget as HTMLElement).releasePointerCapture(event.pointerId);
             }
           } catch (_) {}
-          settleWithMomentum(0);
-          touchStart.current = null;
-          touchPrev.current = null;
+          targetPos.current = Math.round(currentPos.current);
+          startGlide();
+          dragStart.current = null;
+          dragPrev.current = null;
         }}
-        // Keyboard accessibility
+        // Keyboard Arrow Navigation
         onKeyDown={(event) => {
           if (event.key === 'ArrowRight') {
             event.preventDefault();
@@ -387,7 +384,7 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  // Prevent click action if user was dragging
+                  // Avoid triggering click action if user was dragging cursor
                   if (hasMovedSignificant.current) return;
 
                   if (nearCenter) {
