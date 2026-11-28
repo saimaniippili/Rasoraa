@@ -676,22 +676,22 @@ export const RasoraaExperience: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid lg:grid-cols-12 gap-16 items-center">
             {/* Story & Manifesto */}
-            <div className="lg:col-span-6 space-y-8">
-              <span className="text-[#C5A880] text-xs font-sans tracking-[0.28em] uppercase">
+            <div className="lg:col-span-6 space-y-6 sm:space-y-7">
+              <span className="text-[#C5A880] text-[10.5px] sm:text-[11px] font-mono tracking-[0.28em] uppercase">
                 01 / Our Philosophy
               </span>
 
-              <h2 className="font-serif text-3xl sm:text-5xl font-light text-white leading-[1.12]">
+              <h2 className="font-serif text-2xl sm:text-3.5xl lg:text-[38px] font-light text-white leading-[1.18] tracking-tight">
                 Purity Decreed by Lineage.{' '}
                 <br />
                 <span className="italic text-[#E8E4DA]">Mastery Forged in Fire.</span>
               </h2>
 
-              <p className="font-serif italic text-xl text-[#C5A880] font-light border-l border-[#C5A880]/40 pl-6 leading-relaxed">
+              <p className="font-serif italic text-[14.5px] sm:text-base text-[#C5A880] font-light border-l border-[#C5A880]/40 pl-4 sm:pl-5 leading-relaxed">
                 “अन्नं परब्रह्म स्वरूपम् — Food is sacred divine consciousness. In our hearths, every handi is sealed with Vedic reverence, sal wood embers, and pure Gir cow bilona.”
               </p>
 
-              <div className="space-y-4 text-neutral-300 font-light leading-relaxed text-sm sm:text-base">
+              <div className="space-y-3 text-neutral-300 font-light leading-relaxed text-[13px] sm:text-sm">
                 <p>
                   Founded with an uncompromising vow to sacred pure vegetarian gastronomy, RASORAA reclaims centuries of culinary wisdom from the royal courts of Awadh, the clay pits of the Northwest Frontier, and the wok masters of the Silk Road.
                 </p>
@@ -701,22 +701,22 @@ export const RasoraaExperience: React.FC = () => {
               </div>
 
               {/* 4 Quiet Pillars */}
-              <div className="grid grid-cols-2 gap-6 pt-4 border-t border-white/[0.08]">
+              <div className="grid grid-cols-2 gap-4 sm:gap-5 pt-3 border-t border-white/[0.08]">
                 <div>
-                  <span className="text-white block font-serif text-lg font-light">100% Shuddh</span>
-                  <span className="text-xs text-neutral-400 font-light">Zero animal derivatives, enzymes, or compromises</span>
+                  <span className="text-white block font-serif text-[15px] sm:text-base font-light">100% Shuddh</span>
+                  <span className="text-[11px] sm:text-xs text-neutral-400 font-light leading-snug block mt-0.5">Zero animal derivatives, enzymes, or compromises</span>
                 </div>
                 <div>
-                  <span className="text-[#C5A880] block font-serif text-lg font-light">Strict Jain Hearth</span>
-                  <span className="text-xs text-neutral-400 font-light">Dedicated root-free stations &amp; pure brass cookware</span>
+                  <span className="text-[#C5A880] block font-serif text-[15px] sm:text-base font-light">Strict Jain Hearth</span>
+                  <span className="text-[11px] sm:text-xs text-neutral-400 font-light leading-snug block mt-0.5">Dedicated root-free stations &amp; pure brass cookware</span>
                 </div>
                 <div>
-                  <span className="text-white block font-serif text-lg font-light">16-Hour Dum</span>
-                  <span className="text-xs text-neutral-400 font-light">Earthen clay handis sealed under smoldering sal wood</span>
+                  <span className="text-white block font-serif text-[15px] sm:text-base font-light">16-Hour Dum</span>
+                  <span className="text-[11px] sm:text-xs text-neutral-400 font-light leading-snug block mt-0.5">Earthen clay handis sealed under smoldering sal wood</span>
                 </div>
                 <div>
-                  <span className="text-[#22AA00] block font-serif text-lg font-light">A2 Gir Cow Butter</span>
-                  <span className="text-xs text-neutral-400 font-light">Hand-churned bilona ghee from indigenous Vedic cows</span>
+                  <span className="text-[#22AA00] block font-serif text-[15px] sm:text-base font-light">A2 Gir Cow Butter</span>
+                  <span className="text-[11px] sm:text-xs text-neutral-400 font-light leading-snug block mt-0.5">Hand-churned bilona ghee from indigenous Vedic cows</span>
                 </div>
               </div>
             </div>
