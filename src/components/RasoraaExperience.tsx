@@ -22,6 +22,7 @@ import {
 import { RasoraaBook } from './menu/RasoraaBook';
 import { GlassCoverFlow, CoverFlowItem } from './gallery/GlassCoverFlow';
 import { FloatingHeroShowcase } from './home/FloatingHeroShowcase';
+import { CulinaryTimeCapsule } from './philosophy/CulinaryTimeCapsule';
 import { MenuItem, OFFICIAL_DISHES } from '../data/menuData';
 
 /* ─── Visual Chronicles (Gallery) ─── */
@@ -720,27 +721,9 @@ export const RasoraaExperience: React.FC = () => {
               </div>
             </div>
 
-            {/* Editorial Heritage Visual */}
-            <div className="lg:col-span-6">
-              <div className="relative rounded-[32px] overflow-hidden border border-[#C5A880]/30 aspect-[4/5] shadow-[0_30px_90px_rgba(0,0,0,0.85)]">
-                <img
-                  src="/dish-tandoor.jpg"
-                  alt="Royal Tandoor Craft"
-                  className="w-full h-full object-cover filter contrast-[1.08] hover:scale-105 transition-transform duration-1000"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#040806] via-transparent to-transparent pointer-events-none" />
-                <div className="absolute bottom-8 left-8 right-8 text-left">
-                  <span className="text-xs font-sans text-[#C5A880] tracking-[0.25em] uppercase block">
-                    Heritage Alchemy
-                  </span>
-                  <h4 className="font-serif text-2xl text-white font-light pt-1">
-                    Live Clay Pit Metallurgy at 400°C
-                  </h4>
-                  <p className="text-xs text-neutral-300 font-light pt-1">
-                    Fresh hung curd, cold-pressed mustard oil, and hand-strung Kashmiri saffron roasted over direct fruitwood charcoal.
-                  </p>
-                </div>
-              </div>
+            {/* Right Column: Culinary Time Capsule Four-Layer Glass Panel Installation */}
+            <div className="lg:col-span-6 flex items-center justify-center relative">
+              <CulinaryTimeCapsule />
             </div>
           </div>
         </div>
