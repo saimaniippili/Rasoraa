@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import { RasoraaBook } from './menu/RasoraaBook';
 import { GlassCoverFlow, CoverFlowItem } from './gallery/GlassCoverFlow';
+import { FloatingHeroShowcase } from './home/FloatingHeroShowcase';
 import { MenuItem, OFFICIAL_DISHES } from '../data/menuData';
 
 /* ─── Visual Chronicles (Gallery) ─── */
@@ -243,7 +244,6 @@ const EmberCanvas: React.FC = () => {
 export const RasoraaExperience: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [selectedHeroIndex, setSelectedHeroIndex] = useState(0);
 
   // Reservation Form State
   const today = new Date();
@@ -319,33 +319,6 @@ export const RasoraaExperience: React.FC = () => {
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const heroDishes = [
-    {
-      title: 'Malai Paneer Tikka',
-      subtitle: '400°C Clay Pit Metallurgy & Saffron Cream',
-      discipline: 'Tandoori Starter',
-      origin: 'Northwest Frontier',
-      image: '/dish-tandoor.jpg',
-      price: '₹369',
-    },
-    {
-      title: 'Dal Makhani Imperial',
-      subtitle: '16-Hour Slow Simmered Earthen Handi Dum',
-      discipline: 'Royal Indian Curry',
-      origin: 'Punjab Heritage',
-      image: '/dish-awadhi.jpg',
-      price: '₹319',
-    },
-    {
-      title: 'Honey Chilli Lotus Stem',
-      subtitle: 'Wild Honey Glaze, Sesame & High Wok Hei',
-      discipline: 'Chinese Starter',
-      origin: 'Himalayan Silk Road',
-      image: '/dish-oriental.jpg',
-      price: '₹399',
-    },
-  ];
 
   const handleBookingSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -650,90 +623,16 @@ export const RasoraaExperience: React.FC = () => {
               </div>
             </div>
 
-            {/* Right Column: Architectural Arched Masterpiece Frame */}
-            <div className="lg:col-span-6 flex flex-col items-center justify-center">
-              <div className="relative w-full max-w-[460px] select-none mx-auto">
-                <div className="relative rounded-[36px] p-3 sm:p-4 bg-gradient-to-b from-[#14261A] via-[#0B150F] to-[#040805] border border-[#C5A880]/30 shadow-[0_30px_90px_rgba(0,0,0,0.95)]">
-                  {/* Inside Portrait Frame with Soft Arched Crown */}
-                  <div className="relative aspect-[4/4.8] rounded-[26px] overflow-hidden border border-white/10 group">
-                    <AnimatePresence mode="wait">
-                      <motion.img
-                        key={selectedHeroIndex}
-                        src={heroDishes[selectedHeroIndex].image}
-                        alt={heroDishes[selectedHeroIndex].title}
-                        initial={{ opacity: 0, scale: 1.06 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.98 }}
-                        transition={{ duration: 0.7, ease: 'easeOut' }}
-                        className="w-full h-full object-cover filter contrast-[1.05] group-hover:scale-105 transition-transform duration-1000"
-                      />
-                    </AnimatePresence>
-
-                    {/* Atmospheric Vignette */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#040705] via-transparent to-black/30 pointer-events-none" />
-
-                    {/* Top Seal Badge */}
-                    <div className="absolute top-4 left-4 z-20">
-                      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#050C07]/90 backdrop-blur-md border border-[#C5A880]/40 text-[#FBF9F5] text-[10px] font-sans tracking-[0.22em] uppercase">
-                        <Sparkles size={11} className="text-[#C5A880]" />
-                        <span>Imperial Signature</span>
-                      </div>
-                    </div>
-
-                    {/* Floating Bottom Card */}
-                    <div className="absolute bottom-4 inset-x-4 z-20">
-                      <div className="p-4 rounded-2xl bg-[#060D08]/90 backdrop-blur-md border border-[#C5A880]/30 text-left shadow-2xl">
-                        <div className="flex items-center justify-between gap-2 pb-1.5 border-b border-white/10">
-                          <span className="text-[11px] font-sans text-[#C5A880] tracking-[0.2em] uppercase">
-                            {heroDishes[selectedHeroIndex].discipline}
-                          </span>
-                          <span className="text-xs font-mono font-medium text-[#22AA00]">
-                            {heroDishes[selectedHeroIndex].price}
-                          </span>
-                        </div>
-                        <h3 className="font-serif text-2xl text-white font-light pt-2">
-                          {heroDishes[selectedHeroIndex].title}
-                        </h3>
-                        <p className="text-[11px] text-neutral-400 font-light pt-1">
-                          {heroDishes[selectedHeroIndex].subtitle}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Minimalist 3-Dish Selector Beneath Frame */}
-                <div className="mt-4 grid grid-cols-3 gap-3">
-                  {heroDishes.map((item, idx) => {
-                    const isSelected = selectedHeroIndex === idx;
-                    return (
-                      <button
-                        key={item.title}
-                        onClick={() => setSelectedHeroIndex(idx)}
-                        className={`group relative p-2 rounded-2xl border text-left transition-all duration-300 flex items-center gap-2.5 ${
-                          isSelected
-                            ? 'bg-[#142B1A] border-[#C5A880] shadow-[0_0_15px_rgba(197,168,128,0.2)]'
-                            : 'bg-white/[0.03] border-white/10 hover:border-white/30 hover:bg-white/[0.06]'
-                        }`}
-                      >
-                        <img
-                          src={item.image}
-                          alt={item.title}
-                          className="w-10 h-10 rounded-xl object-cover border border-white/10 shrink-0"
-                        />
-                        <div className="min-w-0">
-                          <span className="block text-[9px] font-sans uppercase tracking-wider text-[#C5A880] leading-none">
-                            0{idx + 1}
-                          </span>
-                          <span className="block text-xs font-serif text-white truncate pt-1">
-                            {item.title.split(' ')[0]}
-                          </span>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+            {/* Right Column: Floating Culinary Showcase with Pure Transparent Imagery */}
+            <div className="lg:col-span-6 flex flex-col items-center justify-center relative">
+              <FloatingHeroShowcase
+                onSelectDish={(dish) => {
+                  const found = OFFICIAL_DISHES.find((d) =>
+                    d.name.toLowerCase().includes(dish.title.toLowerCase())
+                  );
+                  if (found) setPreviewDish(found);
+                }}
+              />
             </div>
           </div>
         </div>
