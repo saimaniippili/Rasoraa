@@ -1,6 +1,6 @@
 /* ═════════════════════════════════════════════════════════════════════════════
    RASORAA — LIQUID GLASS COVER FLOW SHOWCASE
-   Adapted from opc8838-hub/cover-flow-showcase for Rasoraa Haute Gastronomy
+   Ultra-smooth, 60/120fps physics-driven 3D cover flow for all screen sizes
    Palettes: Background #070C09, Antique Gold #C8A962, Ivory #F4F0E6, Regal Forest #1B512D
    ═════════════════════════════════════════════════════════════════════════════ */
 
@@ -10,27 +10,34 @@
   margin: 0 auto;
   position: relative;
   user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
   overflow: visible;
+  touch-action: pan-y;
 }
 
-/* Liquid Glass Stage Container - Border completely removed, overflow visible to prevent any clipping */
+/* Liquid Glass Stage Container - Full gesture capture */
 .rasoraa-cover-flow__stage {
   position: relative;
-  height: clamp(520px, 62vh, 600px);
+  height: clamp(460px, 58vh, 560px);
   overflow: visible;
-  cursor: ew-resize;
+  cursor: grab;
   border: none !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-  perspective: 1400px;
-  perspective-origin: 50% 50%;
+  perspective: 1600px;
+  perspective-origin: 50% 48%;
   background:
-    radial-gradient(circle at 50% 12%, rgba(200, 169, 98, 0.08) 0%, transparent 45%),
-    radial-gradient(circle at 18% 85%, rgba(14, 53, 36, 0.25) 0%, transparent 45%),
-    radial-gradient(circle at 82% 85%, rgba(14, 53, 36, 0.25) 0%, transparent 45%),
+    radial-gradient(circle at 50% 15%, rgba(200, 169, 98, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 20% 85%, rgba(14, 53, 36, 0.22) 0%, transparent 45%),
+    radial-gradient(circle at 80% 85%, rgba(14, 53, 36, 0.22) 0%, transparent 45%),
     transparent;
   outline: none;
   touch-action: pan-y;
+}
+
+.rasoraa-cover-flow__stage:active {
+  cursor: grabbing;
 }
 
 /* Atmospheric Ambient Floor & Reflection Field */
@@ -48,13 +55,13 @@
   position: absolute;
   left: 5%;
   right: 5%;
-  bottom: 74px;
+  bottom: 68px;
   height: 1px;
   background: linear-gradient(90deg, transparent 0%, rgba(200, 169, 98, 0.15) 30%, rgba(200, 169, 98, 0.3) 50%, rgba(200, 169, 98, 0.15) 70%, transparent 100%);
   pointer-events: none;
 }
 
-/* 3D Perspective Card Stage - Refined proportional sizing */
+/* 3D Perspective Card Stage */
 .rasoraa-cover-flow__cards {
   position: absolute;
   left: 50%;
@@ -63,9 +70,11 @@
   height: 380px;
   transform: translate(-50%, -50%);
   transform-style: preserve-3d;
+  touch-action: pan-y;
+  pointer-events: none;
 }
 
-/* Individual 3D Card - transform handled purely by 60/120fps RAF for silky-smooth rotation */
+/* Individual 3D Card */
 .rasoraa-cover-card {
   position: absolute;
   left: 0;
@@ -80,45 +89,39 @@
   transform-origin: center center;
   transform-style: preserve-3d;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   will-change: transform, opacity;
   cursor: pointer;
-  transition:
-    filter 220ms ease,
-    opacity 220ms ease;
+  touch-action: pan-y;
+  pointer-events: auto;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Inner Card Container */
+/* Inner Card Container - Avoid transform transition to prevent fighting RAF updates */
 .rasoraa-cover-card__inner {
   position: relative;
   width: 100%;
   height: 100%;
   overflow: visible;
-  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.rasoraa-cover-card__inner:hover {
-  transform: scale(1.02) translateY(-2px);
-}
-
-.rasoraa-cover-card__inner--active {
-  z-index: 35;
+  border-radius: 24px;
 }
 
 /* Glossy Floor Reflection */
 .rasoraa-cover-card__reflection {
   position: absolute;
   left: 6%;
-  bottom: -72px;
+  bottom: -68px;
   width: 88%;
-  height: 68px;
+  height: 62px;
   border-radius: 16px;
-  opacity: 0.25;
+  opacity: 0.22;
   filter: blur(1.5px);
   transform: scaleY(-1);
   overflow: hidden;
   pointer-events: none;
-  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 85%);
-  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 85%);
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, transparent 85%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, transparent 85%);
 }
 
 .rasoraa-cover-card__reflection img {
@@ -135,17 +138,18 @@
   border-radius: 24px;
   border: 1px solid rgba(200, 169, 98, 0.28);
   box-shadow:
-    0 24px 60px rgba(0, 0, 0, 0.85),
+    0 20px 50px rgba(0, 0, 0, 0.85),
     inset 0 1px 1px rgba(255, 255, 255, 0.16);
   background: #060D09;
+  transition: border-color 240ms ease, box-shadow 240ms ease;
 }
 
 .rasoraa-cover-card__inner--active .rasoraa-cover-card__face {
-  border-color: rgba(200, 169, 98, 0.65);
+  border-color: rgba(200, 169, 98, 0.7);
   box-shadow:
-    0 30px 80px rgba(0, 0, 0, 0.9),
-    0 0 32px rgba(200, 169, 98, 0.16),
-    inset 0 1px 2px rgba(244, 240, 230, 0.3);
+    0 25px 70px rgba(0, 0, 0, 0.9),
+    0 0 28px rgba(200, 169, 98, 0.18),
+    inset 0 1px 2px rgba(244, 240, 230, 0.35);
 }
 
 /* Card Food Image */
@@ -155,11 +159,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-.rasoraa-cover-card:hover .rasoraa-cover-card__image {
-  transform: scale(1.05);
+  pointer-events: none;
 }
 
 /* Scrim Gradient for Editorial Readability */
@@ -168,7 +168,7 @@
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(6, 13, 9, 0.2) 0%,
+    rgba(6, 13, 9, 0.25) 0%,
     rgba(6, 13, 9, 0.15) 30%,
     rgba(6, 13, 9, 0.75) 65%,
     rgba(3, 7, 5, 0.96) 100%
@@ -183,7 +183,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 24px 22px;
+  padding: 22px 20px;
   z-index: 10;
   pointer-events: none;
 }
@@ -202,46 +202,48 @@
   pointer-events: none;
 }
 
-/* Glass Pagination Dots - Removed per user request across all devices */
-.rasoraa-cover-flow__dots {
-  display: none !important;
-}
-
-/* Minimal Side Arrow Buttons */
+/* High-Z Navigation Arrow Buttons - Always accessible above cards */
 .rasoraa-cover-flow__arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 45;
-  width: 44px;
-  height: 44px;
+  z-index: 70 !important;
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(6, 13, 9, 0.7);
-  border: 1px solid rgba(200, 169, 98, 0.35);
+  background: rgba(7, 12, 9, 0.85);
+  border: 1px solid rgba(200, 169, 98, 0.45);
   color: #C8A962;
   cursor: pointer;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  transition: all 220ms ease;
-  opacity: 0.65;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 200ms ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 
 .rasoraa-cover-flow__arrow:hover {
-  opacity: 1;
-  background: rgba(14, 34, 23, 0.9);
+  background: rgba(18, 45, 30, 0.95);
   border-color: #C8A962;
+  color: #FAF8F5;
   transform: translateY(-50%) scale(1.08);
+  box-shadow: 0 0 25px rgba(200, 169, 98, 0.25);
+}
+
+.rasoraa-cover-flow__arrow:active {
+  transform: translateY(-50%) scale(0.95);
 }
 
 .rasoraa-cover-flow__arrow--prev {
-  left: 20px;
+  left: 24px;
 }
 
 .rasoraa-cover-flow__arrow--next {
-  right: 20px;
+  right: 24px;
 }
 
 /* ═════════════════════════════════════════════════════════════════════════════
@@ -249,51 +251,75 @@
    ═════════════════════════════════════════════════════════════════════════════ */
 @media (max-width: 1024px) {
   .rasoraa-cover-flow__stage {
-    height: 480px;
+    height: 500px;
   }
 
   .rasoraa-cover-flow__cards,
   .rasoraa-cover-card {
-    width: 235px;
-    height: 330px;
+    width: 240px;
+    height: 340px;
   }
 
   .rasoraa-cover-card__reflection {
     bottom: -62px;
-    height: 58px;
+    height: 56px;
   }
 
   .rasoraa-cover-card__content {
-    padding: 16px 14px;
+    padding: 18px 16px;
+  }
+
+  .rasoraa-cover-flow__arrow {
+    width: 44px;
+    height: 44px;
+  }
+
+  .rasoraa-cover-flow__arrow--prev {
+    left: 14px;
+  }
+
+  .rasoraa-cover-flow__arrow--next {
+    right: 14px;
   }
 }
 
 @media (max-width: 640px) {
   .rasoraa-cover-flow__stage {
-    height: 440px;
+    height: 450px;
   }
 
   .rasoraa-cover-flow__cards,
   .rasoraa-cover-card {
-    width: 205px;
-    height: 290px;
+    width: 210px;
+    height: 295px;
   }
 
   .rasoraa-cover-card__reflection {
     bottom: -52px;
-    height: 48px;
+    height: 46px;
   }
 
   .rasoraa-cover-card__content {
     padding: 14px 12px;
   }
 
+  /* Compact touch arrows on mobile */
   .rasoraa-cover-flow__arrow {
-    display: none;
+    width: 38px;
+    height: 38px;
+    background: rgba(7, 12, 9, 0.9);
+  }
+
+  .rasoraa-cover-flow__arrow--prev {
+    left: 8px;
+  }
+
+  .rasoraa-cover-flow__arrow--next {
+    right: 8px;
   }
 
   .rasoraa-cover-flow__horizon {
-    bottom: 58px;
+    bottom: 54px;
   }
 }
 

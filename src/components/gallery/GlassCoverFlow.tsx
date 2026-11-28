@@ -27,185 +27,204 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
   onSelect,
 }) => {
   const safeItems = useMemo(() => items.filter(Boolean), [items]);
-  const boundedInitial = Math.min(Math.max(initialIndex, 0), Math.max(safeItems.length - 1, 0));
+  const total = safeItems.length || 1;
+  const boundedInitial = Math.min(Math.max(initialIndex, 0), Math.max(total - 1, 0));
 
   const [activeIndex, setActiveIndex] = useState(boundedInitial);
-  const [position, setPosition] = useState(boundedInitial);
 
   const stageRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const positionRef = useRef(boundedInitial);
-  const targetRef = useRef(boundedInitial);
-  const activeIndexRef = useRef(boundedInitial);
-  const animationFrame = useRef<number | null>(null);
-  const settleTimer = useRef<number | null>(null);
-  const pointerRef = useRef({ x: 0, y: 0 });
+  
+  // Continuous position and target — avoid wrapping these directly to prevent sign flips
+  const currentPos = useRef<number>(boundedInitial);
+  const targetPos = useRef<number>(boundedInitial);
+  const velocity = useRef<number>(0);
+  const isAnimating = useRef<boolean>(false);
+  const animFrameId = useRef<number | null>(null);
 
-  const lastPointerX = useRef<number | null>(null);
-  const pointerDownRef = useRef<{ x: number; y: number; time: number; pointerId: number } | null>(null);
-  const isDraggingRef = useRef(false);
-  const dragDirectionRef = useRef<'horizontal' | 'vertical' | null>(null);
+  // Pointer & Touch tracking
+  const pointerCoord = useRef({ x: 0, y: 0 });
+  const touchStart = useRef<{ x: number; y: number; time: number } | null>(null);
+  const touchPrev = useRef<{ x: number; time: number } | null>(null);
+  const isDragging = useRef<boolean>(false);
+  const hasMovedSignificant = useRef<boolean>(false);
 
-  const wrapIndex = useCallback(
-    (index: number) => {
-      const total = safeItems.length || 1;
-      return ((index % total) + total) % total;
-    },
-    [safeItems.length]
-  );
+  // Shortest modular difference from a to b in a circular array of size N
+  const getShortestDelta = useCallback((from: number, to: number, n: number) => {
+    let diff = (to - from) % n;
+    if (diff > n / 2) diff -= n;
+    if (diff < -n / 2) diff += n;
+    return diff;
+  }, []);
 
-  const wrapPosition = useCallback(
-    (nextPosition: number) => {
-      const total = safeItems.length || 1;
-      return ((nextPosition % total) + total) % total;
-    },
-    [safeItems.length]
-  );
+  // Normalizes an index to [0, total - 1]
+  const normalizeIndex = useCallback((idx: number, n: number) => {
+    return ((Math.round(idx) % n) + n) % n;
+  }, []);
 
-  // Responsive 3D Apple-style Cover Flow calculations
-  const styleCards = useCallback(
-    (nextPosition = positionRef.current, pointer = pointerRef.current) => {
-      const total = safeItems.length || 1;
-      const stageW = stageRef.current?.clientWidth || (typeof window !== 'undefined' ? window.innerWidth : 1200);
+  // Update card 3D transforms based on continuous position
+  const renderCards = useCallback(
+    (pos: number, pointer = pointerCoord.current) => {
+      const stageEl = stageRef.current;
+      const stageW = stageEl ? stageEl.clientWidth : (typeof window !== 'undefined' ? window.innerWidth : 1000);
+      
       const isMobile = stageW < 640;
       const isTablet = stageW >= 640 && stageW < 1024;
 
-      // Responsive spacing parameters proportional to 270px card width
-      const step1 = isMobile ? 140 : isTablet ? 190 : 240;
-      const step2 = isMobile ? 50 : isTablet ? 74 : 96;
-      const zBase = isMobile ? 90 : 130;
-      const zStep = isMobile ? 28 : 36;
+      // Proportional spacing tuned for tablet and mobile
+      const step1 = isMobile ? 125 : isTablet ? 175 : 230;
+      const step2 = isMobile ? 45 : isTablet ? 65 : 90;
+      const zBase = isMobile ? 70 : isTablet ? 100 : 130;
+      const zStep = isMobile ? 22 : isTablet ? 28 : 34;
 
       cardRefs.current.forEach((card, index) => {
         if (!card) return;
-        const raw = index - nextPosition;
-        const offset = ((((raw + total / 2) % total) + total) % total) - total / 2;
+
+        // Calculate offset of this card relative to pos in circular range [-total/2, total/2]
+        const raw = index - pos;
+        let offset = ((raw % total) + total) % total;
+        if (offset > total / 2) offset -= total;
+
         const side = offset < 0 ? -1 : 1;
         const abs = Math.abs(offset);
         const nearCenter = abs < 0.5;
+
+        // Smooth Hermite interpolation curves
         const sideProgress = Math.min(abs, 1);
         const centerEase = 1 - sideProgress;
         const breathe = centerEase * centerEase * (3 - 2 * centerEase);
-        // Hermite smoothstep curve for buttery 120fps rotation without angle kinks
         const rotateProgress = sideProgress * sideProgress * (3 - 2 * sideProgress);
         const extraTilt = Math.max(0, abs - 1) * 1.5;
 
         const xBase = abs < 1 ? abs * step1 : step1 + (abs - 1) * step2;
-        const x = side * xBase + pointer.x * (nearCenter ? 12 : 14);
-        const y = abs * 4 + pointer.y * (nearCenter ? 5 : 6);
-        const rotate = side * (-58 * rotateProgress - extraTilt) + pointer.x * (nearCenter ? -1.5 : -1.0);
+        const x = side * xBase + pointer.x * (nearCenter ? 10 : 12);
+        const y = abs * 3.5 + pointer.y * (nearCenter ? 4 : 5);
+        const rotate = side * (-56 * rotateProgress - extraTilt) + pointer.x * (nearCenter ? -1.2 : -0.8);
         const scale = 0.90 + breathe * 0.12 - Math.max(0, abs - 1) * 0.02;
-        const opacity = abs > 5 ? 0 : Math.max(0.28, 1 - abs * 0.08);
-        const blur = abs > 4 ? 'blur(4px)' : abs > 3 ? 'blur(2px)' : 'none';
+        const opacity = abs > 4.5 ? 0 : Math.max(0.28, 1 - abs * 0.11);
+        const blur = abs > 3.5 ? 'blur(3px)' : abs > 2.5 ? 'blur(1.5px)' : 'none';
 
         card.style.transform = `translate3d(${x}px, ${y}px, ${zBase - abs * zStep}px) rotateY(${rotate}deg) scale(${scale})`;
-        card.style.zIndex = String(60 - Math.round(abs));
+        card.style.zIndex = String(Math.max(1, 50 - Math.round(abs * 5)));
         card.style.filter = blur;
         card.style.opacity = String(opacity);
+        card.style.pointerEvents = abs > 3.5 ? 'none' : 'auto';
       });
     },
-    [safeItems.length]
+    [total]
   );
 
-  const updateActiveIndex = useCallback(
-    (nextPosition: number) => {
-      const nextIndex = wrapIndex(Math.round(nextPosition));
-      if (activeIndexRef.current === nextIndex) return;
-      activeIndexRef.current = nextIndex;
-      setActiveIndex(nextIndex);
-    },
-    [wrapIndex]
-  );
+  // Smooth RAF animation engine with spring physics
+  const startAnimation = useCallback(() => {
+    if (isAnimating.current) return;
+    isAnimating.current = true;
 
-  const syncPosition = useCallback(
-    (nextPosition: number, commitState = true) => {
-      const wrapped = wrapPosition(nextPosition);
-      positionRef.current = wrapped;
-      targetRef.current = wrapped;
-      styleCards(wrapped);
-      updateActiveIndex(wrapped);
-      if (commitState) setPosition(wrapped);
-    },
-    [styleCards, updateActiveIndex, wrapPosition]
-  );
-
-  const animateToTarget = useCallback(() => {
-    if (animationFrame.current !== null) return;
     const tick = () => {
-      const total = safeItems.length || 1;
-      let delta = targetRef.current - positionRef.current;
-      if (delta > total / 2) delta -= total;
-      if (delta < -total / 2) delta += total;
-      if (Math.abs(delta) < 0.002) {
-        syncPosition(targetRef.current);
-        animationFrame.current = null;
+      // Find delta from currentPos to targetPos
+      const delta = targetPos.current - currentPos.current;
+
+      // Friction / spring interpolation
+      if (Math.abs(delta) < 0.0015 && Math.abs(velocity.current) < 0.001) {
+        currentPos.current = targetPos.current;
+        renderCards(currentPos.current);
+        const newActive = normalizeIndex(currentPos.current, total);
+        setActiveIndex(newActive);
+        isAnimating.current = false;
+        animFrameId.current = null;
         return;
       }
-      const next = wrapPosition(positionRef.current + delta * 0.11);
-      positionRef.current = next;
-      styleCards(next);
-      animationFrame.current = window.requestAnimationFrame(tick);
+
+      // Spring acceleration
+      const springK = 0.14;
+      const friction = 0.82;
+      velocity.current = velocity.current * friction + delta * springK;
+      currentPos.current += velocity.current;
+
+      renderCards(currentPos.current);
+
+      const activeCandidate = normalizeIndex(currentPos.current, total);
+      setActiveIndex((prev) => (prev !== activeCandidate ? activeCandidate : prev));
+
+      animFrameId.current = window.requestAnimationFrame(tick);
     };
-    animationFrame.current = window.requestAnimationFrame(tick);
-  }, [safeItems.length, styleCards, syncPosition, wrapPosition]);
 
-  const settle = useCallback(() => {
-    targetRef.current = wrapPosition(Math.round(positionRef.current));
-    animateToTarget();
-  }, [animateToTarget, wrapPosition]);
+    animFrameId.current = window.requestAnimationFrame(tick);
+  }, [normalizeIndex, renderCards, total]);
 
-  const scheduleSettle = useCallback(
-    (delay = 130) => {
-      if (settleTimer.current !== null) window.clearTimeout(settleTimer.current);
-      settleTimer.current = window.setTimeout(() => {
-        settleTimer.current = null;
-        settle();
-      }, delay);
+  // Navigate directly to an absolute target index
+  const goToIndex = useCallback(
+    (index: number) => {
+      const shortestDelta = getShortestDelta(currentPos.current, index, total);
+      targetPos.current = currentPos.current + shortestDelta;
+      velocity.current = 0;
+      startAnimation();
     },
-    [settle]
+    [getShortestDelta, startAnimation, total]
   );
 
-  const push = useCallback(
-    (delta: number) => {
-      if (animationFrame.current !== null) {
-        window.cancelAnimationFrame(animationFrame.current);
-        animationFrame.current = null;
-      }
-      if (settleTimer.current !== null) {
-        window.clearTimeout(settleTimer.current);
-        settleTimer.current = null;
-      }
-      syncPosition(positionRef.current + delta, false);
+  const handleNext = useCallback(() => {
+    targetPos.current = Math.round(currentPos.current) + 1;
+    velocity.current = 0;
+    startAnimation();
+  }, [startAnimation]);
+
+  const handlePrev = useCallback(() => {
+    targetPos.current = Math.round(currentPos.current) - 1;
+    velocity.current = 0;
+    startAnimation();
+  }, [startAnimation]);
+
+  // Immediate positional drag update (1:1 finger tracking)
+  const applyDragOffset = useCallback(
+    (deltaX: number) => {
+      const stageW = stageRef.current?.clientWidth || 800;
+      // Sensitivity tuned so a natural swipe advances 1 card easily
+      const sensitivity = stageW < 640 ? 170 : stageW < 1024 ? 220 : 260;
+      const posDelta = -deltaX / sensitivity;
+
+      currentPos.current += posDelta;
+      targetPos.current = currentPos.current;
+      velocity.current = posDelta;
+      renderCards(currentPos.current);
+
+      const activeCandidate = normalizeIndex(currentPos.current, total);
+      setActiveIndex((prev) => (prev !== activeCandidate ? activeCandidate : prev));
     },
-    [syncPosition]
+    [normalizeIndex, renderCards, total]
   );
 
-  const handleNext = () => {
-    targetRef.current = wrapPosition(Math.round(positionRef.current + 1));
-    animateToTarget();
-  };
+  // Settle on nearest card with release momentum
+  const settleWithMomentum = useCallback(
+    (releaseVelocity = 0) => {
+      // Predict target based on release flick velocity
+      let target = currentPos.current + releaseVelocity * 3.5;
+      target = Math.round(target);
+      targetPos.current = target;
+      startAnimation();
+    },
+    [startAnimation]
+  );
 
-  const handlePrev = () => {
-    targetRef.current = wrapPosition(Math.round(positionRef.current - 1));
-    animateToTarget();
-  };
-
-  // Window resize observer
+  // Handle Resize
   useEffect(() => {
     const handleResize = () => {
-      styleCards(positionRef.current, pointerRef.current);
+      renderCards(currentPos.current, pointerCoord.current);
     };
-    window.addEventListener('resize', handleResize);
+    window.addEventListener('resize', handleResize, { passive: true });
     return () => window.removeEventListener('resize', handleResize);
-  }, [styleCards]);
+  }, [renderCards]);
 
+  // Initialize
   useEffect(() => {
-    syncPosition(boundedInitial);
+    currentPos.current = boundedInitial;
+    targetPos.current = boundedInitial;
+    renderCards(boundedInitial);
     return () => {
-      if (animationFrame.current !== null) window.cancelAnimationFrame(animationFrame.current);
-      if (settleTimer.current !== null) window.clearTimeout(settleTimer.current);
+      if (animFrameId.current !== null) {
+        window.cancelAnimationFrame(animFrameId.current);
+      }
     };
-  }, [boundedInitial, syncPosition]);
+  }, [boundedInitial, renderCards]);
 
   const active = safeItems[activeIndex];
 
@@ -216,105 +235,123 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
         className="rasoraa-cover-flow__stage"
         role="region"
         tabIndex={0}
+        // Wheel & Trackpad
         onWheel={(event) => {
           const absX = Math.abs(event.deltaX);
           const absY = Math.abs(event.deltaY);
 
-          // Horizontal trackpad swipe or Shift + scroll
           if (absX > absY || event.shiftKey) {
             event.preventDefault();
             const wheelDelta = event.deltaX || event.deltaY;
-            push(clamp(wheelDelta, -240, 240) / 230);
-            scheduleSettle(170);
-          } else if (absY < 25) {
-            // Gentle scroll: prevent jumpy page skips
-            push(clamp(event.deltaY, -120, 120) / 320);
-            scheduleSettle(170);
+            const delta = clamp(wheelDelta, -180, 180) / 200;
+            currentPos.current += delta;
+            targetPos.current = Math.round(currentPos.current);
+            startAnimation();
           }
         }}
+        // Pointer down
         onPointerDown={(event) => {
-          pointerDownRef.current = {
+          // If clicked on an arrow button, don't initiate stage drag
+          if ((event.target as HTMLElement).closest('.rasoraa-cover-flow__arrow')) {
+            return;
+          }
+
+          touchStart.current = {
             x: event.clientX,
             y: event.clientY,
             time: performance.now(),
-            pointerId: event.pointerId,
           };
-          lastPointerX.current = event.clientX;
-          isDraggingRef.current = true;
-          dragDirectionRef.current = null;
+          touchPrev.current = {
+            x: event.clientX,
+            time: performance.now(),
+          };
+          isDragging.current = true;
+          hasMovedSignificant.current = false;
+
+          if (animFrameId.current !== null) {
+            window.cancelAnimationFrame(animFrameId.current);
+            animFrameId.current = null;
+            isAnimating.current = false;
+          }
+
+          try {
+            (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+          } catch (_) {}
         }}
+        // Pointer move
         onPointerMove={(event) => {
           const rect = event.currentTarget.getBoundingClientRect();
-          pointerRef.current = {
+          pointerCoord.current = {
             x: clamp(((event.clientX - rect.left) / rect.width - 0.5) * 2, -1, 1),
             y: clamp(((event.clientY - rect.top) / rect.height - 0.5) * 2, -1, 1),
           };
-          styleCards(positionRef.current, pointerRef.current);
 
-          if (!isDraggingRef.current || pointerDownRef.current === null) return;
-          if (event.pointerId !== pointerDownRef.current.pointerId) return;
+          if (!isDragging.current || !touchStart.current) {
+            // Still update subtle tilt on desktop hover
+            renderCards(currentPos.current, pointerCoord.current);
+            return;
+          }
 
-          const dx = event.clientX - pointerDownRef.current.x;
-          const dy = event.clientY - pointerDownRef.current.y;
+          const dxTotal = event.clientX - touchStart.current.x;
+          const dyTotal = event.clientY - touchStart.current.y;
 
-          if (dragDirectionRef.current === null) {
-            if (Math.hypot(dx, dy) > 7) {
-              if (Math.abs(dx) > Math.abs(dy)) {
-                dragDirectionRef.current = 'horizontal';
-                try {
-                  event.currentTarget.setPointerCapture(event.pointerId);
-                } catch (_) {}
-              } else {
-                dragDirectionRef.current = 'vertical';
-                isDraggingRef.current = false;
-                return;
-              }
-            } else {
-              return;
+          // Detect intentional swipe
+          if (!hasMovedSignificant.current) {
+            if (Math.hypot(dxTotal, dyTotal) > 6) {
+              hasMovedSignificant.current = true;
             }
           }
 
-          if (dragDirectionRef.current === 'horizontal') {
-            if (lastPointerX.current !== null) {
-              const delta = event.clientX - lastPointerX.current;
-              if (Math.abs(delta) > 0.3) {
-                const stageW = rect.width || 1000;
-                const sensitivity = stageW < 640 ? 130 : 165;
-                push(-delta / sensitivity);
-                scheduleSettle(130);
-              }
-            }
-            lastPointerX.current = event.clientX;
+          if (touchPrev.current) {
+            const dx = event.clientX - touchPrev.current.x;
+            const dt = Math.max(1, performance.now() - touchPrev.current.time);
+            velocity.current = -dx / dt; // pixels per ms
+            applyDragOffset(dx);
           }
+
+          touchPrev.current = {
+            x: event.clientX,
+            time: performance.now(),
+          };
         }}
+        // Pointer up
         onPointerUp={(event) => {
-          const down = pointerDownRef.current;
-          const movedFar = down && Math.hypot(event.clientX - down.x, event.clientY - down.y) > 10;
-
-          isDraggingRef.current = false;
-          dragDirectionRef.current = null;
-          pointerDownRef.current = null;
-          lastPointerX.current = null;
+          if (!isDragging.current) return;
+          isDragging.current = false;
 
           try {
-            if (event.currentTarget.hasPointerCapture(event.pointerId)) {
-              event.currentTarget.releasePointerCapture(event.pointerId);
+            if ((event.currentTarget as HTMLElement).hasPointerCapture(event.pointerId)) {
+              (event.currentTarget as HTMLElement).releasePointerCapture(event.pointerId);
             }
           } catch (_) {}
 
-          if (movedFar) {
-            scheduleSettle(60);
+          let flickVelocity = 0;
+          if (touchPrev.current && touchStart.current) {
+            const elapsed = performance.now() - touchStart.current.time;
+            const dist = event.clientX - touchStart.current.x;
+            if (elapsed < 350 && Math.abs(dist) > 25) {
+              // Valid flick gesture
+              flickVelocity = -Math.sign(dist) * Math.min(1.2, Math.abs(dist) / 120);
+            }
           }
+
+          settleWithMomentum(flickVelocity);
+          touchStart.current = null;
+          touchPrev.current = null;
         }}
-        onPointerLeave={() => {
-          lastPointerX.current = null;
-          isDraggingRef.current = false;
-          dragDirectionRef.current = null;
-          pointerDownRef.current = null;
-          pointerRef.current = { x: 0, y: 0 };
-          styleCards(positionRef.current, pointerRef.current);
-          scheduleSettle(60);
+        // Pointer cancel
+        onPointerCancel={(event) => {
+          isDragging.current = false;
+          try {
+            if ((event.currentTarget as HTMLElement).hasPointerCapture(event.pointerId)) {
+              (event.currentTarget as HTMLElement).releasePointerCapture(event.pointerId);
+            }
+          } catch (_) {}
+          settleWithMomentum(0);
+          touchStart.current = null;
+          touchPrev.current = null;
         }}
+        // Keyboard accessibility
         onKeyDown={(event) => {
           if (event.key === 'ArrowRight') {
             event.preventDefault();
@@ -335,12 +372,10 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
         {/* 3D Perspective Card Stage */}
         <div className="rasoraa-cover-flow__cards" style={{ perspective: 1800 }}>
           {safeItems.map((item, index) => {
-            const raw = index - position;
-            const offset =
-              ((((raw + safeItems.length / 2) % safeItems.length) + safeItems.length) % safeItems.length) -
-              safeItems.length / 2;
-            const abs = Math.abs(offset);
-            const nearCenter = abs < 0.5;
+            const raw = index - activeIndex;
+            let offset = ((raw % total) + total) % total;
+            if (offset > total / 2) offset -= total;
+            const nearCenter = Math.abs(offset) < 0.5;
 
             return (
               <button
@@ -348,15 +383,17 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
                 ref={(node) => {
                   cardRefs.current[index] = node;
                 }}
-                className="rasoraa-cover-card"
+                className={`rasoraa-cover-card ${nearCenter ? 'rasoraa-cover-card--center' : ''}`}
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
+                  // Prevent click action if user was dragging
+                  if (hasMovedSignificant.current) return;
+
                   if (nearCenter) {
                     onSelect?.(item, index);
                   } else {
-                    targetRef.current = index;
-                    animateToTarget();
+                    goToIndex(index);
                   }
                 }}
                 aria-label={`View ${item.title}`}
@@ -367,7 +404,7 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
           })}
         </div>
 
-        {/* Minimal Navigation Arrows */}
+        {/* Minimal Navigation Arrows with High Z-Index & Touch Support */}
         <button
           type="button"
           onClick={(e) => {
@@ -377,7 +414,7 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
           className="rasoraa-cover-flow__arrow rasoraa-cover-flow__arrow--prev"
           aria-label="Previous card"
         >
-          <ChevronLeft size={22} />
+          <ChevronLeft size={24} />
         </button>
         <button
           type="button"
@@ -388,7 +425,7 @@ export const GlassCoverFlow: React.FC<GlassCoverFlowProps> = ({
           className="rasoraa-cover-flow__arrow rasoraa-cover-flow__arrow--next"
           aria-label="Next card"
         >
-          <ChevronRight size={22} />
+          <ChevronRight size={24} />
         </button>
       </div>
     </section>
