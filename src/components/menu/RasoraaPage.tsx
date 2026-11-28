@@ -158,17 +158,17 @@ export const RasoraaPage: React.FC<RasoraaPageProps> = ({
                   key={item.ch}
                   type="button"
                   onClick={() => isInteractive && onTurnToSpread?.(item.spread)}
-                  className="w-full flex items-center justify-between py-1 px-2.5 rounded hover:bg-[#EFE8DA] transition-colors group text-left"
+                  className="w-full flex items-center justify-between py-1 px-2 rounded hover:bg-[#EFE8DA] transition-colors group text-left gap-2"
                 >
-                  <div className="flex items-center gap-2">
-                    <span className="text-[#96784A] text-[10px] font-mono uppercase tracking-wider group-hover:translate-x-0.5 transition-transform">
+                  <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
+                    <span className="text-[#96784A] text-[9.5px] sm:text-[10px] font-mono uppercase tracking-wider group-hover:translate-x-0.5 transition-transform shrink-0 whitespace-nowrap">
                       ✦ {item.ch}
                     </span>
-                    <span className="text-xs text-[#2A3830] font-serif group-hover:text-[#0B1F14] transition-colors font-medium">
+                    <span className="text-[11px] sm:text-xs text-[#2A3830] font-serif group-hover:text-[#0B1F14] transition-colors font-medium truncate">
                       {item.title}
                     </span>
                   </div>
-                  <span className="text-[10px] text-[#8C7A62] font-mono shrink-0">
+                  <span className="text-[9.5px] sm:text-[10px] text-[#8C7A62] font-mono shrink-0 whitespace-nowrap">
                     p. {item.page}
                   </span>
                 </button>
@@ -238,23 +238,23 @@ export const RasoraaPage: React.FC<RasoraaPageProps> = ({
                   : ''
               }`}
             >
-              <div className="flex items-baseline justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <h4 className="font-serif text-sm sm:text-base text-[#0B1F14] font-medium leading-snug">
+              <div className="flex items-start justify-between gap-2">
+                <div className="flex flex-wrap items-center gap-1.5 min-w-0 flex-1">
+                  <h4 className="font-serif text-sm sm:text-base text-[#0B1F14] font-medium leading-snug break-words">
                     {dish.name}
                   </h4>
                   {dish.isJain && (
-                    <span className="text-[9px] font-mono text-[#1F7A28] uppercase tracking-wider font-semibold">
+                    <span className="text-[9px] font-mono text-[#1F7A28] uppercase tracking-wider font-semibold whitespace-nowrap bg-[#1F7A28]/10 px-1 py-0.5 rounded">
                       🌱 Jain
                     </span>
                   )}
                   {dish.isSignature && (
-                    <span className="text-[9px] font-mono text-[#96784A] uppercase tracking-wider">
+                    <span className="text-[9px] font-mono text-[#96784A] uppercase tracking-wider whitespace-nowrap bg-[#96784A]/10 px-1 py-0.5 rounded">
                       ✦ Signature
                     </span>
                   )}
                 </div>
-                <span className="font-mono text-xs sm:text-sm text-[#96784A] font-medium shrink-0">
+                <span className="font-mono text-xs sm:text-sm text-[#96784A] font-semibold shrink-0 ml-1.5 whitespace-nowrap pt-0.5">
                   ₹{dish.price}
                 </span>
               </div>
@@ -415,11 +415,11 @@ export const RasoraaPage: React.FC<RasoraaPageProps> = ({
                     isInteractive ? 'cursor-pointer hover:bg-[#F0E9DC]' : ''
                   }`}
                 >
-                  <div className="flex items-baseline justify-between gap-3">
-                    <h4 className="font-serif text-sm sm:text-base text-[#0B1F14] font-medium">
+                  <div className="flex items-start justify-between gap-2">
+                    <h4 className="font-serif text-sm sm:text-base text-[#0B1F14] font-medium leading-snug break-words flex-1 min-w-0">
                       {dish.name}
                     </h4>
-                    <span className="font-mono text-xs sm:text-sm text-[#96784A] font-medium shrink-0">
+                    <span className="font-mono text-xs sm:text-sm text-[#96784A] font-semibold shrink-0 ml-1.5 whitespace-nowrap pt-0.5">
                       ₹{dish.price}
                     </span>
                   </div>

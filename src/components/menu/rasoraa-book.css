@@ -79,6 +79,17 @@
   pointer-events: none;
 }
 
+@media (max-width: 640px) {
+  .brass-corner-tl,
+  .brass-corner-tr,
+  .brass-corner-bl,
+  .brass-corner-br {
+    width: 18px;
+    height: 18px;
+    border-width: 2px;
+  }
+}
+
 /* Warm Ivory Parchment Paper Page */
 .rasoraa-parchment-page {
   background: radial-gradient(circle at 50% 40%, #FAF7EE 0%, #F5EFEB 60%, #ECE4D6 100%);

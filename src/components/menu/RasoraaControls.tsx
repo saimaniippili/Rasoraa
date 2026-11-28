@@ -39,9 +39,9 @@ export const RasoraaControls: React.FC<RasoraaControlsProps> = ({
   onSearchChange,
 }) => {
   return (
-    <div className="mb-8 space-y-4 max-w-5xl mx-auto">
-      {/* Chapter Ribbon Bookmark Tabs */}
-      <div className="flex items-center justify-center gap-1.5 sm:gap-3 overflow-x-auto pb-2 scrollbar-none">
+    <div className="mb-6 sm:mb-8 space-y-3.5 max-w-5xl mx-auto w-full">
+      {/* Chapter Ribbon Bookmark Tabs (Scrolls cleanly on mobile, centered on larger displays) */}
+      <div className="flex items-center sm:justify-center justify-start gap-1.5 sm:gap-2.5 overflow-x-auto pb-2 px-1 scrollbar-none">
         {TABS.map((tab) => {
           const isActive = currentSpread === tab.spread && menuViewMode === 'book';
           return (
@@ -53,17 +53,17 @@ export const RasoraaControls: React.FC<RasoraaControlsProps> = ({
                 onToggleViewMode('book');
                 onTurnToSpread(tab.spread);
               }}
-              className={`relative px-3.5 sm:px-5 py-2.5 rounded-t-xl text-xs font-sans tracking-wider uppercase transition-all duration-300 shrink-0 border-t border-x ${
+              className={`relative px-3 sm:px-4 md:px-5 py-2 sm:py-2.5 rounded-t-xl text-[11px] sm:text-xs font-sans tracking-wider uppercase transition-all duration-300 shrink-0 border-t border-x ${
                 isActive
                   ? 'bg-[#09251A] text-[#C5A880] border-[#C5A880]/60 shadow-[0_-4px_16px_rgba(197,168,128,0.2)] -translate-y-1'
                   : 'bg-white/[0.02] text-neutral-400 border-white/10 hover:text-white hover:bg-white/[0.05]'
               }`}
             >
-              <div className="flex items-center gap-1.5 font-medium">
+              <div className="flex items-center gap-1.5 font-medium whitespace-nowrap">
                 <Bookmark size={11} className={isActive ? 'text-[#C5A880] fill-[#C5A880]' : 'text-neutral-500'} />
                 <span>{tab.label}</span>
               </div>
-              <span className="text-[10px] block font-mono text-neutral-400 font-normal lowercase">
+              <span className="text-[9.5px] sm:text-[10px] block font-mono text-neutral-400 font-normal lowercase">
                 {tab.pages}
               </span>
               {isActive && (
@@ -75,16 +75,16 @@ export const RasoraaControls: React.FC<RasoraaControlsProps> = ({
       </div>
 
       {/* Utility Toolbar: Search, Audio Toggle, View Mode */}
-      <div className="flex flex-wrap items-center justify-between gap-4 px-2">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 px-1">
         {/* Search Bar */}
-        <div className="relative flex-1 min-w-[260px] max-w-md">
+        <div className="relative flex-1 w-full max-w-full sm:max-w-md">
           <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search dish (e.g. Malai Paneer, Dosa, Biryani)..."
-            className="w-full pl-10 pr-9 py-2.5 rounded-full bg-white/[0.04] border border-white/15 text-white placeholder-neutral-500 text-xs font-sans tracking-wide focus:outline-none focus:border-[#C5A880] transition-colors"
+            className="w-full pl-10 pr-9 py-2 rounded-full bg-white/[0.04] border border-white/15 text-white placeholder-neutral-500 text-xs font-sans tracking-wide focus:outline-none focus:border-[#C5A880] transition-colors"
           />
           {searchQuery && (
             <button
@@ -98,7 +98,7 @@ export const RasoraaControls: React.FC<RasoraaControlsProps> = ({
         </div>
 
         {/* View Switcher & Audio */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between sm:justify-end gap-2 shrink-0">
           {/* Quick Prev/Next Spreads in Toolbar */}
           {menuViewMode === 'book' && (
             <div className="inline-flex items-center gap-1 mr-1">
@@ -107,9 +107,9 @@ export const RasoraaControls: React.FC<RasoraaControlsProps> = ({
                 onClick={onPrevSpread}
                 disabled={currentSpread === 0 || isTurning}
                 title="Previous Spread"
-                className="p-2 rounded-full border border-white/10 bg-white/[0.03] text-neutral-300 hover:text-white hover:border-[#C5A880]/50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                className="p-1.5 sm:p-2 rounded-full border border-white/10 bg-white/[0.03] text-neutral-300 hover:text-white hover:border-[#C5A880]/50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
               >
-                <ChevronLeft size={14} />
+                <ChevronLeft size={13} />
               </button>
               <span className="text-[10px] font-mono text-neutral-400 px-1">
                 {currentSpread + 1}/{totalSpreads}
@@ -119,9 +119,9 @@ export const RasoraaControls: React.FC<RasoraaControlsProps> = ({
                 onClick={onNextSpread}
                 disabled={currentSpread >= totalSpreads - 1 || isTurning}
                 title="Next Spread"
-                className="p-2 rounded-full border border-white/10 bg-white/[0.03] text-neutral-300 hover:text-white hover:border-[#C5A880]/50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+                className="p-1.5 sm:p-2 rounded-full border border-white/10 bg-white/[0.03] text-neutral-300 hover:text-white hover:border-[#C5A880]/50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
               >
-                <ChevronRight size={14} />
+                <ChevronRight size={13} />
               </button>
             </div>
           )}
@@ -130,16 +130,16 @@ export const RasoraaControls: React.FC<RasoraaControlsProps> = ({
             type="button"
             onClick={onToggleAudio}
             title={isAudioMuted ? 'Turn Sound On' : 'Mute Page Sound'}
-            className="p-2.5 rounded-full border border-white/10 bg-white/[0.03] text-neutral-400 hover:text-white hover:border-white/30 transition-all text-xs"
+            className="p-2 sm:p-2.5 rounded-full border border-white/10 bg-white/[0.03] text-neutral-400 hover:text-white hover:border-white/30 transition-all text-xs"
           >
-            {isAudioMuted ? <VolumeX size={15} /> : <Volume2 size={15} className="text-[#C5A880]" />}
+            {isAudioMuted ? <VolumeX size={14} /> : <Volume2 size={14} className="text-[#C5A880]" />}
           </button>
 
           <div className="inline-flex rounded-full p-1 bg-white/[0.04] border border-white/10">
             <button
               type="button"
               onClick={() => onToggleViewMode('book')}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-sans tracking-wider uppercase transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-sans tracking-wider uppercase transition-all whitespace-nowrap ${
                 menuViewMode === 'book'
                   ? 'bg-[#183620] text-[#FBF9F5] border border-[#C5A880]/50 shadow-md'
                   : 'text-neutral-400 hover:text-white'
@@ -151,7 +151,7 @@ export const RasoraaControls: React.FC<RasoraaControlsProps> = ({
             <button
               type="button"
               onClick={() => onToggleViewMode('grid')}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-sans tracking-wider uppercase transition-all ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-sans tracking-wider uppercase transition-all whitespace-nowrap ${
                 menuViewMode === 'grid'
                   ? 'bg-[#183620] text-[#FBF9F5] border border-[#C5A880]/50 shadow-md'
                   : 'text-neutral-400 hover:text-white'

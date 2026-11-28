@@ -6,3 +6,4 @@ dist-ssr
 cloudflared.exe
 .DS_Store
 Thumbs.db
+*.tsbuildinfo
