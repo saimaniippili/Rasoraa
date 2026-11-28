@@ -67,7 +67,7 @@ export const CulinaryTimeCapsule: React.FC = () => {
   return (
     <div className="relative w-full max-w-[500px] sm:max-w-[540px] lg:max-w-[560px] mx-auto select-none py-4">
       {/* ─── Ambient Atmospheric Backlight (Emerald & Antique Gold) ─── */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] sm:w-[480px] h-[340px] sm:h-[400px] bg-gradient-to-tr from-[#12331C]/35 via-[#C5A880]/15 to-transparent blur-[90px] sm:blur-[110px] pointer-events-none -z-20 rounded-full" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] sm:w-[480px] h-[340px] sm:h-[400px] bg-gradient-to-tr from-[#1B512D]/40 via-[#C5A880]/15 to-transparent blur-[90px] sm:blur-[110px] pointer-events-none -z-20 rounded-full" />
 
       {/* ─── Subtle Whispering Rising Smoke Effect over Panel 3 (Clay Pit) ─── */}
       <div className="absolute top-[18%] left-[52%] -translate-x-1/2 w-24 h-48 pointer-events-none -z-10 opacity-40 mix-blend-screen overflow-hidden">
@@ -126,9 +126,9 @@ export const CulinaryTimeCapsule: React.FC = () => {
               <stop offset="100%" stopColor="#C5A880" stopOpacity="0.1" />
             </linearGradient>
             <linearGradient id="archGlow" x1="50" y1="160" x2="490" y2="380" gradientUnits="userSpaceOnUse">
-              <stop offset="0%" stopColor="#22AA00" stopOpacity="0.1" />
+              <stop offset="0%" stopColor="#1B512D" stopOpacity="0.2" />
               <stop offset="50%" stopColor="#C5A880" stopOpacity="0.6" />
-              <stop offset="100%" stopColor="#22AA00" stopOpacity="0.1" />
+              <stop offset="100%" stopColor="#1B512D" stopOpacity="0.2" />
             </linearGradient>
           </defs>
         </svg>
@@ -231,7 +231,7 @@ export const CulinaryTimeCapsule: React.FC = () => {
         {/* ─── Circular Carved Antique Stone / Metal Pedestal Base ─── */}
         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-[90%] lg:w-[94%] pointer-events-none z-0 flex flex-col items-center">
           {/* Warm Golden Glow beneath Pedestal */}
-          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[80%] h-8 bg-[radial-gradient(ellipse_at_center,_rgba(197,168,128,0.45)_0%,_rgba(34,170,0,0.15)_40%,_transparent_75%)] blur-md pointer-events-none" />
+          <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-[80%] h-8 bg-[radial-gradient(ellipse_at_center,_rgba(197,168,128,0.45)_0%,_rgba(27,81,45,0.3)_40%,_transparent_75%)] blur-md pointer-events-none" />
 
           {/* Carved Pedestal Dais Image */}
           <img
@@ -297,7 +297,7 @@ export const CulinaryTimeCapsule: React.FC = () => {
                 onClick={() => setActiveMobileTab(idx)}
                 className={`py-2 px-1 rounded-xl border flex flex-col items-center justify-center transition-all duration-300 text-center ${
                   isActive
-                    ? 'bg-[#142A1B] border-[#C5A880] text-[#E2CCA6] shadow-[0_0_15px_rgba(197,168,128,0.25)]'
+                    ? 'bg-[#1B512D] border-[#C5A880] text-[#E2CCA6] shadow-[0_0_15px_rgba(27,81,45,0.4)]'
                     : 'bg-white/[0.03] border-white/10 text-neutral-400 hover:text-white'
                 }`}
               >

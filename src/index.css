@@ -1,7 +1,7 @@
 /* ==========================================================================
    RASORAA — ESENCJA HAUTE CUISINE DESIGN SYSTEM
    Luxury Pure Vegetarian Multicuisine Gastronomy
-   Primary Accent: #22AA00 (Vibrant Pure Veg Leaf Green)
+   Primary Regal Forest Accent: #1B512D
    ========================================================================== */
 
 @tailwind base;
@@ -36,12 +36,13 @@
 }
 
 :root {
-  /* User-Defined Signature Palette */
-  --color-leaf: #22AA00;
-  --color-leaf-dark: #198000;
-  --color-leaf-glow: rgba(34, 170, 0, 0.35);
-  --color-leaf-subtle: rgba(34, 170, 0, 0.12);
-  --color-leaf-border: rgba(34, 170, 0, 0.28);
+  /* User-Defined Signature Palette #1B512D */
+  --color-leaf: #1B512D;
+  --color-leaf-dark: #0F2F1A;
+  --color-leaf-light: #2E8B4E;
+  --color-leaf-glow: rgba(27, 81, 45, 0.45);
+  --color-leaf-subtle: rgba(27, 81, 45, 0.15);
+  --color-leaf-border: rgba(27, 81, 45, 0.4);
 
   /* Royal Gold & Warm Accents */
   --color-gold: #C8A962;
@@ -50,11 +51,11 @@
   --color-gold-glow: rgba(200, 169, 98, 0.25);
 
   /* Deep Atmospheric Charcoal Emerald Canvas */
-  --color-bg-dark: #0A1410;
-  --color-bg-surface: #101F19;
-  --color-bg-card: #142720;
-  --color-bg-card-hover: #193128;
-  --color-bg-deep: #060E0B;
+  --color-bg-dark: #070C09;
+  --color-bg-surface: #0F2F1A;
+  --color-bg-card: #133B21;
+  --color-bg-card-hover: #1B512D;
+  --color-bg-deep: #050906;
 
   /* Refined Typography Tones */
   --color-text-pure: #FFFFFF;

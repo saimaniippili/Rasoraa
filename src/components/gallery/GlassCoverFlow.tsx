@@ -428,10 +428,10 @@ const GlassCoverCard: React.FC<{ item: CoverFlowItem; active: boolean }> = ({ it
             <div className="flex items-center gap-1.5">
               {item.isJain && (
                 <span
-                  className="w-4 h-4 rounded-sm border border-[#22AA00] bg-black/60 flex items-center justify-center"
+                  className="w-4 h-4 rounded-sm border border-[#2E8B4E] bg-black/60 flex items-center justify-center"
                   title="100% Strict Jain Decree"
                 >
-                  <span className="w-2 h-2 rounded-full bg-[#22AA00]" />
+                  <span className="w-2 h-2 rounded-full bg-[#1B512D]" />
                 </span>
               )}
               {item.isSignature && (

@@ -155,7 +155,7 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
   return (
     <div className="relative w-full max-w-[460px] select-none mx-auto flex flex-col items-center">
       {/* ─── Ambient Emerald & Warm Amber Volumetric Lighting ─── */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[420px] h-[280px] sm:h-[340px] bg-gradient-to-tr from-[#143d22]/30 via-[#C5A880]/10 to-transparent blur-[80px] sm:blur-[100px] pointer-events-none -z-20 rounded-full" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[420px] h-[280px] sm:h-[340px] bg-gradient-to-tr from-[#1B512D]/40 via-[#C5A880]/10 to-transparent blur-[80px] sm:blur-[100px] pointer-events-none -z-20 rounded-full" />
 
       {/* ─── Top Eyebrow: Imperial Signature with gold line ─── */}
       <div className="w-full flex flex-col items-start px-2 sm:px-4 mb-1.5 sm:mb-3">
@@ -271,7 +271,7 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
               </h3>
               <div className="flex items-center gap-2.5 shrink-0">
                 <span className="w-6 sm:w-10 h-[1px] bg-white/20 hidden sm:block" />
-                <span className="font-mono text-lg sm:text-xl lg:text-2xl font-medium text-[#22AA00] tracking-tight">
+                <span className="font-mono text-lg sm:text-xl lg:text-2xl font-semibold text-[#2E8B4E] tracking-tight">
                   {currentDish.price}
                 </span>
               </div>
@@ -299,7 +299,7 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
               }}
               className={`flex items-center gap-2.5 px-3 sm:px-3.5 py-1.5 sm:py-2 rounded-full border transition-all duration-300 select-none group cursor-pointer ${
                 isActive
-                  ? 'bg-gradient-to-r from-[#142D1C] to-[#0A1A10] border-[#C5A880] shadow-[0_0_20px_rgba(197,168,128,0.28)] ring-1 ring-[#C5A880]/60 scale-105'
+                  ? 'bg-gradient-to-r from-[#1B512D] to-[#0A1A10] border-[#C5A880] shadow-[0_0_20px_rgba(27,81,45,0.45)] ring-1 ring-[#C5A880]/60 scale-105'
                   : 'bg-[#060D08]/60 border-white/10 hover:border-white/30 hover:bg-white/[0.04]'
               }`}
             >
@@ -380,7 +380,7 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
               className="relative max-w-4xl w-full flex-1 flex items-center justify-center my-4 pointer-events-auto"
             >
               {/* Soft warm glow behind dish in lightbox */}
-              <div className="absolute w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] rounded-full bg-gradient-to-tr from-[#143d22]/40 via-[#C5A880]/20 to-transparent blur-[120px] pointer-events-none -z-10" />
+              <div className="absolute w-[350px] sm:w-[500px] h-[350px] sm:h-[500px] rounded-full bg-gradient-to-tr from-[#1B512D]/45 via-[#C5A880]/20 to-transparent blur-[120px] pointer-events-none -z-10" />
 
               <img
                 src={currentDish.image}
@@ -401,7 +401,7 @@ export const FloatingHeroShowcase: React.FC<FloatingHeroShowcaseProps> = ({ onSe
                 {currentDish.subtitle}
               </p>
               <div className="pt-2 flex items-center justify-center gap-3 text-xs">
-                <span className="font-mono text-lg text-[#22AA00] font-medium">{currentDish.price}</span>
+                <span className="font-mono text-lg text-[#2E8B4E] font-semibold">{currentDish.price}</span>
                 <span className="text-neutral-500">·</span>
                 <span className="text-[11px] font-mono text-neutral-400 uppercase tracking-widest">
                   Press ESC or click anywhere to return

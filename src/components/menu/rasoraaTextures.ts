@@ -158,10 +158,10 @@ function drawParchmentBackground(ctx: CanvasRenderingContext2D, isLeftPage: bool
 // Draw Jain leaf indicator
 function drawJainLeaf(ctx: CanvasRenderingContext2D, x: number, y: number) {
   ctx.save();
-  ctx.strokeStyle = '#22AA00';
+  ctx.strokeStyle = '#2E8B4E';
   ctx.lineWidth = 1.5;
   ctx.strokeRect(x - 6, y - 6, 12, 12);
-  ctx.fillStyle = '#22AA00';
+  ctx.fillStyle = '#1B512D';
   ctx.beginPath();
   ctx.arc(x, y, 3, 0, Math.PI * 2);
   ctx.fill();
